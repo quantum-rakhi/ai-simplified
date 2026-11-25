@@ -72,6 +72,28 @@ AI Simplified now includes a dedicated interactive Neural Network Playground.
 
 No API key, account or paid service required. All training runs locally in the browser.
 
+# AI Simplified — Phase 2
+
+## Files
+- `src/main.jsx` — updated app entry point; registers the Phase 2 curriculum and opens the Phase 2 roadmap level.
+- `src/phase2Lessons.js` — four new lessons, four guided chapters per lesson, and four practice questions per lesson.
+
+## Install
+1. Replace your repository's `src/main.jsx` with this package's `src/main.jsx`.
+2. Add `src/phase2Lessons.js` to your repository's `src/` folder.
+3. Keep `src/advancedLessons.js`, `src/services/progressStorage.js`, and `src/styles.css` unchanged.
+4. Commit both files to `main`.
+5. Run `npm run build` locally or check the GitHub Actions deployment workflow.
+
+Phase 2 lesson IDs:
+- `python-basics`
+- `math-for-ai`
+- `data-with-python`
+- `statistics-visualization`
+
+The existing lesson UI and progress tracking are reused.
+
+
 **AI Simplified — Make AI make sense.**
 
 ## 🛠️ Technology Stack
