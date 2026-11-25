@@ -1894,3 +1894,32 @@ body {
  .hero-art .lab-orbit-one,.hero-art .lab-orbit-four{right:0!important}
  .hero-art .lab-orbit-two,.hero-art .lab-orbit-three{left:0!important}
 }
+
+
+/* POLISHED LAB NAV — remove bobbing; use a calm premium constellation */
+.hero-art .lab-orbit-card,
+.hero-art .lab-orbit-card-inner{
+ animation:none!important;
+ translate:0 0!important;
+ rotate:0deg!important;
+}
+.hero-art .lab-orbit-card{
+ transform:none!important;
+ transition:transform .28s cubic-bezier(.2,.75,.25,1),box-shadow .28s ease,border-color .28s ease,background .28s ease!important;
+}
+.hero-art .lab-orbit-card:hover{
+ transform:translateY(-4px)!important;
+ scale:1.025!important;
+ box-shadow:0 20px 48px rgba(76,61,143,.17),0 4px 12px rgba(76,61,143,.06)!important;
+ border-color:rgba(158,139,230,.62)!important;
+}
+.hero-art .lab-orbit-card:active{transform:translateY(-1px)!important;scale:.99!important}
+.hero-art .lab-orbit-icon{transition:background .25s ease,color .25s ease,box-shadow .25s ease!important}
+.hero-art .lab-orbit-card:hover .lab-orbit-icon{
+ background:linear-gradient(145deg,#e8e1ff,#dcd2ff)!important;
+ color:#5f4bb8!important;
+ box-shadow:0 0 0 5px rgba(136,111,220,.08)!important;
+}
+@media(prefers-reduced-motion:reduce){
+ .hero-art .lab-orbit-card,.hero-art .lab-orbit-card-inner{animation:none!important;transition:none!important}
+}
