@@ -5,10 +5,11 @@ import {
   Gamepad2, Search, Menu, X, CheckCircle2, CircleHelp, Lightbulb, Target,
   Trophy, ChevronRight, RotateCcw, WandSparkles, Layers3, ShieldCheck,
   Bot, Network, FlaskConical, GraduationCap, Play, Star,
-  SlidersHorizontal, GitBranch, Scale, Gauge
+  SlidersHorizontal, GitBranch, Scale, Gauge, Clock3, Download, Upload, RefreshCw
 } from "lucide-react";
 import "./styles.css";
 import { advancedLessons, advancedLessonDeepDive, advancedChapterPractice } from "./advancedLessons";
+import { recordChapterCompletion, recordQuizResult, recordAssessmentResult, getProgressSnapshot, subscribeToProgress, exportProgress, importProgress, resetProgress } from "./services/progressStorage";
 
 const lessons = [
   { id:"ai", tag:"START HERE", title:"What is AI?", desc:"Meet the technology that helps machines perform tasks that usually need human intelligence.", time:"4 min", level:"Beginner", icon:BrainCircuit, color:"violet", body:"Artificial Intelligence (AI) is the field of building computer systems that can perform tasks associated with human intelligence — such as recognising patterns, understanding language, making predictions and solving problems.", analogy:"Think of AI as a very capable pattern-finder. Show it enough examples of cats and dogs, and it can learn patterns that help it tell the two apart.", points:["AI systems find patterns in information.","AI can make predictions or generate new content.","AI does not automatically understand the world like a human does."] },
@@ -95,9 +96,10 @@ function LessonDeepDive({lesson}) {
   if (!content) return null;
 
   const progress = Math.round((completed.length / content.modules.length) * 100);
-  const finishChapter = (index) => setCompleted(previous =>
-    previous.includes(index) ? previous : [...previous, index]
-  );
+  const finishChapter = (index) => {
+    setCompleted(previous => previous.includes(index) ? previous : [...previous, index]);
+    recordChapterCompletion(lesson.id, index, content.modules.length);
+  };
   const activeIndex = Math.max(0, Math.min(expanded, content.modules.length - 1));
   const activeModule = content.modules[activeIndex];
   const goNext = () => setExpanded(index => Math.min(index + 1, content.modules.length - 1));
@@ -803,6 +805,7 @@ function App() {
       if(assessmentAnswers[i]===q.correct) topicScores[q.topic].correct++;
     });
     setAssessmentHistory(previous=>[...previous,{level:assessmentLevel,score:correct,total,topicScores,date:new Date().toISOString()}]);
+    recordAssessmentResult({level:assessmentLevel,score:correct,total,topicScores});
     setAssessmentSaved(true);
   },[assessmentFinished,assessmentSaved,assessmentLevel,assessmentAnswers]);
   const currentLesson = lessons.find(x => x.id === selectedLesson) || lessons[0];
@@ -841,8 +844,10 @@ function App() {
     setAnswers(prev => ({...prev, [quizIndex]:index}));
   };
   const nextQuestion = () => {
-    if (quizIndex === quiz.length - 1) setQuizDone(true);
-    else setQuizIndex(v => v + 1);
+    if (quizIndex === quiz.length - 1) {
+      recordQuizResult(score, quiz.length);
+      setQuizDone(true);
+    } else setQuizIndex(v => v + 1);
   };
   const restartQuiz = () => { setAnswers({}); setQuizIndex(0); setQuizDone(false); };
   const startAssessment = (level=assessmentLevel) => {
@@ -888,10 +893,13 @@ function App() {
         <button className={active==="visual-lab"?"nav-active":""} onClick={()=>go("visual-lab")}>Visual AI Lab</button>
         <button className={active==="quiz"?"nav-active":""} onClick={()=>go("quiz")}>Quiz</button>
         <button className={active==="assessment"?"nav-active":""} onClick={()=>go("assessment")}>Assessment Centre</button>
+        <button className={active==="dashboard"?"nav-active":""} onClick={()=>go("dashboard")}>My Progress</button>
       </nav>
       <button className="top-cta" onClick={()=>go("explore")}>Start learning <ArrowUpRight size={16}/></button>
       <button className="mobile-menu" onClick={()=>setMenuOpen(v=>!v)} aria-label="Toggle menu">{menuOpen?<X/>:<Menu/>}</button>
     </header>
+
+    {active==="dashboard" && <LearningDashboard onNavigate={go} onOpenLesson={openLesson}/>}
 
     {active==="home" && <main>
       <section className="hero section-wrap">
@@ -902,6 +910,7 @@ function App() {
           <div className="hero-actions">
             <button className="btn-primary" onClick={()=>go("explore")}>Explore AI <ArrowRight size={18}/></button>
             <button className="btn-ghost" onClick={()=>go("neural-playground")}><Play size={16}/> Try the neural playground</button>
+            <button className="btn-ghost" onClick={()=>go("dashboard")}><GraduationCap size={16}/> My learning progress</button>
           </div>
           <div className="hero-proof"><div className="avatar-stack"><i>🧑‍🎓</i><i>👩‍💻</i><i>🧑‍🚀</i></div><span><b>Curious minds welcome.</b><br/>Start from absolute zero.</span></div>
         </div>
@@ -1384,6 +1393,107 @@ function App() {
 
     <footer className="footer"><div className="footer-inner"><button className="brand footer-brand" onClick={()=>go("home")}><span className="brand-mark"><BrainCircuit size={21}/></span><span>AI <b>SIMPLIFIED</b><small>MAKE AI MAKE SENSE</small></span></button><p>Making artificial intelligence practical and understandable for students, professionals, creators and developers.</p><div className="footer-bottom"><span>© 2026 AI Simplified v1.3.3 · An open learning project</span><span>Built with curiosity <span className="heart">♥</span> by <a href="https://github.com/quantum-rakhi" target="_blank" rel="noreferrer">Rakhi Thakur</a></span></div></div></footer>
   </div>;
+}
+
+
+const roadmapLevels = [
+  {id:"foundations",level:0,title:"AI Foundations",description:"Understand what AI is, where it is used, and what its limitations mean in practice.",skills:["AI fundamentals","AI vs ML vs Deep Learning","Responsible AI"],lessons:["ai"],practical:"Identify AI use cases and distinguish AI, machine learning and generative AI.",status:"available"},
+  {id:"python-data",level:1,title:"Python, Mathematics & Data",description:"Learn the programming and data skills used throughout practical AI development.",skills:["Python","NumPy and Pandas","Statistics","Data visualisation"],lessons:[],practical:"Explore a dataset, clean missing values and create a simple data visualisation.",status:"planned"},
+  {id:"machine-learning",level:2,title:"Machine Learning",description:"Understand training data, features, labels, algorithms and model evaluation.",skills:["Supervised learning","Unsupervised learning","Regression","Classification"],lessons:["ml"],practical:"Design a classifier and explain how to evaluate predictions on unseen data.",status:"available"},
+  {id:"deep-learning",level:3,title:"Deep Learning",description:"Explore neurons, layers, activation functions, backpropagation and training.",skills:["Neural networks","Backpropagation","Optimisation","Transformers"],lessons:["dl"],practical:"Train the existing XOR neural network and inspect how loss changes.",status:"available"},
+  {id:"generative-ai",level:4,title:"Generative AI & LLMs",description:"Learn how language models process prompts and generate text and other content.",skills:["Generative AI","LLMs","Tokens","Prompt engineering","Evaluation"],lessons:["genai","llm","prompt"],practical:"Improve a prompt by adding context, constraints and an output format.",status:"available"},
+  {id:"ai-engineering",level:5,title:"AI Engineering & RAG",description:"Understand embeddings, vector search, document chunking and retrieval-augmented generation.",skills:["Embeddings","Vector databases","Semantic search","Chunking","RAG"],lessons:["embeddings","vectordb","semantic-search","chunking","rag"],practical:"Map the stages of a document question-answering pipeline.",status:"available"},
+  {id:"agentic-ai",level:6,title:"Agentic AI",description:"Explore agent planning, tool calling, memory, orchestration and guardrails.",skills:["AI agents","Tool calling","Memory","Multi-agent systems","MCP"],lessons:["ai-agents"],practical:"Design a safe agent workflow with a tool, validation and human approval.",status:"available"},
+  {id:"production-ai",level:7,title:"Production AI & MLOps",description:"Learn deployment, monitoring, evaluation, security and responsible operations.",skills:["Model serving","APIs","CI/CD","Monitoring","Drift","Governance"],lessons:["finetuning"],practical:"Create a deployment checklist covering evaluation, monitoring and rollback.",status:"available"}
+];
+
+function LearningDashboard({onNavigate,onOpenLesson}) {
+  const [progress,setProgress] = useState(getProgressSnapshot);
+  const [notice,setNotice] = useState("");
+  useEffect(()=>subscribeToProgress(()=>setProgress(getProgressSnapshot())),[]);
+  const completedChapters = Object.values(progress.chapters).reduce((sum,item)=>sum+(item.completed?.length||0),0);
+  const totalChapters = Object.values(progress.chapters).reduce((sum,item)=>sum+(item.total||0),0);
+  const chapterPercent = totalChapters ? Math.round(completedChapters/totalChapters*100) : 0;
+  const latestAssessment = progress.assessments[progress.assessments.length-1];
+  const latestQuiz = progress.quizzes[progress.quizzes.length-1];
+  const lessonDone = id => {
+    const item = progress.chapters[id];
+    return !!item && item.total>0 && item.completed.length>=item.total;
+  };
+  const startNext = () => {
+    const level = roadmapLevels.find(item=>item.status==="available" && item.lessons.some(id=>!lessonDone(id)));
+    onOpenLesson(level?.lessons.find(id=>!lessonDone(id)) || "ai");
+  };
+  const downloadBackup = () => {
+    const blob = new Blob([exportProgress()],{type:"application/json"});
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href=url; anchor.download="ai-simplified-progress.json"; anchor.click();
+    URL.revokeObjectURL(url); setNotice("Progress backup downloaded.");
+  };
+  const uploadBackup = async event => {
+    const file=event.target.files?.[0]; if(!file) return;
+    try { importProgress(await file.text()); setProgress(getProgressSnapshot()); setNotice("Progress restored from backup."); }
+    catch(error) { setNotice(error.message || "Could not import this backup."); }
+    event.target.value="";
+  };
+  const clearProgress = () => {
+    if(!window.confirm("Reset all locally saved AI Simplified learning progress on this device?")) return;
+    resetProgress(); setProgress(getProgressSnapshot()); setNotice("Local learning progress has been reset.");
+  };
+  return <main className="section-wrap page-main learner-dashboard">
+    <style>{`
+      .learner-dashboard{padding-bottom:76px}.learner-welcome{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:26px 28px;margin:24px 0;border:1px solid rgba(177,151,255,.22);border-radius:18px;background:linear-gradient(115deg,rgba(116,83,190,.22),rgba(34,31,59,.9))}
+      .learner-welcome h2{font:700 25px "Space Grotesk";margin:9px 0}.learner-welcome p{color:#aaa8c3;font-size:13px;margin:0}
+      .learner-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin:20px 0 44px}
+      .learner-stats article{display:flex;flex-direction:column;gap:7px;padding:18px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(145deg,#201e3c,#19182f)}
+      .learner-stats svg{width:19px;color:#b9a6ff}.learner-stats strong{font:700 27px "Space Grotesk";color:#f8f5ff}.learner-stats span{font-size:11px;color:#aaa8c3}
+      .roadmap-section{margin:0 0 42px}.roadmap-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+      .roadmap-card{display:flex;flex-direction:column;padding:20px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(145deg,#201e3c,#19182f);min-height:300px}
+      .roadmap-card.is-complete{border-color:rgba(119,217,198,.4)}.roadmap-card.is-planned{opacity:.78}
+      .roadmap-card-top{display:flex;justify-content:space-between;align-items:center;color:#b9a6ff;font-size:10px;font-weight:850;letter-spacing:1.2px}
+      .roadmap-card-top svg{color:#8fe0c4}.roadmap-card h3{font:700 20px "Space Grotesk";margin:14px 0 7px}.roadmap-card>p{font-size:12px;line-height:1.7;color:#aaa8c3;margin:0 0 14px}
+      .roadmap-skills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:15px}.roadmap-skills span{font-size:10px;color:#d3c8f4;background:#9b7cff18;border:1px solid #9b7cff30;border-radius:30px;padding:5px 8px}
+      .roadmap-practical{margin-top:auto;padding:12px;border-radius:11px;background:#77d9c610;border:1px solid #77d9c622;color:#c9e8df;font-size:11px;line-height:1.6}.roadmap-practical b{display:block;color:#8fe0c4;font-size:9px;letter-spacing:1px;margin-bottom:4px}
+      .roadmap-card-bottom{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:14px;color:#aaa8c3;font-size:10px}.roadmap-card-bottom button{display:inline-flex;align-items:center;gap:6px;border:0;background:#9b7cff22;color:#d6c9ff;padding:8px 10px;border-radius:9px;font-size:10px;font-weight:800}.roadmap-coming{color:#9c96b3;font-weight:700}
+      .learner-recent-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:24px 0}.learner-panel{padding:20px;border:1px solid var(--line);border-radius:15px;background:#1b1a32}
+      .learner-panel h3{font:700 24px "Space Grotesk";margin:10px 0 5px}.learner-panel p{font-size:11px;line-height:1.6;color:#aaa8c3}
+      .learner-data-tools{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;padding:20px;border:1px solid var(--line);border-radius:15px;background:#17162c}
+      .learner-data-tools h3{margin:8px 0;font-size:16px}.learner-data-tools p{max-width:560px;color:#aaa8c3;font-size:11px;line-height:1.6}
+      .learner-data-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.learner-data-actions .btn-light{margin:0;padding:10px 12px;font-size:10px}
+      .learner-reset{display:inline-flex;align-items:center;gap:6px;border:1px solid #e68b9a44;border-radius:10px;background:#e68b9a12;color:#f0b8c0;padding:10px 12px;font-size:10px;font-weight:800}
+      .learner-notice{width:100%;color:#9de4c9!important;margin:0}
+      @media(max-width:760px){.learner-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.roadmap-grid{grid-template-columns:1fr}.learner-welcome{align-items:flex-start;flex-direction:column}.learner-recent-grid{grid-template-columns:1fr}}
+      @media(max-width:480px){.learner-dashboard{padding-left:16px;padding-right:16px}.learner-stats article{padding:14px}.learner-data-tools{align-items:flex-start;flex-direction:column}}
+    `}</style>
+    <div className="page-intro"><div className="eyebrow"><Sparkles size={13}/> YOUR LEARNING HOME</div><h1>Your AI learning <span>journey.</span></h1><p>Pick up where you left off, explore the roadmap and keep track of the skills you are building. Your progress stays in this browser.</p></div>
+    <section className="learner-welcome"><div><div className="eyebrow">YOUR NEXT STEP</div><h2>Small steps become real skills.</h2><p>Start with a lesson, try the experiment, then check what you understand.</p></div><button className="btn-primary" onClick={startNext}>Continue learning <ArrowRight size={16}/></button></section>
+    <section className="learner-stats">
+      <article><BookOpen/><strong>{completedChapters}</strong><span>Chapters completed</span></article>
+      <article><Target/><strong>{chapterPercent}%</strong><span>Chapter progress</span></article>
+      <article><Trophy/><strong>{progress.quizzes.length+progress.assessments.length}</strong><span>Assessments attempted</span></article>
+      <article><GraduationCap/><strong>{roadmapLevels.length}</strong><span>Learning levels</span></article>
+    </section>
+    <section className="roadmap-section"><div className="section-heading"><div><div className="eyebrow">ZERO TO AI BUILDER</div><h2>Your learning <span>roadmap.</span></h2><p>Follow the levels in order, or revisit a topic whenever you need it.</p></div></div>
+      <div className="roadmap-grid">{roadmapLevels.map(level=>{
+        const done=level.lessons.length>0&&level.lessons.every(lessonDone); const available=level.status==="available";
+        return <article className={`roadmap-card ${done?"is-complete":""} ${available?"":"is-planned"}`} key={level.id}>
+          <div className="roadmap-card-top"><span>LEVEL {level.level}</span>{done?<CheckCircle2 size={17}/>:available?<BookOpen size={17}/>:<Clock3 size={17}/>}</div>
+          <h3>{level.title}</h3><p>{level.description}</p><div className="roadmap-skills">{level.skills.map(skill=><span key={skill}>{skill}</span>)}</div>
+          <div className="roadmap-practical"><b>HANDS-ON OUTCOME</b>{level.practical}</div>
+          <div className="roadmap-card-bottom"><span>{done?"Completed":available?"Lessons available":"Coming in a future release"}</span>{available&&level.lessons.length>0?<button onClick={()=>onOpenLesson(level.lessons[0])}>Start level <ArrowRight size={14}/></button>:<span className="roadmap-coming">Planned</span>}</div>
+        </article>;
+      })}</div>
+    </section>
+    <section className="learner-recent-grid">
+      <article className="learner-panel"><div className="eyebrow">LATEST QUIZ</div><h3>{latestQuiz?`${latestQuiz.score} / ${latestQuiz.total}`:"Not attempted yet"}</h3><p>{latestQuiz?new Date(latestQuiz.date).toLocaleString():"Complete the knowledge quiz to record your first result."}</p><button className="text-link" onClick={()=>onNavigate("quiz")}>Open quiz <ArrowRight size={14}/></button></article>
+      <article className="learner-panel"><div className="eyebrow">LATEST MOCK ASSESSMENT</div><h3>{latestAssessment?`${latestAssessment.score} / ${latestAssessment.total}`:"Not attempted yet"}</h3><p>{latestAssessment?`${latestAssessment.level} · ${new Date(latestAssessment.date).toLocaleString()}`:"Take a timed assessment to check your understanding."}</p><button className="text-link" onClick={()=>onNavigate("assessment")}>Open assessment <ArrowRight size={14}/></button></article>
+    </section>
+    <section className="learner-data-tools"><div><div className="eyebrow">YOUR DATA, YOUR DEVICE</div><h3>Manage your learning backup</h3><p>Progress is stored locally in this browser. Export it before clearing browser data or moving to another device.</p></div>
+      <div className="learner-data-actions"><button className="btn-light" onClick={downloadBackup}><Download size={15}/> Export progress</button><label className="btn-light"><Upload size={15}/> Import backup<input type="file" accept="application/json,.json" onChange={uploadBackup} hidden/></label><button className="learner-reset" onClick={clearProgress}><RefreshCw size={14}/> Reset progress</button></div>
+      {notice&&<p className="learner-notice" role="status">{notice}</p>}
+    </section>
+  </main>;
 }
 
 function LessonCard({lesson,index,onClick}) {
