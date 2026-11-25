@@ -1001,7 +1001,7 @@ const levelCounts = {
       <nav className={menuOpen ? "nav-links open" : "nav-links"}>
         <button className={active==="home"?"nav-active":""} onClick={()=>go("home")}>Home</button>
         <button className={active==="explore"?"nav-active":""} onClick={()=>go("explore")}>Learn</button>
-        <details className="nav-menu">
+        <details className="nav-menu" onMouseLeave={(event)=>{event.currentTarget.open=false;}}>
           <summary className={["playground","neural-playground","visual-lab"].includes(active)?"nav-active":""}>Labs</summary>
           <div className="nav-dropdown">
             <button className={active==="playground"?"nav-active":""} onClick={()=>go("playground")}>AI Playground</button>
@@ -1010,7 +1010,7 @@ const levelCounts = {
             <button className={active==="agent-tutorial"?"nav-active":""} onClick={()=>go("agent-tutorial")}>Build an Agent</button>
           </div>
         </details>
-        <details className="nav-menu">
+        <details className="nav-menu" onMouseLeave={(event)=>{event.currentTarget.open=false;}}>
           <summary className={["quiz","assessment"].includes(active)?"nav-active":""}>Assessments</summary>
           <div className="nav-dropdown">
             <button className={active==="quiz"?"nav-active":""} onClick={()=>go("quiz")}>Knowledge Quiz</button>
