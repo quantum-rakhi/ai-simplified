@@ -79,30 +79,128 @@ const lessonDeepDive = {
 function LessonDeepDive({lesson}) {
   const content = lessonDeepDive[lesson.id];
   const [expanded, setExpanded] = useState(0);
+  const [completed, setCompleted] = useState([]);
   const [revealed, setRevealed] = useState({});
+  const [notes, setNotes] = useState({});
   if (!content) return null;
+
+  const progress = Math.round((completed.length / content.modules.length) * 100);
+  const finishChapter = (index) => setCompleted(previous =>
+    previous.includes(index) ? previous : [...previous, index]
+  );
+  const goNext = () => {
+    const next = Math.min(expanded + 1, content.modules.length - 1);
+    setExpanded(next);
+    document.getElementById(`lesson-chapter-${lesson.id}-${next}`)?.scrollIntoView({behavior:"smooth",block:"center"});
+  };
+
   return <section className="deep-dive">
     <style>{`
-      .deep-dive{margin:30px 0 28px}.deep-dive-head{margin-bottom:18px}.deep-dive-head .eyebrow{margin-bottom:9px}.deep-dive-head h2{font-size:25px;margin:0 0 8px}.deep-dive-head p{color:#bdb7d8;line-height:1.7;margin:0}
-      .learning-outcome{border:1px solid rgba(166,139,250,.28);background:rgba(139,110,232,.10);padding:15px 17px;border-radius:14px;margin:18px 0 22px;color:#ddd5ff;line-height:1.65}.learning-outcome b{display:block;color:#c4adff;font-size:11px;letter-spacing:1.2px;margin-bottom:5px}
-      .chapter-card{border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.035);border-radius:15px;margin:12px 0;overflow:hidden}.chapter-toggle{width:100%;display:flex;align-items:center;gap:13px;text-align:left;padding:17px 18px;background:transparent;border:0;color:#f5f1ff;cursor:pointer}.chapter-number{width:34px;height:34px;border-radius:10px;background:#30284f;color:#c8b5ff;display:grid;place-items:center;font-size:12px;font-weight:800;flex:none}.chapter-toggle strong{font-size:15px;flex:1}.chapter-toggle .chapter-chevron{color:#b7a4f4;transition:transform .2s}.chapter-toggle[aria-expanded="true"] .chapter-chevron{transform:rotate(90deg)}
-      .chapter-body{padding:0 19px 19px 65px;color:#c9c3df;line-height:1.75}.chapter-body p{margin:0 0 13px}.chapter-body h4{color:#f0eaff;font-size:13px;margin:17px 0 8px}.chapter-body ul{padding-left:19px;margin:0 0 14px}.chapter-body li{padding:3px 0}.chapter-example{background:rgba(119,217,198,.07);border-left:3px solid #77d9c6;border-radius:0 10px 10px 0;padding:12px 14px;margin:14px 0;color:#d2e9e3}.chapter-task{background:rgba(173,145,255,.08);border:1px solid rgba(173,145,255,.18);padding:13px 14px;border-radius:11px;margin-top:14px}.chapter-task b{display:block;color:#cbb8ff;font-size:11px;letter-spacing:1px;margin-bottom:5px}.chapter-task button{border:0;background:transparent;color:#cdbbff;text-decoration:underline;padding:7px 0 0;cursor:pointer;font-weight:700}.chapter-answer{margin-top:9px;color:#d9d2f2;font-size:13px}
-      .lesson-end-check{padding:18px;border-radius:14px;background:#211e38;border:1px solid rgba(255,255,255,.1);margin:22px 0}.lesson-end-check h3{margin:0 0 8px}.lesson-end-check p{color:#c5bfdc;line-height:1.65;margin:0}
-      @media(max-width:700px){.chapter-body{padding:0 15px 17px}.chapter-toggle{padding:14px}.chapter-toggle strong{font-size:14px}}
+      .deep-dive{margin:42px 0 34px;color:#f5f1ff}
+      .deep-dive-hero{position:relative;overflow:hidden;padding:25px 26px 22px;border:1px solid rgba(177,151,255,.25);border-radius:20px;background:radial-gradient(circle at 92% 0%,rgba(180,119,255,.20),transparent 34%),linear-gradient(135deg,#24203d,#19172d 72%);margin-bottom:20px}
+      .deep-dive-hero:after{content:"";position:absolute;width:170px;height:170px;border:1px solid rgba(196,174,255,.12);border-radius:50%;right:-62px;bottom:-105px;box-shadow:0 0 0 18px rgba(196,174,255,.035),0 0 0 38px rgba(196,174,255,.025)}
+      .deep-dive-kicker{display:flex;align-items:center;gap:8px;color:#c6b2ff;font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase}
+      .deep-dive-hero h2{font-size:clamp(23px,3vw,30px);line-height:1.15;margin:11px 0 8px;letter-spacing:-.6px}
+      .deep-dive-hero p{max-width:680px;color:#c7c0df;line-height:1.7;margin:0;font-size:14px}
+      .deep-dive-progress{display:flex;align-items:center;gap:13px;margin-top:22px;position:relative;z-index:1}
+      .deep-dive-progress-track{height:8px;flex:1;background:#38334d;border-radius:99px;overflow:hidden}
+      .deep-dive-progress-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#8c72ef,#d28ce8);transition:width .25s}
+      .deep-dive-progress span{font-size:12px;color:#d9d0f8;font-weight:800;white-space:nowrap}
+      .deep-dive-roadmap{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:0 0 22px}
+      .roadmap-step{display:flex;align-items:center;gap:9px;padding:11px 12px;border:1px solid rgba(255,255,255,.09);border-radius:12px;background:rgba(255,255,255,.025);color:#bcb5d5;font-size:11px;min-width:0}
+      .roadmap-step span{display:grid;place-items:center;width:25px;height:25px;flex:none;border-radius:8px;background:#30294b;color:#c9b8ff;font-weight:800}
+      .roadmap-step strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:650}
+      .roadmap-step.done{border-color:rgba(119,217,198,.35);background:rgba(119,217,198,.07);color:#d8f5ed}
+      .roadmap-step.done span{background:#24564f;color:#9ef0d8}
+      .learning-outcome{display:flex;gap:13px;align-items:flex-start;border:1px solid rgba(166,139,250,.25);background:linear-gradient(110deg,rgba(139,110,232,.13),rgba(139,110,232,.045));padding:17px 19px;border-radius:15px;margin:0 0 22px;color:#ddd5ff;line-height:1.65;font-size:13px}
+      .outcome-icon{width:34px;height:34px;display:grid;place-items:center;border-radius:10px;background:#30284f;color:#cdbbff;flex:none}
+      .learning-outcome b{display:block;color:#c4adff;font-size:10px;letter-spacing:1.2px;margin-bottom:4px}
+      .chapter-card{position:relative;border:1px solid rgba(255,255,255,.10);background:linear-gradient(120deg,rgba(255,255,255,.045),rgba(255,255,255,.018));border-radius:16px;margin:12px 0;overflow:hidden;transition:border-color .2s,background .2s}
+      .chapter-card.open{border-color:rgba(174,145,255,.45);background:linear-gradient(120deg,rgba(139,110,232,.105),rgba(255,255,255,.025))}
+      .chapter-card.is-done{border-color:rgba(119,217,198,.28)}
+      .chapter-toggle{width:100%;display:flex;align-items:center;gap:13px;text-align:left;padding:17px 19px;background:transparent;border:0;color:#f5f1ff;cursor:pointer}
+      .chapter-number{width:38px;height:38px;border-radius:11px;background:linear-gradient(145deg,#3b315d,#29233f);color:#d0beff;display:grid;place-items:center;font-size:12px;font-weight:850;flex:none}
+      .chapter-card.is-done .chapter-number{background:linear-gradient(145deg,#24665c,#20483f);color:#a9f1dc}
+      .chapter-title-wrap{flex:1;min-width:0}.chapter-title-wrap strong{display:block;font-size:15px;line-height:1.35}.chapter-title-wrap small{display:block;color:#9e96bd;font-size:10px;margin-top:4px;letter-spacing:.35px}
+      .chapter-status{font-size:10px;font-weight:750;color:#9fe5d1;background:rgba(73,169,145,.13);border:1px solid rgba(119,217,198,.2);padding:5px 8px;border-radius:99px;white-space:nowrap}
+      .chapter-toggle .chapter-chevron{color:#b7a4f4;transition:transform .2s;flex:none}.chapter-toggle[aria-expanded="true"] .chapter-chevron{transform:rotate(90deg)}
+      .chapter-body{padding:1px 22px 22px 70px;color:#c9c3df;line-height:1.75;font-size:13px}.chapter-body>p{margin:0 0 17px;font-size:14px;line-height:1.8;color:#ded8ee}
+      .chapter-section-label{display:flex;align-items:center;gap:7px;color:#cbb9ff;font-size:10px;font-weight:850;letter-spacing:1.15px;text-transform:uppercase;margin:18px 0 9px}
+      .chapter-concepts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0 0 17px}
+      .concept-item{display:flex;gap:9px;align-items:flex-start;padding:10px 11px;border-radius:11px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.06);color:#cfc9e3;font-size:12px;line-height:1.55}
+      .concept-item svg{color:#b49aff;flex:none;margin-top:2px}
+      .chapter-example{position:relative;background:linear-gradient(110deg,rgba(65,158,139,.13),rgba(65,158,139,.045));border:1px solid rgba(119,217,198,.17);border-left:3px solid #77d9c6;border-radius:0 12px 12px 0;padding:14px 15px;margin:16px 0;color:#d2e9e3;line-height:1.7}
+      .chapter-example b{display:flex;align-items:center;gap:7px;color:#8fe2cd;font-size:10px;letter-spacing:1.1px;margin-bottom:5px}
+      .chapter-task{background:linear-gradient(110deg,rgba(173,145,255,.12),rgba(173,145,255,.045));border:1px solid rgba(173,145,255,.22);padding:15px 16px;border-radius:13px;margin-top:16px}
+      .chapter-task b{display:flex;align-items:center;gap:7px;color:#cbb8ff;font-size:10px;letter-spacing:1.1px;margin-bottom:7px}
+      .chapter-task p{margin:0;color:#e0daf1;line-height:1.65}
+      .reflection-input{width:100%;min-height:76px;resize:vertical;background:#171529;border:1px solid rgba(187,164,255,.2);border-radius:10px;color:#eee9ff;padding:11px 12px;font:inherit;font-size:12px;line-height:1.6;margin-top:12px;outline:none}
+      .reflection-input:focus{border-color:#a88bf4;box-shadow:0 0 0 3px rgba(168,139,244,.1)}
+      .chapter-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px}
+      .chapter-action-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:9px 12px;border-radius:9px;border:1px solid rgba(184,160,255,.28);background:rgba(157,126,241,.12);color:#d9ccff;font-size:11px;font-weight:750;cursor:pointer}
+      .chapter-action-btn.primary{background:linear-gradient(100deg,#8065dc,#a879df);border-color:transparent;color:white}
+      .chapter-action-btn:disabled{opacity:.45;cursor:not-allowed}
+      .chapter-answer{margin-top:11px;padding:11px 12px;border-radius:10px;background:rgba(255,255,255,.045);color:#d9d2f2;font-size:12px;line-height:1.65}
+      .lesson-end-check{position:relative;overflow:hidden;padding:21px;border-radius:16px;background:radial-gradient(circle at 100% 0%,rgba(176,136,255,.16),transparent 36%),#211e38;border:1px solid rgba(255,255,255,.11);margin:25px 0}
+      .lesson-end-check h3{margin:0 0 7px;font-size:17px}.lesson-end-check p{color:#c5bfdc;line-height:1.7;margin:0;font-size:13px}
+      .lesson-end-check .finish-stat{display:flex;align-items:center;gap:8px;margin-top:13px;color:#b8efdF;font-size:11px;font-weight:700}
+      @media(max-width:760px){.deep-dive-roadmap{grid-template-columns:repeat(2,minmax(0,1fr))}.chapter-concepts{grid-template-columns:1fr}.chapter-body{padding:0 15px 18px}.chapter-toggle{padding:14px}.chapter-title-wrap strong{font-size:14px}.chapter-status{display:none}.deep-dive-hero{padding:20px}.learning-outcome{padding:14px}}
     `}</style>
-    <div className="deep-dive-head"><div className="eyebrow">GO BEYOND THE SUMMARY · {content.modules.length} CHAPTERS</div><h2>Learn it step by step</h2><p>Work through each chapter in order. Open a chapter to read the explanation, see a practical example and try a short thinking exercise.</p></div>
-    <div className="learning-outcome"><b>WHAT YOU'LL BE ABLE TO DO</b>{content.outcome}</div>
-    {content.modules.map((module,index)=><article className="chapter-card" key={module.title}>
+
+    <div className="deep-dive-hero">
+      <div className="deep-dive-kicker"><Sparkles size={14}/> INTERACTIVE LEARNING PATH <span>·</span> {content.modules.length} CHAPTERS</div>
+      <h2>Go from curious to confident.</h2>
+      <p>Explore the concepts, connect them to real situations, and test your understanding as you go. No memorising required — learn by doing.</p>
+      <div className="deep-dive-progress">
+        <div className="deep-dive-progress-track"><div className="deep-dive-progress-fill" style={{width:`${progress}%`}}/></div>
+        <span>{completed.length}/{content.modules.length} completed · {progress}%</span>
+      </div>
+    </div>
+
+    <div className="deep-dive-roadmap">
+      {content.modules.map((module,index)=><div key={module.title} className={`roadmap-step ${completed.includes(index)?"done":""}`}>
+        <span>{completed.includes(index)?<CheckCircle2 size={14}/>:String(index+1).padStart(2,"0")}</span>
+        <strong>{module.title}</strong>
+      </div>)}
+    </div>
+
+    <div className="learning-outcome">
+      <span className="outcome-icon"><Target size={18}/></span>
+      <div><b>YOUR LEARNING GOAL</b>{content.outcome}</div>
+    </div>
+
+    {content.modules.map((module,index)=><article id={`lesson-chapter-${lesson.id}-${index}`} className={`chapter-card ${expanded===index?"open":""} ${completed.includes(index)?"is-done":""}`} key={module.title}>
       <button className="chapter-toggle" aria-expanded={expanded===index} onClick={()=>setExpanded(expanded===index?-1:index)}>
-        <span className="chapter-number">{String(index+1).padStart(2,"0")}</span><strong>{module.title}</strong><ChevronRight className="chapter-chevron" size={18}/>
+        <span className="chapter-number">{completed.includes(index)?<CheckCircle2 size={19}/>:String(index+1).padStart(2,"0")}</span>
+        <span className="chapter-title-wrap"><strong>{module.title}</strong><small>CONCEPT EXPLAINER · EXAMPLE · PRACTICE</small></span>
+        {completed.includes(index)&&<span className="chapter-status">COMPLETED</span>}
+        <ChevronRight className="chapter-chevron" size={18}/>
       </button>
       {expanded===index&&<div className="chapter-body">
-        <p>{module.explain}</p><h4>Key ideas</h4><ul>{module.bullets.map(item=><li key={item}>{item}</li>)}</ul>
-        <div className="chapter-example"><b>REAL-WORLD EXAMPLE</b><br/>{module.example}</div>
-        <div className="chapter-task"><b>THINK IT THROUGH</b>{module.task}<br/><button onClick={()=>setRevealed(prev=>({...prev,[index]:!prev[index]}))}>{revealed[index]?"Hide reflection hint":"Show reflection hint"}</button>{revealed[index]&&<div className="chapter-answer">There can be more than one good answer. Identify the input, the task the system is performing, what a correct result would look like, and what could go wrong. Explain your reasoning rather than memorising a definition.</div>}</div>
+        <p>{module.explain}</p>
+        <div className="chapter-section-label"><BookOpen size={13}/> The important ideas</div>
+        <div className="chapter-concepts">{module.bullets.map((item,bulletIndex)=><div className="concept-item" key={item}><CheckCircle2 size={14}/><span>{item}</span></div>)}</div>
+        <div className="chapter-example"><b><Lightbulb size={13}/> SEE IT IN THE REAL WORLD</b>{module.example}</div>
+        <div className="chapter-task">
+          <b><Target size={13}/> YOUR TURN · THINK IT THROUGH</b>
+          <p>{module.task}</p>
+          <textarea className="reflection-input" value={notes[index]||""} onChange={event=>setNotes(previous=>({...previous,[index]:event.target.value}))} placeholder="Write your answer or an example in your own words…"/>
+          <div className="chapter-actions">
+            <button className="chapter-action-btn" onClick={()=>setRevealed(previous=>({...previous,[index]:!previous[index]}))}><Lightbulb size={13}/>{revealed[index]?"Hide learning hint":"Show learning hint"}</button>
+            <button className="chapter-action-btn primary" onClick={()=>finishChapter(index)} disabled={completed.includes(index)}><CheckCircle2 size={14}/>{completed.includes(index)?"Chapter completed":"Mark chapter complete"}</button>
+          </div>
+          {revealed[index]&&<div className="chapter-answer"><b>How to approach it:</b> Identify the input, the task the system is performing, what a correct result would look like, and what could go wrong. There may be several valid answers — explain your reasoning rather than memorising a definition.</div>}
+        </div>
+        {index<content.modules.length-1&&<div className="chapter-actions" style={{justifyContent:"flex-end",marginTop:16}}><button className="chapter-action-btn" onClick={goNext}>Next chapter <ArrowRight size={14}/></button></div>}
       </div>}
     </article>)}
-    <div className="lesson-end-check"><h3>Before you move on</h3><p>Can you explain the main idea in your own words, give a real-world example and name one limitation? If yes, you're ready for the next lesson. If not, revisit the chapter that felt least clear.</p></div>
+
+    <div className="lesson-end-check">
+      <div className="deep-dive-kicker"><Trophy size={14}/> YOUR PROGRESS</div>
+      <h3>{progress===100?"Excellent work — lesson complete!":"You're building real understanding."}</h3>
+      <p>{progress===100?"You've marked every chapter complete. Move on to the lesson quiz to check what you can recall and apply.":`You've completed ${completed.length} of ${content.modules.length} chapters. Mark each chapter complete as you work through it; your progress updates here.`}</p>
+      <div className="finish-stat"><CheckCircle2 size={15}/> {completed.length} of {content.modules.length} chapters completed</div>
+    </div>
   </section>;
 }
 
