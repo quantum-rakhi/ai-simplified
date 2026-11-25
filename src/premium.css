@@ -1458,3 +1458,7 @@ body {
  .footer-inner {padding:30px 18px 18px !important}
  .footer-bottom {align-items:flex-start;flex-direction:column}
 }
+
+
+/* Keep level-filter scroll target clear of the sticky header */
+#course-catalogue { scroll-margin-top: 104px; }
