@@ -747,6 +747,9 @@ function App() {
   const [quizDone, setQuizDone] = useState(false);
   const [promptMode, setPromptMode] = useState(1);
   const [demoCount, setDemoCount] = useState(0);
+  const [demoGuess, setDemoGuess] = useState("");
+  const [demoScore, setDemoScore] = useState(0);
+  const [demoAnswered, setDemoAnswered] = useState(false);
   const [x1, setX1] = useState(0.8);
   const [x2, setX2] = useState(0.3);
   const [w1, setW1] = useState(2);
@@ -1154,16 +1157,80 @@ function App() {
     {active==="neural-playground" && <NeuralNetworkPlayground/>}
 
     {active==="playground" && <main className="section-wrap page-main">
-      <div className="page-intro"><div className="eyebrow">THE AI PLAYGROUND</div><h1>Learn by <span>experimenting.</span></h1><p>This tiny demo is a simplified, rule-based illustration of classification — not a trained AI model.</p></div>
-      <div className="playground-card">
-        <div className="playground-header"><div className="play-icon"><FlaskConical size={22}/></div><div><h2>Meet the mini classifier</h2><p>Can you guess what kind of fruit this could be?</p></div><span className="demo-tag">INTERACTIVE DEMO</span></div>
-        <div className="fruit-stage"><div className="fruit-orb">{demoCount%3===0?"🍎":demoCount%3===1?"🍌":"🍊"}</div><div><span className="stage-label">SAMPLE #{demoCount+1}</span><h3>{demoCount%3===0?"Red · Round · Crisp":demoCount%3===1?"Yellow · Long · Soft":"Orange · Round · Juicy"}</h3><p>Look at the sample features, then reveal the prediction.</p></div></div>
-        <div className="feature-row"><span>COLOUR</span><b>{demoCount%3===0?"Red":demoCount%3===1?"Yellow":"Orange"}</b><span>SHAPE</span><b>{demoCount%3===1?"Long":"Round"}</b><span>TEXTURE</span><b>{demoCount%3===1?"Soft":"Firm"}</b></div>
-        <div className="prediction-area"><div><div className="eyebrow">THE MODEL'S GUESS</div><h3>{demoCount%3===0?"🍎 Apple":demoCount%3===1?"🍌 Banana":"🍊 Orange"}</h3><p>It matches the sample's simple feature rules.</p></div><div className="confidence"><strong>{demoCount%3===1?"96":"92"}%</strong><span>illustrative match</span></div></div>
-        <button className="btn-primary" onClick={()=>setDemoCount(v=>v+1)}>Try another sample <RotateCcw size={16}/></button>
-        <div className="disclaimer"><CircleHelp size={16}/> Real machine-learning models learn patterns from training data. This demo uses fixed rules to help explain the idea.</div>
-      </div>
-      <div className="concept-note"><div className="note-icon"><Target size={22}/></div><div><b>What's the AI concept here?</b><p>Classification is a machine-learning task where a system assigns an item to a category based on its features. Examples include filtering spam emails or recognising objects in photos.</p></div></div>
+      {(() => {
+        const samples = [
+          {fruit:"Apple",emoji:"🍎",colour:"Red",shape:"Round",texture:"Crisp",clue:"A familiar snack fruit. Its red skin and crisp bite are useful clues.",why:"Red + round + crisp strongly points to an apple in this tiny teaching dataset."},
+          {fruit:"Banana",emoji:"🍌",colour:"Yellow",shape:"Long",texture:"Soft",clue:"Notice the unusual shape as well as the colour.",why:"Yellow + long + soft is the feature pattern labelled Banana."},
+          {fruit:"Orange",emoji:"🍊",colour:"Orange",shape:"Round",texture:"Juicy",clue:"The colour is a strong signal, but check the texture too.",why:"Orange colour + round shape + juicy texture matches Orange."},
+          {fruit:"Apple",emoji:"🍎",colour:"Green",shape:"Round",texture:"Crisp",clue:"This one is designed to challenge a colour-only guess.",why:"Even though the colour is green, round + crisp still matches the Apple examples."},
+          {fruit:"Banana",emoji:"🍌",colour:"Green-yellow",shape:"Long",texture:"Firm",clue:"A banana can look different depending on how ripe it is.",why:"The long shape is a strong feature; the colour and texture can vary with ripeness."},
+          {fruit:"Orange",emoji:"🍊",colour:"Orange",shape:"Round",texture:"Juicy",clue:"Compare this sample with the earlier round fruit.",why:"The juicy texture and orange colour distinguish it from the crisp apple."}
+        ];
+        const sample = samples[demoCount % samples.length];
+        const options = ["Apple","Banana","Orange"];
+        const answered = demoAnswered;
+        return <>
+          <style>{`
+            .meaning-playground{max-width:850px;margin:0 auto 28px}
+            .meaning-playground .playground-header{align-items:center}
+            .meaning-progress{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:20px 0 10px;color:#aaa2c5;font-size:11px}
+            .meaning-progress-track{height:7px;border-radius:20px;background:#ffffff12;overflow:hidden;margin-bottom:22px}
+            .meaning-progress-track span{display:block;height:100%;background:linear-gradient(90deg,#9474ed,#e19bd4);transition:width .25s}
+            .meaning-task{padding:24px;border-radius:16px;background:#111022;border:1px solid #ffffff12}
+            .meaning-features{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px 0}
+            .meaning-feature{padding:13px;border-radius:12px;background:#ffffff08}
+            .meaning-feature small{display:block;color:#a99fc9;font-size:9px;letter-spacing:1px;font-weight:800;margin-bottom:6px}
+            .meaning-feature b{font-size:14px;color:#f5f0ff}
+            .meaning-options{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:15px}
+            .meaning-option{padding:14px 10px;border-radius:12px;border:1px solid #ffffff20;background:#ffffff08;color:#f7f2ff;font-weight:750;cursor:pointer}
+            .meaning-option.selected{border-color:#b39aff;background:#9271e52b}
+            .meaning-option:disabled{cursor:default;opacity:.8}
+            .meaning-feedback{padding:16px;border-radius:13px;margin-top:16px;background:#8c78e51a;border:1px solid #9c85f055;color:#e8e0ff;font-size:13px;line-height:1.65}
+            .meaning-feedback.correct{background:#48c99a12;border-color:#48c99a55}
+            .meaning-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:18px}
+            .meaning-score{font-size:12px;color:#bdb4d8;margin-left:auto}
+            .meaning-learning{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+            .meaning-learning article{padding:17px;border:1px solid #ffffff14;border-radius:14px;background:#ffffff06}
+            .meaning-learning b{display:block;font-size:13px;margin:8px 0 5px}
+            .meaning-learning p{font-size:11px;line-height:1.6;color:#aaa2c5;margin:0}
+            @media(max-width:600px){.meaning-features,.meaning-options,.meaning-learning{grid-template-columns:1fr}.meaning-task{padding:16px}.meaning-score{width:100%;margin-left:0}}
+          `}</style>
+          <div className="page-intro"><div className="eyebrow">THE AI PLAYGROUND · HANDS-ON LAB</div><h1>Don't just read AI. <span>Make decisions.</span></h1><p>Step into the role of a machine-learning trainer. Inspect data, make a prediction, and learn why the features matter.</p></div>
+          <div className="playground-card meaning-playground">
+            <div className="playground-header"><div className="play-icon"><FlaskConical size={22}/></div><div><h2>Lab 01 · Train your fruit classifier</h2><p>Can you classify unseen examples using their features?</p></div><span className="demo-tag">INTERACTIVE LAB</span></div>
+            <div className="meaning-progress"><span>EXAMPLE {demoCount % samples.length + 1} OF {samples.length}</span><span>YOUR SCORE: {demoScore}/{demoCount + (answered ? 1 : 0)}</span></div>
+            <div className="meaning-progress-track"><span style={{width:`${((demoCount%samples.length)+1)/samples.length*100}%`}}/></div>
+            <div className="meaning-task">
+              <div className="fruit-stage"><div className="fruit-orb">{sample.emoji}</div><div><span className="stage-label">UNKNOWN SAMPLE</span><h3>What fruit is this?</h3><p>{sample.clue}</p></div></div>
+              <div className="meaning-features">
+                <div className="meaning-feature"><small>FEATURE 01 · COLOUR</small><b>{sample.colour}</b></div>
+                <div className="meaning-feature"><small>FEATURE 02 · SHAPE</small><b>{sample.shape}</b></div>
+                <div className="meaning-feature"><small>FEATURE 03 · TEXTURE</small><b>{sample.texture}</b></div>
+              </div>
+              <div className="eyebrow">YOUR PREDICTION</div>
+              <p style={{fontSize:12,color:"#aaa2c5",margin:"7px 0 0"}}>Choose the label you think best matches these features.</p>
+              <div className="meaning-options">{options.map(option=><button key={option} disabled={answered} className={`meaning-option ${demoGuess===option?"selected":""}`} onClick={()=>setDemoGuess(option)}>{option}</button>)}</div>
+              {answered && <div className={`meaning-feedback ${demoGuess===sample.fruit?"correct":""}`}>
+                <b>{demoGuess===sample.fruit?"Correct classification!":"Good attempt — let's inspect the label."}</b><br/>
+                The correct label is <strong>{sample.emoji} {sample.fruit}</strong>. {sample.why}
+              </div>}
+              <div className="meaning-actions">
+                {!answered ? <button className="btn-primary" disabled={!demoGuess} onClick={()=>{setDemoAnswered(true);if(demoGuess===sample.fruit)setDemoScore(v=>v+1);}}>Check my prediction <ArrowRight size={16}/></button> :
+                  <button className="btn-primary" onClick={()=>{setDemoCount(v=>v+1);setDemoGuess("");setDemoAnswered(false);}}>Next example <ArrowRight size={16}/></button>}
+                <button className="btn-light" onClick={()=>{setDemoCount(0);setDemoGuess("");setDemoScore(0);setDemoAnswered(false);}}><RotateCcw size={15}/> Restart lab</button>
+                <span className="meaning-score">{answered?"Answer recorded":"No pressure — learn by trying"}</span>
+              </div>
+            </div>
+            <div className="disclaimer"><CircleHelp size={16}/> This is a transparent rule-based learning exercise, not a trained AI model. The labels are known in advance so you can understand how classification works.</div>
+          </div>
+          <div className="concept-note"><div className="note-icon"><Target size={22}/></div><div><b>What are you learning?</b><p>A classification model learns from labelled examples. The input features (colour, shape and texture) help it predict a category (the label). In real machine learning, the model learns patterns from many examples and can make mistakes on new data.</p></div></div>
+          <div className="meaning-learning">
+            <article><span className="eyebrow">01 · INPUT</span><b>Features</b><p>Observable properties supplied to a model, such as colour, shape or texture.</p></article>
+            <article><span className="eyebrow">02 · OUTPUT</span><b>Label</b><p>The category the model is trying to predict, such as Apple, Banana or Orange.</p></article>
+            <article><span className="eyebrow">03 · EVALUATION</span><b>Accuracy</b><p>Compare predictions with known labels to see how often the classifier is correct.</p></article>
+          </div>
+        </>;
+      })()}
     </main>}
 
     {active==="quiz" && <main className="section-wrap page-main quiz-page">
