@@ -381,13 +381,13 @@ function LessonDeepDive({lesson}) {
       </div>
       <div className="chapter-body">
         <p>{activeModule.explain}</p>
-        <div className="chapter-section-label"><BookOpen size={13}/> The important ideas</div>
+        <div className="chapter-section-label"><BookOpen size={13}/> Key concepts</div>
         <div className="chapter-concepts">{activeModule.bullets.map(item=><div className="concept-item" key={item}><CheckCircle2 size={14}/><span>{item}</span></div>)}</div>
-        <div className="chapter-example"><b><Lightbulb size={13}/> SEE IT IN THE REAL WORLD</b>{activeModule.example}</div>
+        <div className="chapter-example"><b><Lightbulb size={13}/> WORKED EXAMPLE</b>{activeModule.example}</div>
         <div className="chapter-task">
-          <b><Target size={13}/> YOUR TURN · THINK IT THROUGH</b>
+          <b><Target size={13}/> APPLY WHAT YOU LEARNED</b>
           <p>{activeModule.task}</p>
-          <textarea className="reflection-input" value={notes[activeIndex]||""} onChange={event=>setNotes(previous=>({...previous,[activeIndex]:event.target.value}))} placeholder="Write your answer or an example in your own words…"/>
+          <textarea className="reflection-input" value={notes[activeIndex]||""} onChange={event=>setNotes(previous=>({...previous,[activeIndex]:event.target.value}))} placeholder="Work through the task. Record your steps, result and reasoning…"/>
           <div className="chapter-actions">
             <button className="chapter-action-btn" onClick={()=>setRevealed(previous=>({...previous,[activeIndex]:!previous[activeIndex]}))}><Lightbulb size={13}/>{revealed[activeIndex]?"Hide learning hint":"Show learning hint"}</button>
             <button className="chapter-action-btn primary" onClick={()=>finishChapter(activeIndex)} disabled={completed.includes(activeIndex)}><CheckCircle2 size={14}/>{completed.includes(activeIndex)?"Chapter completed":"Mark chapter complete"}</button>
