@@ -392,7 +392,7 @@ function LessonDeepDive({lesson}) {
             <button className="chapter-action-btn" onClick={()=>setRevealed(previous=>({...previous,[activeIndex]:!previous[activeIndex]}))}><Lightbulb size={13}/>{revealed[activeIndex]?"Hide learning hint":"Show learning hint"}</button>
             <button className="chapter-action-btn primary" onClick={()=>finishChapter(activeIndex)} disabled={completed.includes(activeIndex)}><CheckCircle2 size={14}/>{completed.includes(activeIndex)?"Chapter completed":"Mark chapter complete"}</button>
           </div>
-          {revealed[activeIndex]&&<div className="chapter-answer"><b>How to approach it:</b> Identify the input, the task the system is performing, what a correct result would look like, and what could go wrong. There may be several valid answers — explain your reasoning rather than memorising a definition.</div>}
+          {revealed[activeIndex]&&<div className="chapter-answer"><b>Learning hint:</b> {activeModule.hint || "Identify the input, the task, what a correct result would look like and what could go wrong. Explain your reasoning."}</div>}
         </div>
         {chapterPractice[lesson.id]?.[activeIndex]&&<div className="chapter-practice">
           <div className="chapter-section-label"><FlaskConical size={14}/> INTERACTIVE PRACTICE · CHECK YOUR UNDERSTANDING</div>
