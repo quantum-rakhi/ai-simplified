@@ -25,7 +25,7 @@ const modulesFor = course => {
  return course.chapters.map((title,i)=>({
   title,
   explain:`${title} is a core design concern in ${course.title}. ${g.focus}\n\nConsider this working scenario: ${course.scenario} Trace the request through the system and identify which component owns each decision. Specify what information crosses each boundary, what must be validated and what evidence should be logged. A production-ready design makes these responsibilities explicit rather than relying on the model to behave correctly by itself.\n\nNow test a failure: remove a required field, delay a dependency, provide conflicting context or attempt an unauthorised action. Describe the expected safe behaviour and how an operator would detect the problem. ${g.focus} The aim is to make a defensible engineering decision, not simply to repeat a definition.`,
-  bullets:g.ideas,
+  bullets:g.ideas.map((idea,j)=>[idea,`Apply this to ${title.toLowerCase()} in the scenario: ${course.scenario}`,`Name the component or person accountable for ${title.toLowerCase()}.`,`Define a measurable acceptance check for ${title.toLowerCase()}.`,`Describe a failure mode and the evidence that would reveal it.`][j]),
   example:g.example,
   task:`Engineering exercise — ${title}: ${g.example} Create an artefact for this scenario: a component diagram, threat model, evaluation table, deployment plan or operational runbook. Include success criteria, one failure case, the control that handles it and evidence that would prove the control works.`
  }));
