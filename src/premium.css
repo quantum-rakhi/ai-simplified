@@ -1923,3 +1923,59 @@ body {
 @media(prefers-reduced-motion:reduce){
  .hero-art .lab-orbit-card,.hero-art .lab-orbit-card-inner{animation:none!important;transition:none!important}
 }
+
+
+/* PREMIUM AI CORE — layered glass, luminous edge and refined neural mark */
+.hero-art .brain-glow{
+ width:300px!important;height:300px!important;
+ border:1px solid rgba(163,142,239,.12)!important;
+ background:radial-gradient(circle,rgba(151,126,232,.22) 0%,rgba(151,126,232,.10) 38%,rgba(151,126,232,.035) 58%,transparent 73%)!important;
+ box-shadow:0 0 75px rgba(130,105,215,.10),inset 0 0 45px rgba(255,255,255,.18)!important;
+}
+.hero-art .brain-core{
+ width:184px!important;height:184px!important;
+ overflow:visible!important;
+ border:1px solid rgba(255,255,255,.56)!important;
+ border-radius:50%!important;
+ color:#eee8ff!important;
+ background:
+  radial-gradient(circle at 34% 24%,rgba(255,255,255,.42),transparent 28%),
+  radial-gradient(circle at 70% 82%,rgba(39,28,103,.42),transparent 52%),
+  linear-gradient(145deg,#b7a3f5 0%,#806bd0 42%,#51418e 100%)!important;
+ box-shadow:
+  0 0 0 8px rgba(255,255,255,.24),
+  0 0 0 10px rgba(153,130,232,.26),
+  0 16px 42px rgba(70,52,139,.28),
+  0 0 78px rgba(145,115,235,.62),
+  inset 0 2px 2px rgba(255,255,255,.62),
+  inset 0 -18px 35px rgba(38,27,93,.24)!important;
+}
+.hero-art .brain-core:before{
+ content:"";position:absolute;inset:-19px;border-radius:50%;
+ border:1px solid rgba(174,153,255,.42);
+ box-shadow:0 0 25px rgba(163,139,246,.18),inset 0 0 22px rgba(255,255,255,.13);
+ pointer-events:none;
+}
+.hero-art .brain-core:after{
+ content:"";position:absolute;inset:-31px;border-radius:50%;
+ border:1px solid rgba(185,169,255,.18);
+ box-shadow:0 0 48px rgba(151,126,232,.23),inset 0 0 35px rgba(255,255,255,.10);
+ animation:premium-core-halo 5.5s ease-in-out infinite!important;
+}
+.hero-art .brain-core svg{
+ width:108px!important;height:108px!important;
+ color:#f0eaff!important;stroke-width:1.35!important;
+ filter:drop-shadow(0 2px 7px rgba(42,29,105,.34)) drop-shadow(0 0 13px rgba(255,255,255,.26))!important;
+}
+.hero-art .core-spark{
+ right:28px!important;top:25px!important;
+ color:#fff!important;font-size:25px!important;
+ text-shadow:0 0 12px rgba(255,255,255,.95),0 0 25px rgba(213,195,255,.85)!important;
+}
+@keyframes premium-core-halo{0%,100%{opacity:.58;scale:1}50%{opacity:1;scale:1.045}}
+@media(max-width:760px){
+ .hero-art .brain-glow{width:260px!important;height:260px!important}
+ .hero-art .brain-core{width:158px!important;height:158px!important}
+ .hero-art .brain-core svg{width:92px!important;height:92px!important}
+}
+@media(prefers-reduced-motion:reduce){.hero-art .brain-core:after{animation:none!important}}
