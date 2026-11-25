@@ -779,6 +779,50 @@ const svgPoints = samples.map(sample => ({
 }
 
 
+
+function AgentTutorial() {
+  const [completed,setCompleted] = useState([]);
+  const [expanded,setExpanded] = useState(0);
+  const steps = [
+    {title:"Understand the architecture",time:"3 min",body:"Your React website is the learning interface. The Python Gemini ADK agent runs separately on your computer. The browser will call a backend API later; never place a Gemini key in frontend code.",code:"React website  →  Python ADK agent  →  Gemini model"},
+    {title:"Install Python",time:"5 min",body:"On Windows, install Python 3.11 or later. Open PowerShell and check that the Python launcher is available.",code:"py --version"},
+    {title:"Get a Gemini API key",time:"5 min",body:"Create a key in Google AI Studio. Use only the free tier and check the current model availability, quota and data-use terms before sending prompts. Do not commit your key to GitHub.",link:"https://aistudio.google.com/apikey"},
+    {title:"Download the AI Simplified project",time:"3 min",body:"Clone the existing repository and move into the agent backend folder.",code:"git clone https://github.com/quantum-rakhi/ai-simplified.git\ncd ai-simplified\\agent-backend"},
+    {title:"Create and activate a virtual environment",time:"3 min",body:"A virtual environment keeps the agent's Python packages separate from other projects.",code:"py -3.11 -m venv .venv\n.\\.venv\\Scripts\\Activate.ps1"},
+    {title:"Install Google ADK",time:"3 min",body:"Install the dependencies listed in the agent backend requirements file.",code:"python -m pip install --upgrade pip\npip install -r requirements.txt"},
+    {title:"Configure your API key",time:"3 min",body:"Create a local .env file by copying .env.example. Add your key to GOOGLE_API_KEY. The .env file is ignored by Git; never paste the key into this website or a public repository.",code:"Copy-Item .env.example .env\nnotepad .env"},
+    {title:"Start the agent locally",time:"2 min",body:"Run the ADK development interface from the agent-backend directory. Open the local address in your browser and select ai_simplified_agent.",code:"adk web --port 8000"},
+    {title:"Test the learning tools",time:"5 min",body:"Try these prompts. The agent can search the course catalogue, return a learning path and prepare a practice plan.",code:"Find beginner courses about Python.\nShow me the intermediate AI learning path.\nCreate a 5-question quiz about RAG."},
+    {title:"Connect the agent to the website",time:"Next phase",body:"After local testing, we will add a small FastAPI service and a React chat panel. During local development, run both services on your computer. Public hosting is a separate step and must be checked for a genuinely free option."}
+  ];
+  const toggleDone = (i) => setCompleted(prev=>prev.includes(i)?prev.filter(x=>x!==i):[...prev,i]);
+  return <main className="section-wrap page-main agent-tutorial-page">
+    <div className="page-intro">
+      <div className="eyebrow">HANDS-ON WORKSHOP · ZERO-COST DEVELOPMENT</div>
+      <h1>Build your first <span>AI agent.</span></h1>
+      <p>A guided, beginner-friendly path to create a Python agent with Google ADK and Gemini, then connect it to AI Simplified.</p>
+    </div>
+    <section className="agent-tutorial-hero">
+      <div><span className="agent-tutorial-pill">YOUR PROJECT</span><h2>AI Simplified Learning Agent</h2><p>A tutor that can find courses, explain concepts and prepare practice quizzes using real agent tools.</p><div className="agent-tutorial-meta"><span>10 steps</span><span>About 30–40 minutes setup</span><span>Local-first</span></div></div>
+      <div className="agent-orbit"><Bot size={58}/><span>ADK</span></div>
+    </section>
+    <div className="agent-tutorial-layout">
+      <aside className="agent-tutorial-sidebar"><strong>Your progress</strong><div className="agent-progress-track"><i style={{width:(completed.length/steps.length*100)+"%"}}/></div><b>{completed.length} of {steps.length} completed</b><span>Complete each step in order. Your checklist stays in this page while it is open.</span></aside>
+      <section className="agent-step-list">
+        {steps.map((step,i)=><article className={"agent-step "+(expanded===i?"active":"")} key={step.title}>
+          <button className="agent-step-head" onClick={()=>setExpanded(expanded===i?-1:i)}>
+            <span className={"agent-step-number "+(completed.includes(i)?"done":"")}>{completed.includes(i)?<CheckCircle2 size={18}/>:String(i+1).padStart(2,"0")}</span>
+            <span className="agent-step-title"><strong>{step.title}</strong><small>{step.time}</small></span><ChevronRight className="agent-step-chevron" size={19}/>
+          </button>
+          {expanded===i&&<div className="agent-step-content"><p>{step.body}</p>{step.code&&<div className="agent-code"><pre>{step.code}</pre><button onClick={()=>navigator.clipboard?.writeText(step.code)}>Copy commands</button></div>}{step.link&&<a href={step.link} target="_blank" rel="noreferrer">Open Google AI Studio <ArrowUpRight size={14}/></a>}<button className="agent-step-complete" onClick={()=>toggleDone(i)}>{completed.includes(i)?"Mark as not complete":"Mark step complete"} <CheckCircle2 size={15}/></button></div>}
+        </article>)}
+      </section>
+    </div>
+    <section className="agent-tutorial-note"><ShieldCheck size={21}/><div><strong>Keep it free and safe</strong><p>Use the Gemini API free tier only where available. Quotas and terms can change. Do not add billing, do not publish API keys, and do not send confidential information. The local agent can be developed without paying for hosting.</p></div></section>
+    <div className="agent-tutorial-links"><a href="https://github.com/quantum-rakhi/ai-simplified/tree/main/agent-backend" target="_blank" rel="noreferrer">View agent source on GitHub <ArrowUpRight size={15}/></a><a href="https://google.github.io/adk-docs/" target="_blank" rel="noreferrer">Google ADK documentation <ArrowUpRight size={15}/></a></div>
+  </main>;
+}
+
 function App() {
   const [active, setActive] = useState("home");
   const [selectedLesson, setSelectedLesson] = useState("ai");
@@ -948,6 +992,7 @@ const levelCounts = {
             <button className={active==="playground"?"nav-active":""} onClick={()=>go("playground")}>AI Playground</button>
             <button className={active==="neural-playground"?"nav-active":""} onClick={()=>go("neural-playground")}>Neural Playground</button>
             <button className={active==="visual-lab"?"nav-active":""} onClick={()=>go("visual-lab")}>Visual AI Lab</button>
+            <button className={active==="agent-tutorial"?"nav-active":""} onClick={()=>go("agent-tutorial")}>Build an Agent</button>
           </div>
         </details>
         <details className="nav-menu">
@@ -964,6 +1009,7 @@ const levelCounts = {
     </header>
 
     {active==="dashboard" && <LearningDashboard onNavigate={go} onOpenLesson={openLesson}/>}
+    {active==="agent-tutorial" && <AgentTutorial/>}
 
     {active==="home" && <main>
       <section className="hero section-wrap">
