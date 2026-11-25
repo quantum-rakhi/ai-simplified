@@ -751,6 +751,7 @@ function App() {
   const [active, setActive] = useState("home");
   const [selectedLesson, setSelectedLesson] = useState("ai");
   const [query, setQuery] = useState("");
+  const [levelFilter, setLevelFilter] = useState("All");
   const [menuOpen, setMenuOpen] = useState(false);
   const [quizIndex, setQuizIndex] = useState(0);
   const [answers, setAnswers] = useState({});
@@ -817,7 +818,20 @@ function App() {
     setAssessmentSaved(true);
   },[assessmentFinished,assessmentSaved,assessmentLevel,assessmentAnswers]);
   const currentLesson = lessons.find(x => x.id === selectedLesson) || lessons[0];
-  const filteredLessons = lessons.filter(x => (x.title + " " + x.desc + " " + x.tag).toLowerCase().includes(query.toLowerCase()));
+  const filteredLessons = lessons.filter(
+  x =>
+    (levelFilter === "All" || x.level === levelFilter) &&
+    (x.title + " " + x.desc + " " + x.tag)
+      .toLowerCase()
+      .includes(query.toLowerCase())
+);
+
+const levelCounts = {
+  All: lessons.length,
+  Beginner: lessons.filter(x => x.level === "Beginner").length,
+  Intermediate: lessons.filter(x => x.level === "Intermediate").length,
+  Advanced: lessons.filter(x => x.level === "Advanced").length
+};
   const z = x1*w1 + x2*w2 + bias;
   const probability = 1 / (1 + Math.exp(-z));
   const selectedXorSample = xorTrainingSet[selectedXor];
@@ -967,28 +981,67 @@ function App() {
       <section className="section-wrap bottom-cta"><div className="cta-emoji">🧠</div><h2>Ready to see what you know?</h2><p>Take a quick quiz. No pressure — learning is the win.</p><button className="btn-primary" onClick={()=>go("quiz")}>Take the 2-minute quiz <ArrowRight size={17}/></button></section>
     </main>}
 
-    {active==="explore" && <main className="section-wrap page-main">
-      <div className="page-intro"><div className="eyebrow">THE AI STARTER PACK</div><h1>Explore the <span>building blocks.</span></h1><p>Learn at your level — whether you're a student, a professional, a creator or a developer.</p></div>
-      <div className="search-box"><Search size={18}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search lessons, topics or concepts..."/><span>{filteredLessons.length} LESSONS</span></div>
-      <div className="lesson-grid all-lessons">{filteredLessons.map((lesson,i)=><LessonCard key={lesson.id} lesson={lesson} index={i} onClick={()=>openLesson(lesson.id)}/>)}</div>
-      {filteredLessons.length===0 && <div className="empty-state">No lessons found. Try another keyword.</div>}
-    </main>}
+{active==="explore" && <main className="section-wrap page-main explore-page">
+  <div className="page-intro">
+    <div className="eyebrow">YOUR AI LEARNING JOURNEY</div>
+    <h1>Learn AI. <span>Level by level.</span></h1>
+    <p>Build a strong foundation, develop practical skills, then move into advanced AI engineering.</p>
+  </div>
 
-    {active==="lesson" && <main className="section-wrap page-main lesson-page">
-      <button className="back-link" onClick={()=>go("explore")}>← Back to all lessons</button>
-      <div className="lesson-detail">
-        <div className="lesson-main">
-          <div className="eyebrow">{currentLesson.tag} · {currentLesson.time.toUpperCase()} READ</div>
-          <h1>{currentLesson.title}</h1><p className="lesson-intro">{currentLesson.desc}</p>
-          <div className="definition-card"><div className={`lesson-icon ${currentLesson.color}`}><currentLesson.icon size={27}/></div><h3>In simple words</h3><p>{currentLesson.body}</p></div>
-          <div className="analogy-card"><div className="analogy-label"><Lightbulb size={17}/> THE EVERYDAY ANALOGY</div><p>{currentLesson.analogy}</p></div>
-          <h2>Remember these 3 things</h2><div className="point-list">{currentLesson.points.map((p,i)=><div key={p}><span>{i+1}</span>{p}</div>)}</div>
-          <LessonDeepDive key={currentLesson.id} lesson={currentLesson}/>
-          <button className="btn-primary" onClick={()=>go("quiz")}>Check what you learned <ArrowRight size={17}/></button>
-        </div>
-        <aside className="lesson-aside"><div className="aside-kicker">YOUR LEARNING PATH</div>{lessons.map((l,i)=><button key={l.id} className={l.id===selectedLesson?"path-item selected":"path-item"} onClick={()=>setSelectedLesson(l.id)}><span className="path-number">0{i+1}</span><span>{l.title}</span><ChevronRight size={16}/></button>)}<div className="aside-tip"><Star size={17}/><b>Beginner tip</b><p>You don't need to memorise everything. Focus on understanding the big idea.</p></div></aside>
-      </div>
-    </main>}
+  <div className="level-overview">
+    {[
+      {level:"Beginner",num:"01",kicker:"START HERE",desc:"AI fundamentals, Python, maths and data basics."},
+      {level:"Intermediate",num:"02",kicker:"BUILD SKILLS",desc:"Embeddings, vector search, RAG and AI agents."},
+      {level:"Advanced",num:"03",kicker:"GO DEEPER",desc:"Fine-tuning and production AI systems."}
+    ].map(item => (
+      <button key={item.level}
+        className={`level-card level-${item.level.toLowerCase()} ${levelFilter===item.level?"selected":""}`}
+        onClick={()=>setLevelFilter(item.level)}>
+        <span className="level-index">{item.num}</span>
+        <span className="level-kicker">{item.kicker}</span>
+        <strong>{item.level}</strong>
+        <span className="level-description">{item.desc}</span>
+        <span className="level-total">{levelCounts[item.level]} lessons <ArrowUpRight size={14}/></span>
+      </button>
+    ))}
+  </div>
+
+  <div className="catalogue-heading">
+    <div>
+      <div className="eyebrow">COURSE CATALOGUE</div>
+      <h2>{levelFilter==="All"?"All learning content":levelFilter+" learning path"}</h2>
+      <p>Select a level that matches your experience. You can change it anytime.</p>
+    </div>
+  </div>
+
+  <div className="catalogue-controls">
+    <div className="level-filters">
+      {["All","Beginner","Intermediate","Advanced"].map(level => (
+        <button key={level}
+          className={levelFilter===level?"level-filter active":"level-filter"}
+          onClick={()=>setLevelFilter(level)}>
+          {level}<span>{levelCounts[level]}</span>
+        </button>
+      ))}
+    </div>
+    <div className="search-box">
+      <Search size={18}/>
+      <input value={query}
+        onChange={e=>setQuery(e.target.value)}
+        placeholder="Search lessons, topics or concepts..."/>
+      <span>{filteredLessons.length} LESSONS</span>
+    </div>
+  </div>
+
+  <div className="lesson-grid all-lessons">
+    {filteredLessons.map((lesson,i)=>(
+      <LessonCard key={lesson.id} lesson={lesson} index={i}
+        onClick={()=>openLesson(lesson.id)}/>
+    ))}
+  </div>
+  {filteredLessons.length===0 &&
+    <div className="empty-state">No lessons found. Try another level.</div>}
+</main>}
 
     {active==="visual-lab" && <main className="section-wrap page-main visual-lab-page">
       <div className="page-intro"><div className="eyebrow">VERSION 1.1 · INTERACTIVE EXPERIMENT</div><h1>See how a <span>neural network thinks.</span></h1><p>Change the inputs and connection weights. Watch the weighted sum and prediction update instantly — no maths degree required.</p></div>
@@ -1516,8 +1569,13 @@ function LearningDashboard({onNavigate,onOpenLesson}) {
 
 function LessonCard({lesson,index,onClick}) {
   const Icon=lesson.icon;
-  return <button className="lesson-card" onClick={onClick}>
-    <div className="card-topline"><span className={`lesson-icon ${lesson.color}`}><Icon size={23}/></span><span className="card-number">0{index+1}</span></div>
+  return <button className="lesson-card" onClick={onClick}><div className="card-topline">
+  <span className={`lesson-icon ${lesson.color}`}><Icon size={23}/></span>
+  <span className={`lesson-level-chip ${(lesson.level||"Beginner").toLowerCase()}`}>
+    {lesson.level||"Beginner"}
+  </span>
+  <span className="card-number">{String(index+1).padStart(2,"0")}</span>
+</div>
     <div className="card-tag">{lesson.tag}</div><h3>{lesson.title}</h3><p>{lesson.desc}</p>
     <div className="card-bottom"><span><BookOpen size={14}/> {lesson.time}</span><span className="card-arrow"><ArrowUpRight size={18}/></span></div>
   </button>;
