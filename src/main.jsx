@@ -1046,25 +1046,29 @@ const levelCounts = {
           <button className="lab-orbit-card lab-orbit-three" onClick={()=>go("neural-playground")}><span className="lab-orbit-card-inner"><span className="lab-orbit-icon"><Network size={16}/></span><span><b>Neural Playground</b><small>TRAIN · EXPLORE</small></span><ArrowUpRight size={13}/></span></button>
           <button className="lab-orbit-card lab-orbit-four" onClick={()=>go("visual-lab")}><span className="lab-orbit-card-inner"><span className="lab-orbit-icon"><BrainCircuit size={16}/></span><span><b>Visual AI Lab</b><small>VISUALISE · DISCOVER</small></span><ArrowUpRight size={13}/></span></button>
           <div className="brain-glow ai-face-glow"><div className="ai-face-shell">
-            <svg className="ai-face-svg" viewBox="0 0 320 360" role="img" aria-label="Futuristic AI face with glowing eyes">
+            <svg className="ai-face-svg" viewBox="0 0 320 390" role="img" aria-label="Minimal futuristic AI face with reactive cyan eyes">
               <defs>
-                <linearGradient id="faceMetal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#b9c9e8"/><stop offset=".28" stopColor="#5c6f9e"/><stop offset=".62" stopColor="#202d50"/><stop offset="1" stopColor="#111a32"/></linearGradient>
-                <linearGradient id="faceEdge" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#ffb66e"/><stop offset=".48" stopColor="#47e8ff"/><stop offset="1" stopColor="#9a7cff"/></linearGradient>
-                <linearGradient id="eyeGlow" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#d7ffff"/><stop offset=".5" stopColor="#47eaff"/><stop offset="1" stopColor="#1688db"/></linearGradient>
-                <filter id="eyeBloom"><feGaussianBlur stdDeviation="5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                <linearGradient id="faceMetal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#52678f"/><stop offset=".32" stopColor="#273958"/><stop offset=".72" stopColor="#172641"/><stop offset="1" stopColor="#101a30"/></linearGradient>
+                <linearGradient id="faceRim" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#c0a7ff"/><stop offset=".45" stopColor="#55eaff"/><stop offset="1" stopColor="#8e7aff"/></linearGradient>
+                <linearGradient id="eyeGlow" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#f1ffff"/><stop offset=".45" stopColor="#6df4ff"/><stop offset="1" stopColor="#28a9db"/></linearGradient>
+                <filter id="eyeBloom"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                <filter id="faceShadow"><feGaussianBlur stdDeviation="9"/></filter>
               </defs>
-              <path className="face-outline" d="M160 18 C91 18 48 65 45 139 L51 235 C56 294 102 333 160 342 C218 333 264 294 269 235 L275 139 C272 65 229 18 160 18Z" fill="url(#faceMetal)" stroke="url(#faceEdge)" strokeWidth="2.5"/>
-              <path d="M74 104 Q160 47 246 104 M61 147 Q160 117 259 147 M67 238 Q160 278 253 238" fill="none" stroke="#80c9ed" strokeOpacity=".34" strokeWidth="1.4"/>
-              <path d="M83 70 L111 49 L132 47 M237 70 L209 49 L188 47 M59 185 L78 202 L81 225 M261 185 L242 202 L239 225" fill="none" stroke="#ffb66e" strokeWidth="2" strokeOpacity=".8"/>
-              <path d="M85 152 Q117 126 146 153 Q119 181 85 152Z M174 153 Q203 126 235 152 Q202 181 174 153Z" fill="#0b1730" stroke="#62eaff" strokeWidth="2"/>
-              <g className="ai-eye-pupil left-eye"><circle cx="116" cy="153" r="13" fill="url(#eyeGlow)" filter="url(#eyeBloom)"/><circle cx="116" cy="153" r="5" fill="#f2ffff"/><circle cx="111" cy="148" r="2.5" fill="#fff"/></g>
-              <g className="ai-eye-pupil right-eye"><circle cx="204" cy="153" r="13" fill="url(#eyeGlow)" filter="url(#eyeBloom)"/><circle cx="204" cy="153" r="5" fill="#f2ffff"/><circle cx="199" cy="148" r="2.5" fill="#fff"/></g>
-              <path d="M160 159 L146 219 L160 230 L174 219Z" fill="#273d62" stroke="#66eaff" strokeWidth="1.5"/>
-              <path d="M125 263 Q160 279 195 263 L184 288 Q160 301 136 288Z" fill="#09162d" stroke="#66dff5" strokeWidth="1.8"/>
-              <path d="M137 272 L183 272 M143 281 L177 281" stroke="#ffb66e" strokeWidth="2" strokeLinecap="round"/>
-              <path d="M93 94 L108 83 L124 82 M227 94 L212 83 L196 82 M99 310 L124 324 L145 329 M221 310 L196 324 L175 329" fill="none" stroke="#66dff5" strokeWidth="2" strokeOpacity=".65"/>
-              <path d="M160 27 V66 M160 294 V331 M52 192 H73 M247 192 H268" stroke="#9a8cff" strokeWidth="1.5" strokeOpacity=".75"/>
-              <circle cx="160" cy="76" r="4" fill="#ffbd78"/><circle cx="160" cy="315" r="3" fill="#59eaff"/>
+              <ellipse cx="160" cy="365" rx="88" ry="9" fill="#7464c8" opacity=".16" filter="url(#faceShadow)"/>
+              <path d="M160 15 C82 15 43 69 43 151 L48 260 C52 330 96 372 160 379 C224 372 268 330 272 260 L277 151 C277 69 238 15 160 15Z" fill="url(#faceMetal)" stroke="url(#faceRim)" strokeWidth="2.1"/>
+              <path d="M62 120 Q160 70 258 120 M57 154 Q160 121 263 154" fill="none" stroke="#8ddfff" strokeOpacity=".27" strokeWidth="1.4"/>
+              <path d="M84 75 L111 56 L137 55 M236 75 L209 56 L183 55" fill="none" stroke="#e7b777" strokeOpacity=".85" strokeWidth="2" strokeLinecap="round"/>
+              <path d="M91 177 Q119 153 148 177 Q120 201 91 177Z M172 177 Q201 153 229 177 Q200 201 172 177Z" fill="#0b1a32" stroke="#a5f5ff" strokeWidth="2.1"/>
+              <g className="ai-eye-pupil left-eye"><circle cx="120" cy="177" r="14" fill="url(#eyeGlow)" filter="url(#eyeBloom)"/><circle cx="120" cy="177" r="5" fill="#f6ffff"/><circle cx="115" cy="171" r="2.5" fill="#fff"/></g>
+              <g className="ai-eye-pupil right-eye"><circle cx="200" cy="177" r="14" fill="url(#eyeGlow)" filter="url(#eyeBloom)"/><circle cx="200" cy="177" r="5" fill="#f6ffff"/><circle cx="195" cy="171" r="2.5" fill="#fff"/></g>
+              <path d="M160 180 L145 249 L160 260 L175 249Z" fill="#1c3150" stroke="#70dff0" strokeWidth="1.7"/>
+              <path d="M126 292 Q160 300 194 292" fill="none" stroke="#9bd9ec" strokeOpacity=".55" strokeWidth="1.6" strokeLinecap="round"/>
+              <path d="M132 307 H188" stroke="#7beaff" strokeWidth="2" strokeLinecap="round" opacity=".85"/>
+              <path d="M140 315 H180" stroke="#d7b985" strokeWidth="1.2" strokeLinecap="round" opacity=".7"/>
+              <path d="M70 220 L91 238 L93 258 M250 220 L229 238 L227 258" fill="none" stroke="#5edff0" strokeOpacity=".6" strokeWidth="1.8"/>
+              <path d="M160 32 V68 M160 335 V360" stroke="#9e91ed" strokeOpacity=".7" strokeWidth="1.5"/>
+              <circle cx="160" cy="83" r="4" fill="#e8bd81"/><circle cx="160" cy="350" r="3" fill="#70eaff"/>
+              <path d="M88 345 Q160 374 232 345" fill="none" stroke="#70eaff" strokeOpacity=".35" strokeWidth="1.4"/>
             </svg>
             <span className="face-scan-line"/><span className="face-spark face-spark-a">✦</span><span className="face-spark face-spark-b">✧</span>
           </div></div>
