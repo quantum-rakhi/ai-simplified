@@ -2058,3 +2058,43 @@ body {
  .android-portrait{width:250px!important;height:290px!important}
 }
 @media(prefers-reduced-motion:reduce){.android-portrait{animation:none!important}.android-gaze{transition:none!important}}
+
+
+/* ANDROID PORTRAIT FINISH — larger presence with a seamless page blend */
+.hero-art .ai-face-glow{
+ width:460px!important;height:480px!important;
+ background:
+  radial-gradient(ellipse at 50% 43%,rgba(112,157,222,.20) 0%,rgba(142,132,224,.13) 42%,rgba(244,246,253,.04) 68%,transparent 78%)!important;
+ box-shadow:0 0 100px rgba(91,145,218,.12),0 0 145px rgba(139,103,232,.12)!important;
+}
+.android-portrait{
+ width:430px!important;height:470px!important;
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ filter:drop-shadow(0 18px 30px rgba(51,71,112,.15))!important;
+}
+.android-face-image{
+ width:100%!important;height:100%!important;object-fit:contain!important;
+ /* Feather the lower neck/shoulder edge into the hero background */
+ -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 76%,rgba(0,0,0,.94) 82%,rgba(0,0,0,.62) 89%,rgba(0,0,0,.20) 96%,transparent 100%)!important;
+ mask-image:linear-gradient(to bottom,#000 0%,#000 76%,rgba(0,0,0,.94) 82%,rgba(0,0,0,.62) 89%,rgba(0,0,0,.20) 96%,transparent 100%)!important;
+}
+.android-portrait:after{
+ content:"";position:absolute;z-index:2;left:10%;right:10%;bottom:0;height:23%;
+ background:linear-gradient(to bottom,transparent,rgba(245,247,253,.24) 42%,rgba(245,247,253,.68) 100%);
+ filter:blur(13px);pointer-events:none;
+}
+.android-gaze{z-index:3}
+.android-portrait .face-scan-line{z-index:4}
+.hero-art .ai-face-glow{overflow:visible!important}
+@media(max-width:1050px){
+ .hero-art .ai-face-glow{width:400px!important;height:430px!important}
+ .android-portrait{width:370px!important;height:420px!important}
+}
+@media(max-width:760px){
+ .hero-art .ai-face-glow{width:330px!important;height:360px!important}
+ .android-portrait{width:310px!important;height:350px!important}
+}
+@media(max-width:480px){
+ .hero-art .ai-face-glow{width:285px!important;height:320px!important}
+ .android-portrait{width:270px!important;height:310px!important}
+}
