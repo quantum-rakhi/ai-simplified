@@ -2020,3 +2020,22 @@ body {
  .ai-face-shell,.face-scan-line,.face-spark{animation:none!important}
  .ai-eye-pupil{transition:none!important}
 }
+
+
+/* MATCH THE USER'S REFERENCE — large, calm, elegant synthetic face */
+.hero-art .ai-face-glow{width:360px!important;height:390px!important;background:radial-gradient(ellipse,rgba(106,101,205,.22),rgba(85,207,240,.10) 48%,transparent 74%)!important;box-shadow:0 0 90px rgba(103,99,203,.16),0 0 120px rgba(71,206,235,.10)!important}
+.ai-face-shell{width:270px!important;height:330px!important;border-radius:0!important;background:transparent!important;filter:drop-shadow(0 20px 34px rgba(32,46,82,.28))!important}
+.ai-face-svg{width:100%!important;height:100%!important;overflow:visible!important}
+.ai-face-svg .face-outline{stroke-dasharray:none!important}
+.ai-face-svg .ai-eye-pupil{transform:translate(var(--gaze-x),var(--gaze-y));transform-box:fill-box;transform-origin:center;transition:transform .11s ease-out!important}
+.ai-face-svg .ai-eye-pupil circle:first-child{filter:drop-shadow(0 0 7px rgba(66,233,255,.75))}
+.face-scan-line{left:17%!important;right:17%!important;opacity:.22!important;animation-duration:8s!important}
+.face-spark{opacity:.6!important}
+@media(max-width:760px){
+ .hero-art .ai-face-glow{width:300px!important;height:330px!important}
+ .ai-face-shell{width:225px!important;height:275px!important}
+}
+@media(max-width:480px){
+ .hero-art .ai-face-glow{width:260px!important;height:290px!important}
+ .ai-face-shell{width:195px!important;height:240px!important}
+}
