@@ -493,3 +493,104 @@ body {
   color: #56647d !important;
 }
 
+
+
+/* COURSE READER — LIGHT THEME CONTRAST REPAIR */
+.lesson-page .page-intro h1,
+.lesson-page .lesson-intro h1 {
+  color: #202943 !important;
+}
+.lesson-page .page-intro p,
+.lesson-page .lesson-intro p {
+  color: #53627c !important;
+}
+.lesson-page .deep-dive {
+  color: #27334d !important;
+}
+.lesson-page .deep-dive-roadmap,
+.lesson-page .deep-dive-roadmap * {
+  color: #34415c !important;
+}
+.lesson-page .deep-dive-roadmap button,
+.lesson-page .deep-dive-roadmap .path-item,
+.lesson-page .deep-dive-roadmap .chapter-nav-item {
+  color: #34415c !important;
+}
+.lesson-page .deep-dive-progress span {
+  color: #e8e3ff !important;
+}
+.lesson-page .chapter-card {
+  background: #ffffff !important;
+  border: 1px solid #e1e5ef !important;
+  box-shadow: 0 8px 24px rgba(35, 45, 70, .06) !important;
+}
+.lesson-page .chapter-card.open {
+  background: #fbfaff !important;
+  border-color: #cfc5f6 !important;
+}
+.lesson-page .chapter-toggle,
+.lesson-page .chapter-toggle * {
+  color: #26324b !important;
+}
+.lesson-page .chapter-body,
+.lesson-page .chapter-body * {
+  color: #46536d !important;
+}
+.lesson-page .chapter-body > p {
+  color: #46536d !important;
+  line-height: 1.85 !important;
+}
+.lesson-page .chapter-body strong,
+.lesson-page .chapter-body b,
+.lesson-page .chapter-body h3,
+.lesson-page .chapter-body h4 {
+  color: #202943 !important;
+}
+.lesson-page .concept-item {
+  color: #34415c !important;
+  background: #f5f6fb !important;
+  border: 1px solid #e7e9f2 !important;
+}
+.lesson-page .chapter-example {
+  color: #34415c !important;
+  background: #f1efff !important;
+  border: 1px solid #ddd6fb !important;
+}
+.lesson-page .chapter-task {
+  color: #34415c !important;
+  background: #f4f8fb !important;
+  border: 1px solid #dce8f0 !important;
+}
+.lesson-page .chapter-example *,
+.lesson-page .chapter-task * {
+  color: #34415c !important;
+}
+.lesson-page .chapter-toggle:hover {
+  background: #f7f5ff !important;
+}
+.lesson-page .deep-dive-hero {
+  color: #f7f5ff !important;
+}
+.lesson-page .deep-dive-hero h2,
+.lesson-page .deep-dive-hero .deep-dive-kicker {
+  color: #f2edff !important;
+}
+.lesson-page .deep-dive-hero p {
+  color: #ddd7f4 !important;
+}
+.lesson-page .lesson-aside,
+.lesson-page .lesson-aside * {
+  color: #34415c;
+}
+.lesson-page .lesson-aside .path-item.active {
+  color: #5c46bd !important;
+  background: #eeeaff !important;
+}
+.lesson-page .lesson-main {
+  background: #ffffff !important;
+  border-color: #e4e8f1 !important;
+  box-shadow: 0 12px 36px rgba(35,45,70,.07) !important;
+}
+.lesson-page .lesson-main > .lesson-intro {
+  color: #53627c !important;
+}
