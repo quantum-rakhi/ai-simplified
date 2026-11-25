@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   ArrowRight, ArrowUpRight, BrainCircuit, Sparkles, Compass, Zap, BookOpen,
@@ -76,12 +76,15 @@ const lessonDeepDive = {
   }
 };
 
+const chapterPractice = {"ai": [{"q": "A photo app groups pictures of the same person without names. Which capability is it demonstrating?", "a": ["File compression", "Pattern recognition", "Manual rule execution", "Internet browsing"], "correct": 1, "explain": "It identifies visual similarities across photos."}, {"q": "A voice assistant converts spoken words into text. Which capability is most directly involved?", "a": ["File sorting", "Disk encryption", "Audio and language perception", "Processor cooling"], "correct": 2, "explain": "It interprets an audio signal and maps it to language."}, {"q": "A navigation app compares routes using traffic and distance. Which combination best describes its work?", "a": ["Random selection", "Manual data entry", "Image generation only", "Search and prediction"], "correct": 3, "explain": "It evaluates routes against constraints and estimates travel conditions."}, {"q": "A bank model flags an unusual payment. What should happen next?", "a": ["Treat the flag as a signal for review", "Assume the model is always correct", "Automatically accuse the customer", "Delete the transaction"], "correct": 0, "explain": "A prediction is not proof. Human review should consider the context."}], "ml": [{"q": "You have 5,000 emails labelled spam or not spam. Which learning approach fits best?", "a": ["Manual clustering", "Reinforcement learning", "Unsupervised learning", "Supervised learning"], "correct": 3, "explain": "The examples already contain target labels."}, {"q": "A retailer wants to discover customer groups but has no group labels. Which approach is suitable?", "a": ["Unsupervised learning", "Reinforcement learning", "Supervised learning", "Text generation"], "correct": 0, "explain": "Clustering finds structure without supplied target labels."}, {"q": "Why keep a test dataset separate until final evaluation?", "a": ["To increase labels", "To estimate performance on unseen data", "To remove all errors", "To make training run faster"], "correct": 1, "explain": "A held-out test set estimates generalisation when it is not used for tuning."}, {"q": "A model scores 99% on training data but 68% on unseen data. What is likely?", "a": ["Perfect generalisation", "Data encryption", "Overfitting", "Tokenisation"], "correct": 2, "explain": "The large gap suggests it fitted training-specific patterns."}], "dl": [{"q": "A neuron multiplies inputs by weights and adds a bias. What happens next?", "a": ["A new dataset is created", "An activation function transforms the result", "The output is always zero", "The inputs are deleted"], "correct": 1, "explain": "The activation function transforms the weighted sum."}, {"q": "Why can multiple hidden layers be useful?", "a": ["They guarantee 100% accuracy", "They make every model explainable", "They can learn layered representations of complex patterns", "They remove the need for data"], "correct": 2, "explain": "Successive layers can build increasingly useful representations."}, {"q": "During training, what does backpropagation calculate?", "a": ["Internet speed", "Database record counts", "The final user interface", "Gradients used to update parameters"], "correct": 3, "explain": "It computes how the loss changes with model parameters."}, {"q": "A deep network performs well on training images but poorly on new images. What should you investigate?", "a": ["Overfitting and data representativeness", "File name length", "Screen brightness", "The network logo"], "correct": 0, "explain": "Poor performance on new examples can indicate overfitting or data mismatch."}], "genai": [{"q": "A tool writes a new product description from a brief. What makes this generative AI?", "a": ["It measures network speed", "It sorts records", "It retrieves an exact saved file", "It creates new content"], "correct": 3, "explain": "Generative AI produces new outputs such as text, images, audio or code."}, {"q": "A text model generates a reply one token at a time. What is it doing at each step?", "a": ["Predicting a likely next token from context", "Selecting a random dictionary page", "Searching every website", "Running a spreadsheet formula"], "correct": 0, "explain": "Autoregressive generation repeatedly predicts the next token from context."}, {"q": "You want a model to describe a photo and answer a question about it. Which capability is useful?", "a": ["Database indexing only", "Multimodal processing", "A compiler", "Text-only formatting"], "correct": 1, "explain": "Multimodal systems work across modalities such as images and text."}, {"q": "An AI-generated image includes a misleading logo. What is the best response?", "a": ["Assume generated images are always accurate", "Remove the original brief", "Review and correct it before publishing", "Publish without checking"], "correct": 2, "explain": "Generated content needs human review for accuracy, rights and brand requirements."}], "llm": [{"q": "What is a token in a language model?", "a": ["A user's password", "A unit of text the model processes", "A database table", "A physical computer chip"], "correct": 1, "explain": "Tokens are chunks of text such as words, word pieces or punctuation."}, {"q": "Why do LLMs need large training corpora?", "a": ["To store a verified answer to every question", "To avoid parameters", "To learn statistical patterns in language from many examples", "To connect to every website"], "correct": 2, "explain": "Large and varied data helps models learn patterns and relationships in language."}, {"q": "An LLM gives a plausible but fabricated citation. What is this?", "a": ["A correct database join", "A network timeout", "A guaranteed fact", "A hallucination"], "correct": 3, "explain": "A hallucination is plausible-sounding generated content that is unsupported or false."}, {"q": "You need an LLM to summarise a long policy document. What should you do?", "a": ["Provide the source text and request a traceable summary", "Remove all context", "Ask it to guess the policy", "Request confidence only"], "correct": 0, "explain": "Grounding the task in source material reduces unsupported additions."}], "prompt": [{"q": "Which prompt is most useful for a specific task?", "a": ["Make it better", "Do the thing", "Tell me something", "Summarise this report for a new manager in five bullets, noting risks and dates"], "correct": 3, "explain": "A strong prompt defines task, audience, output format and constraints."}, {"q": "You want an AI to compare two products fairly. What context should you provide?", "a": ["Products, comparison criteria and source information", "A request to choose the most expensive", "Only the word compare", "No criteria"], "correct": 0, "explain": "Criteria and sources make the comparison focused and auditable."}, {"q": "The first AI response is too long. What is a good next step?", "a": ["Delete the task", "Refine the prompt with a length and format constraint", "Ask an unrelated question", "Assume the model cannot be guided"], "correct": 1, "explain": "Prompt iteration clarifies constraints and improves output."}, {"q": "A prompt asks for current legal information but supplies no jurisdiction or date. What should be improved?", "a": ["Ask for more confident wording", "Request a longer answer only", "Add jurisdiction, relevant dates and request verified sources", "Remove the question"], "correct": 2, "explain": "Jurisdiction and date can materially affect legal information."}]};
+
 function LessonDeepDive({lesson}) {
   const content = lessonDeepDive[lesson.id];
   const [expanded, setExpanded] = useState(0);
   const [completed, setCompleted] = useState([]);
   const [revealed, setRevealed] = useState({});
   const [notes, setNotes] = useState({});
+  const [practiceAnswers, setPracticeAnswers] = useState({});
   if (!content) return null;
 
   const progress = Math.round((completed.length / content.modules.length) * 100);
@@ -248,6 +251,17 @@ function LessonDeepDive({lesson}) {
       .learning-outcome{display:flex;gap:13px;align-items:flex-start;border:1px solid rgba(166,139,250,.25);background:linear-gradient(110deg,rgba(139,110,232,.13),rgba(139,110,232,.045));padding:17px 19px;border-radius:15px;margin:0 0 22px;color:#ddd5ff;line-height:1.65;font-size:13px}
       .outcome-icon{width:34px;height:34px;display:grid;place-items:center;border-radius:10px;background:#30284f;color:#cdbbff;flex:none}
       .learning-outcome b{display:block;color:#c4adff;font-size:10px;letter-spacing:1.2px;margin-bottom:4px}
+      .chapter-practice{margin:22px 0 4px;padding:20px;border:1px solid rgba(158,133,245,.28);border-radius:15px;background:linear-gradient(135deg,rgba(104,79,171,.13),rgba(255,255,255,.025))}
+      .chapter-practice h4{font-size:15px;line-height:1.6;margin:8px 0 14px;color:#f6f2ff}
+      .practice-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+      .practice-option{display:flex;align-items:center;gap:10px;text-align:left;padding:12px;border:1px solid rgba(255,255,255,.11);border-radius:11px;background:rgba(255,255,255,.035);color:#ddd7ef;cursor:pointer;font:inherit;font-size:12px;line-height:1.5;transition:.18s}
+      .practice-option>span{display:grid;place-items:center;width:25px;height:25px;flex:none;border-radius:8px;background:#30294b;color:#cbbaff;font-size:11px;font-weight:800}
+      .practice-option:hover:not(:disabled){border-color:#a58af5;background:rgba(155,127,240,.12)}
+      .practice-option.correct{border-color:rgba(105,210,174,.55);background:rgba(73,169,145,.12);color:#c9f5e6}
+      .practice-option.incorrect{border-color:rgba(241,125,151,.45);background:rgba(241,125,151,.08)}
+      .practice-feedback{margin-top:13px;padding:13px 15px;border-radius:10px;background:rgba(255,255,255,.045);color:#d8d0ea;font-size:12px;line-height:1.7}
+      .practice-feedback b{color:#c9b8ff}.practice-feedback p{margin:5px 0 9px}
+      @media(max-width:560px){.practice-options{grid-template-columns:1fr}.chapter-practice{padding:15px}}
       .chapter-card{position:relative;border:1px solid rgba(255,255,255,.10);background:linear-gradient(120deg,rgba(255,255,255,.045),rgba(255,255,255,.018));border-radius:16px;margin:12px 0;overflow:hidden;transition:border-color .2s,background .2s}
       .chapter-card.open{border-color:rgba(174,145,255,.45);background:linear-gradient(120deg,rgba(139,110,232,.105),rgba(255,255,255,.025))}
       .chapter-card.is-done{border-color:rgba(119,217,198,.28)}
@@ -324,6 +338,26 @@ function LessonDeepDive({lesson}) {
           </div>
           {revealed[index]&&<div className="chapter-answer"><b>How to approach it:</b> Identify the input, the task the system is performing, what a correct result would look like, and what could go wrong. There may be several valid answers — explain your reasoning rather than memorising a definition.</div>}
         </div>
+        {chapterPractice[lesson.id]?.[index]&&<div className="chapter-practice">
+          <div className="chapter-section-label"><FlaskConical size={14}/> INTERACTIVE PRACTICE · CHECK YOUR UNDERSTANDING</div>
+          <h4>{chapterPractice[lesson.id][index].q}</h4>
+          <div className="practice-options">{chapterPractice[lesson.id][index].a.map((option,optionIndex)=>{
+            const answerKey=`${lesson.id}-${index}`;
+            const chosen=practiceAnswers[answerKey];
+            const locked=chosen!==undefined;
+            const correct=chapterPractice[lesson.id][index].correct;
+            return <button key={option} disabled={locked} onClick={()=>setPracticeAnswers(prev=>({...prev,[answerKey]:optionIndex}))}
+              className={`practice-option ${locked&&optionIndex===correct?"correct":""} ${locked&&chosen===optionIndex&&chosen!==correct?"incorrect":""}`}>
+              <span>{String.fromCharCode(65+optionIndex)}</span>{option}
+              {locked&&optionIndex===correct&&<CheckCircle2 size={16}/>}
+            </button>;
+          })}</div>
+          {practiceAnswers[`${lesson.id}-${index}`]!==undefined&&<div className="practice-feedback">
+            <b>{practiceAnswers[`${lesson.id}-${index}`]===chapterPractice[lesson.id][index].correct?"Correct — nicely reasoned!":"Not quite. Review the explanation:"}</b>
+            <p>{chapterPractice[lesson.id][index].explain}</p>
+            <button className="chapter-action-btn" onClick={()=>setPracticeAnswers(prev=>({...prev,[`${lesson.id}-${index}`]:undefined}))}><RotateCcw size={13}/> Try again</button>
+          </div>}
+        </div>}
         {index<content.modules.length-1&&<div className="chapter-actions" style={{justifyContent:"flex-end",marginTop:16}}><button className="chapter-action-btn" onClick={goNext}>Next chapter <ArrowRight size={14}/></button></div>}
       </div>}
     </article>)}
@@ -338,12 +372,24 @@ function LessonDeepDive({lesson}) {
 }
 
 const quiz = [
-  { q:"Which statement best describes Artificial Intelligence?", a:["A computer that is always connected to the internet","Systems designed to perform tasks associated with human intelligence","A faster type of computer processor"], correct:1, explain:"AI is the broader field of building systems that can perform tasks such as recognising patterns, understanding language and making predictions." },
-  { q:"Machine Learning is…", a:["A subset of AI that learns patterns from data","Another name for a database","A programming language"], correct:0, explain:"Machine Learning is one approach within AI. Models learn patterns from examples rather than relying only on hand-written rules." },
-  { q:"What does Generative AI do?", a:["Only stores information","Creates new content such as text, images or code","Guarantees that every answer is true"], correct:1, explain:"Generative AI creates new outputs. Those outputs can still contain errors, so human review matters." },
-  { q:"What is a prompt?", a:["The instruction or context given to an AI system","The AI model's password","A type of computer screen"], correct:0, explain:"A prompt is the input that guides the AI system's response." },
-  { q:"Can a fluent AI response still be wrong?", a:["No, fluent means verified","Only if the internet is off","Yes — always verify important information"], correct:2, explain:"Language models can produce confident-sounding errors, sometimes called hallucinations." }
+  { topic:"AI", q:"Which statement best describes Artificial Intelligence?", a:["A computer always connected to the internet", "A database storing every answer", "Systems designed to perform tasks associated with human intelligence", "A faster processor"], correct:2, explain:"AI systems perform tasks such as recognising patterns, understanding language and making predictions." },
+  { topic:"AI", q:"An AI system flags a payment as unusual. What does this mean?", a:["The model made a legal decision", "The customer must be blocked permanently", "The payment may deserve further review", "The payment is proven fraudulent"], correct:2, explain:"A model output is a signal, not proof. High-impact decisions need review." },
+  { topic:"AI", q:"Which is a limitation of AI systems?", a:["They can make errors when data is incomplete or unrepresentative", "They cannot process images", "They understand context exactly like humans", "They never use patterns"], correct:0, explain:"Performance depends on data, task design and evaluation." },
+  { topic:"Machine Learning", q:"Machine Learning is best described as\u2026", a:["A programming language", "A subset of AI that learns patterns from data", "A hardware component", "Another name for a database"], correct:1, explain:"Machine Learning uses data and algorithms to adjust model parameters." },
+  { topic:"Machine Learning", q:"You have customer records with no group labels and want to discover groups. Which approach fits?", a:["Unsupervised clustering", "Text generation", "Supervised classification", "Reinforcement learning"], correct:0, explain:"Clustering discovers structure without supplied target labels." },
+  { topic:"Machine Learning", q:"A model performs well on training data but poorly on unseen data. What is this?", a:["Data compression", "Multimodal learning", "Tokenisation", "Overfitting"], correct:3, explain:"Overfitting means fitting training-specific details and generalising poorly." },
+  { topic:"Deep Learning", q:"What is the role of a weight in an artificial neuron?", a:["It controls how strongly an input influences the weighted sum", "It selects the user interface", "It stores the complete dataset", "It guarantees a correct prediction"], correct:0, explain:"Weights scale inputs and are adjusted during training." },
+  { topic:"Deep Learning", q:"What does an epoch represent in neural-network training?", a:["A single prediction", "One pass through the training dataset", "The time to install software", "One neuron in a hidden layer"], correct:1, explain:"An epoch is one complete pass through the training dataset." },
+  { topic:"Deep Learning", q:"What does backpropagation help calculate?", a:["The number of users online", "A list of training labels", "Gradients for updating network parameters", "Screen resolution"], correct:2, explain:"Backpropagation computes gradients of loss with respect to parameters." },
+  { topic:"Generative AI", q:"What is a defining capability of Generative AI?", a:["Guaranteeing every output is true", "Only copying a database row", "Only sorting files", "Creating new content such as text, images, audio or code"], correct:3, explain:"Generative AI produces new outputs from learned patterns and supplied context." },
+  { topic:"Generative AI", q:"A model creates an image from a written description. What is the description called?", a:["A prompt", "A gradient", "A label", "An epoch"], correct:0, explain:"The prompt is the instruction or context guiding the model output." },
+  { topic:"LLMs", q:"What do LLMs primarily learn from large text datasets?", a:["Human consciousness", "Statistical patterns and relationships in language", "The identity of every user", "A verified answer to every possible question"], correct:1, explain:"LLMs learn patterns in token sequences; fluent output is not guaranteed fact." },
+  { topic:"LLMs", q:"Why can an LLM produce a fabricated citation?", a:["It checks every source live", "It refuses to predict tokens", "It can generate plausible but unsupported details", "It has perfect factual memory"], correct:2, explain:"Language generation can produce plausible but unsupported content." },
+  { topic:"Prompt Engineering", q:"Which prompt is likely to produce a useful answer?", a:["Write something interesting", "Give me everything", "Explain stuff", "Explain photosynthesis to a 10-year-old in four bullets with one example"], correct:3, explain:"A clear prompt specifies task, audience, format and constraints." },
+  { topic:"Prompt Engineering", q:"An AI response must use only an attached policy. Which instruction helps?", a:["Use only the supplied policy; quote the relevant section and flag missing information", "Do not mention uncertainty", "Fill gaps using guesses", "Make the answer sound confident"], correct:0, explain:"Source constraints and explicit handling of missing information reduce unsupported additions." }
 ];
+
+const assessmentBanks = {"Beginner": {"minutes": 10, "questions": [{"topic": "AI", "q": "Which task is a common use of AI?", "a": ["Charging a battery", "Recognising objects in images", "Formatting a USB drive", "Increasing screen brightness"], "correct": 1, "explain": "AI can identify patterns in images and classify objects."}, {"topic": "Machine Learning", "q": "What does supervised learning use?", "a": ["Only random numbers", "Rewards from a game only", "Examples with known labels", "No data at all"], "correct": 2, "explain": "Supervised learning trains on examples paired with known target labels."}, {"topic": "Deep Learning", "q": "What is an artificial neuron?", "a": ["A type of monitor", "A database table", "A physical brain cell inside a computer", "A unit that combines inputs using weights and a bias"], "correct": 3, "explain": "An artificial neuron calculates a weighted sum and applies an activation function."}, {"topic": "Generative AI", "q": "Which output can Generative AI create?", "a": ["A new image from a text prompt", "Only a network cable", "Only a printed spreadsheet", "A computer processor"], "correct": 0, "explain": "Generative AI can create text, images, audio, video and code."}, {"topic": "LLMs", "q": "What does LLM stand for?", "a": ["Linked Learning Module", "Large Language Model", "Low Latency Memory", "Long Logic Machine"], "correct": 1, "explain": "LLM stands for Large Language Model."}, {"topic": "Prompt Engineering", "q": "Which prompt gives the clearest instruction?", "a": ["Tell me about things", "Write anything", "Explain gravity to a 10-year-old in three bullet points", "Do it"], "correct": 2, "explain": "A good prompt gives a task, audience and output format."}]}, "Intermediate": {"minutes": 8, "questions": [{"topic": "AI", "q": "A medical-image model highlights a possible abnormality. What is the appropriate use?", "a": ["Ignore patient history", "Support a qualified clinician's review", "Treat the prediction as certain", "Replace diagnosis automatically"], "correct": 1, "explain": "The model can support decision-making, but qualified professionals must interpret it in context."}, {"topic": "Machine Learning", "q": "A dataset has 2% fraud cases. Why might accuracy be misleading?", "a": ["Accuracy always equals recall", "Fraud is a regression target", "A model can predict 'not fraud' for nearly all cases and still score highly", "The dataset has too many columns"], "correct": 2, "explain": "With severe class imbalance, accuracy can hide poor detection of the minority class."}, {"topic": "Machine Learning", "q": "Which data split should be reserved for final unbiased evaluation?", "a": ["Production cache", "Feature set", "Training set", "Test set"], "correct": 3, "explain": "The test set should remain separate from model selection and tuning."}, {"topic": "Deep Learning", "q": "What does backpropagation calculate?", "a": ["Gradients of the loss with respect to model parameters", "The total number of records", "The number of hidden layers", "The model's file size"], "correct": 0, "explain": "Backpropagation computes gradients that an optimiser uses to update weights."}, {"topic": "Generative AI", "q": "A generated answer includes a made-up statistic. What should you do?", "a": ["Repeat it without checking", "Verify it against a reliable source before use", "Remove all citations", "Assume fluent writing means accuracy"], "correct": 1, "explain": "Generated outputs can contain hallucinations and need fact-checking."}, {"topic": "LLMs", "q": "Why can a very long prompt exceed a model's context window?", "a": ["The model has no vocabulary", "The file is not a PDF", "The prompt and response require more tokens than the model can handle at once", "The internet is disconnected"], "correct": 2, "explain": "A context window limits how many tokens can be processed in one interaction."}]}, "Advanced": {"minutes": 6, "questions": [{"topic": "AI", "q": "A model's error rate rises after deployment as customer behaviour changes. What is the likely concern?", "a": ["Image resolution", "Data or concept drift", "Prompt formatting", "Tokenisation failure"], "correct": 1, "explain": "Drift occurs when input distributions or relationships change, degrading model performance."}, {"topic": "Machine Learning", "q": "A feature includes information recorded only after the outcome occurred. What risk does this create?", "a": ["Regularisation", "Batch normalisation", "Data leakage", "Clustering"], "correct": 2, "explain": "Leakage lets the model use information unavailable at prediction time, inflating evaluation results."}, {"topic": "Machine Learning", "q": "For a high-recall fraud-screening system, which trade-off may increase?", "a": ["No need for labels", "Guaranteed perfect precision", "Fewer flagged cases in every scenario", "More false positives"], "correct": 3, "explain": "Increasing recall can catch more actual fraud but may also flag more legitimate transactions."}, {"topic": "Deep Learning", "q": "Why can a deep network suffer vanishing gradients?", "a": ["Gradients can shrink as they propagate through many layers", "The GPU has no display", "The model has too many labels", "The dataset is sorted alphabetically"], "correct": 0, "explain": "Repeated derivatives smaller than one can cause gradients to diminish in early layers."}, {"topic": "Generative AI", "q": "What is retrieval-augmented generation (RAG) designed to do?", "a": ["Guarantee every generated answer is correct", "Retrieve relevant external knowledge and provide it as context to generation", "Train a model without data", "Replace the language model with a database"], "correct": 1, "explain": "RAG grounds generation in retrieved material, though the retrieved sources and answer still need evaluation."}, {"topic": "LLMs", "q": "Why is temperature usually lowered for deterministic extraction tasks?", "a": ["To increase image resolution", "To train new model weights", "To reduce variation in token sampling", "To expand the context window"], "correct": 2, "explain": "Lower temperature generally makes sampling less varied, which can help structured extraction tasks."}]}};
 
 const promptExamples = [
   { name:"Vague prompt", prompt:"Explain AI.", result:"AI is technology that enables machines to perform tasks that typically require human intelligence.", note:"The request has no audience, depth or format." },
@@ -691,10 +737,51 @@ function App() {
   const [selectedXor,setSelectedXor] = useState(1);
   const [trainingRate,setTrainingRate] = useState(1.5);
   const [trainingHistory,setTrainingHistory] = useState([networkLoss(createNetwork())]);
+  const [assessmentLevel,setAssessmentLevel] = useState("Beginner");
+  const [assessmentStarted,setAssessmentStarted] = useState(false);
+  const [assessmentIndex,setAssessmentIndex] = useState(0);
+  const [assessmentAnswers,setAssessmentAnswers] = useState({});
+  const [assessmentSeconds,setAssessmentSeconds] = useState(600);
+  const [assessmentFinished,setAssessmentFinished] = useState(false);
+  const [assessmentHistory,setAssessmentHistory] = useState([]);
+  const [assessmentSaved,setAssessmentSaved] = useState(false);
 
 
   const completed = useMemo(() => Object.keys(answers).length, [answers]);
   const score = quiz.reduce((n, q, i) => n + (answers[i] === q.correct ? 1 : 0), 0);
+  const currentAssessment = assessmentBanks[assessmentLevel];
+  const assessmentScore = currentAssessment.questions.reduce((total,q,i)=>total+(assessmentAnswers[i]===q.correct?1:0),0);
+  const assessmentTopics = ["AI","Machine Learning","Deep Learning","Generative AI","LLMs","Prompt Engineering"];
+  const formatTime = seconds => `${Math.floor(seconds/60).toString().padStart(2,"0")}:${(seconds%60).toString().padStart(2,"0")}`;
+  useEffect(()=>{
+    if(!assessmentStarted || assessmentFinished) return;
+    const timer=window.setInterval(()=>{
+      setAssessmentSeconds(previous=>{
+        if(previous<=1){
+          window.clearInterval(timer);
+          setAssessmentStarted(false);
+          setAssessmentFinished(true);
+          return 0;
+        }
+        return previous-1;
+      });
+    },1000);
+    return ()=>window.clearInterval(timer);
+  },[assessmentStarted,assessmentFinished]);
+  useEffect(()=>{
+    if(!assessmentFinished || assessmentSaved) return;
+    const bank=assessmentBanks[assessmentLevel];
+    const total=bank.questions.length;
+    const correct=bank.questions.reduce((sum,q,i)=>sum+(assessmentAnswers[i]===q.correct?1:0),0);
+    const topicScores={};
+    bank.questions.forEach((q,i)=>{
+      if(!topicScores[q.topic]) topicScores[q.topic]={correct:0,total:0};
+      topicScores[q.topic].total++;
+      if(assessmentAnswers[i]===q.correct) topicScores[q.topic].correct++;
+    });
+    setAssessmentHistory(previous=>[...previous,{level:assessmentLevel,score:correct,total,topicScores,date:new Date().toISOString()}]);
+    setAssessmentSaved(true);
+  },[assessmentFinished,assessmentSaved,assessmentLevel,assessmentAnswers]);
   const currentLesson = lessons.find(x => x.id === selectedLesson) || lessons[0];
   const filteredLessons = lessons.filter(x => (x.title + " " + x.desc + " " + x.tag).toLowerCase().includes(query.toLowerCase()));
   const z = x1*w1 + x2*w2 + bias;
@@ -735,6 +822,33 @@ function App() {
     else setQuizIndex(v => v + 1);
   };
   const restartQuiz = () => { setAnswers({}); setQuizIndex(0); setQuizDone(false); };
+  const startAssessment = (level=assessmentLevel) => {
+    setAssessmentLevel(level);
+    setAssessmentAnswers({});
+    setAssessmentIndex(0);
+    setAssessmentSeconds(assessmentBanks[level].minutes*60);
+    setAssessmentFinished(false);
+    setAssessmentSaved(false);
+    setAssessmentStarted(true);
+  };
+  const answerAssessment = optionIndex => {
+    if(assessmentAnswers[assessmentIndex]!==undefined) return;
+    setAssessmentAnswers(previous=>({...previous,[assessmentIndex]:optionIndex}));
+  };
+  const nextAssessmentQuestion = () => {
+    if(assessmentIndex===currentAssessment.questions.length-1){
+      setAssessmentStarted(false);
+      setAssessmentFinished(true);
+    } else setAssessmentIndex(previous=>previous+1);
+  };
+  const resetAssessment = () => {
+    setAssessmentStarted(false);
+    setAssessmentFinished(false);
+    setAssessmentAnswers({});
+    setAssessmentIndex(0);
+    setAssessmentSeconds(currentAssessment.minutes*60);
+    setAssessmentSaved(false);
+  };
 
   return <div className="app-shell">
     <div className="announcement"><Sparkles size={14}/> YOUR FRIENDLY FIRST STEP INTO AI <span>·</span> FREE FOREVER</div>
@@ -750,6 +864,7 @@ function App() {
         <button className={active==="neural-playground"?"nav-active":""} onClick={()=>go("neural-playground")}>Neural Playground</button>
         <button className={active==="visual-lab"?"nav-active":""} onClick={()=>go("visual-lab")}>Visual AI Lab</button>
         <button className={active==="quiz"?"nav-active":""} onClick={()=>go("quiz")}>Quiz</button>
+        <button className={active==="assessment"?"nav-active":""} onClick={()=>go("assessment")}>Assessment Centre</button>
       </nav>
       <button className="top-cta" onClick={()=>go("explore")}>Start learning <ArrowUpRight size={16}/></button>
       <button className="mobile-menu" onClick={()=>setMenuOpen(v=>!v)} aria-label="Toggle menu">{menuOpen?<X/>:<Menu/>}</button>
@@ -778,7 +893,7 @@ function App() {
       </section>
 
       <section className="stats-strip section-wrap">
-        <div><b>06</b><span>Beginner lessons</span></div><div><b>01</b><span>Interactive playground</span></div><div><b>05</b><span>Quick quiz questions</span></div><div><b>∞</b><span>Curiosity encouraged</span></div>
+        <div><b>06</b><span>Beginner lessons</span></div><div><b>01</b><span>Interactive playground</span></div><div><b>03</b><span>Assessment levels</span></div><div><b>∞</b><span>Curiosity encouraged</span></div>
       </section>
 
       <section className="section-wrap learn-section">
@@ -1032,17 +1147,152 @@ function App() {
     </main>}
 
     {active==="quiz" && <main className="section-wrap page-main quiz-page">
-      <div className="page-intro"><div className="eyebrow">THE KNOWLEDGE ARENA</div><h1>Ready, curious <span>mind?</span></h1><p>Five quick questions to check your AI basics. Every answer teaches you something.</p></div>
+      <div className="page-intro"><div className="eyebrow">THE KNOWLEDGE ARENA</div><h1>Test your AI <span>knowledge.</span></h1><p>15 questions across six core topics. Test concepts, apply what you learned and read the explanation after every answer.</p></div>
       <div className="quiz-card">
         {!quizDone ? <>
           <div className="quiz-top"><span>QUESTION {quizIndex+1} OF {quiz.length}</span><span>{completed}/{quiz.length} ANSWERED</span></div>
           <div className="progress-track"><div style={{width:`${(quizIndex/quiz.length)*100}%`}}/></div>
-          <div className="quiz-question"><span className="question-number">0{quizIndex+1}</span><h2>{quiz[quizIndex].q}</h2></div>
+          <div className="quiz-question"><span className="question-number">{String(quizIndex+1).padStart(2,"0")}</span><div><div className="eyebrow">{quiz[quizIndex].topic}</div><h2>{quiz[quizIndex].q}</h2></div></div>
           <div className="answer-list">{quiz[quizIndex].a.map((a,i)=><button key={a} onClick={()=>answerQuiz(i)} className={`answer-option ${answers[quizIndex]===i?(i===quiz[quizIndex].correct?"correct":"incorrect"):""} ${answers[quizIndex]!==undefined&&i===quiz[quizIndex].correct?"correct":""}`}><span className="answer-letter">{String.fromCharCode(65+i)}</span>{a}{answers[quizIndex]===i&&<CheckCircle2 size={19}/>}</button>)}</div>
           {answers[quizIndex]!==undefined&&<div className="answer-explain"><b>{answers[quizIndex]===quiz[quizIndex].correct?"That's right! 🎉":"Good try — here's the idea."}</b><p>{quiz[quizIndex].explain}</p></div>}
           <div className="quiz-footer"><span>{answers[quizIndex]!==undefined?"Answer locked in":"Choose the best answer"}</span><button className="btn-primary" disabled={answers[quizIndex]===undefined} onClick={nextQuestion}>{quizIndex===quiz.length-1?"See my score":"Next question"} <ArrowRight size={16}/></button></div>
-        </> : <div className="quiz-result"><div className="trophy-icon"><Trophy size={42}/></div><div className="eyebrow">YOU SHOWED UP. THAT'S A WIN.</div><h2>{score===5?"AI superstar!":score>=3?"You're getting the hang of it!":"A curious mind is a growing mind!"}</h2><div className="score-big">{score}<span> / 5</span></div><p>You got {score} out of 5 correct. Revisit a lesson and give it another go.</p><button className="btn-primary" onClick={restartQuiz}><RotateCcw size={16}/> Try again</button><button className="text-link" onClick={()=>go("explore")}>Explore lessons <ArrowRight size={16}/></button></div>}
+        </> : <div className="quiz-result"><div className="trophy-icon"><Trophy size={42}/></div><div className="eyebrow">YOU SHOWED UP. THAT'S A WIN.</div><h2>{score===quiz.length?"AI superstar!":score>=Math.ceil(quiz.length*0.7)?"You're getting the hang of it!":"A curious mind is a growing mind!"}</h2><div className="score-big">{score}<span> / {quiz.length}</span></div><p>You got {score} out of {quiz.length} correct across six topics. Revisit a lesson and give it another go.</p><button className="btn-primary" onClick={restartQuiz}><RotateCcw size={16}/> Try again</button><button className="text-link" onClick={()=>go("explore")}>Explore lessons <ArrowRight size={16}/></button></div>}
         </div>
+    </main>}
+
+    {active==="assessment" && <main className="section-wrap page-main assessment-page">
+      <style>{`
+      .assessment-page{padding-bottom:70px}
+      .assessment-level-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:28px 0 18px}
+      .assessment-level-card{display:flex;flex-direction:column;align-items:flex-start;gap:9px;text-align:left;padding:22px;border:1px solid rgba(255,255,255,.12);border-radius:17px;background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.018));color:#f5f1ff;cursor:pointer;transition:.2s}
+      .assessment-level-card:hover,.assessment-level-card.selected{border-color:rgba(177,151,255,.65);background:linear-gradient(145deg,rgba(139,110,232,.17),rgba(255,255,255,.025));transform:translateY(-2px)}
+      .assessment-level-card strong{font-size:23px;letter-spacing:-.5px}
+      .assessment-level-card>span:nth-of-type(2){font-size:12px;color:#c8bde7}
+      .assessment-level-kicker{font-size:9px;letter-spacing:1.2px;font-weight:850;color:#bca8ff}
+      .assessment-level-desc{font-size:12px;line-height:1.6;color:#a9a1c3}
+      .assessment-start-card,.assessment-test-card,.assessment-result-card,.assessment-dashboard{padding:clamp(20px,3vw,30px);border:1px solid rgba(177,151,255,.2);border-radius:19px;background:linear-gradient(145deg,rgba(31,29,53,.96),rgba(22,20,39,.96));margin:18px 0 26px}
+      .assessment-start-card{display:flex;align-items:center;justify-content:space-between;gap:20px}
+      .assessment-start-card h2,.assessment-test-top h2,.assessment-result-card h2{font-size:24px;margin:8px 0}
+      .assessment-start-card p,.assessment-result-heading p{font-size:13px;color:#aaa2c5;margin:0;line-height:1.6}
+      .assessment-test-top{display:flex;align-items:center;justify-content:space-between;gap:18px}
+      .assessment-timer{display:flex;flex-direction:column;align-items:center;padding:10px 17px;border-radius:12px;border:1px solid rgba(177,151,255,.3);background:rgba(139,110,232,.12)}
+      .assessment-timer span{font-size:9px;letter-spacing:1px;color:#b9add9;font-weight:800}
+      .assessment-timer strong{font-size:25px;font-variant-numeric:tabular-nums;color:#eee7ff}
+      .assessment-timer.urgent{border-color:rgba(255,120,140,.55);background:rgba(255,100,120,.12)}
+      .assessment-topic-label{display:inline-flex;margin:24px 0 4px;padding:6px 10px;border-radius:99px;background:rgba(139,110,232,.14);color:#c8b5ff;font-size:10px;font-weight:800}
+      .assessment-test-card h3{font-size:20px;line-height:1.55;color:#f4efff;margin:12px 0 20px}
+      .assessment-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+      .assessment-option{display:flex;align-items:center;gap:11px;text-align:left;padding:14px;border:1px solid rgba(255,255,255,.11);border-radius:12px;background:rgba(255,255,255,.035);color:#ded8ef;cursor:pointer;font:inherit;font-size:13px;line-height:1.5}
+      .assessment-option>span{display:grid;place-items:center;width:27px;height:27px;flex:none;border-radius:8px;background:#30294b;color:#cbbaff;font-size:11px;font-weight:850}
+      .assessment-option:hover:not(:disabled),.assessment-option.chosen{border-color:#a58af5;background:rgba(155,127,240,.13)}
+      .assessment-option:disabled{cursor:default}
+      .assessment-test-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:24px;padding-top:18px;border-top:1px solid rgba(255,255,255,.09);font-size:12px;color:#aaa2c5}
+      .assessment-result-heading{display:flex;align-items:center;gap:17px}
+      .assessment-score-line{display:flex;align-items:baseline;justify-content:space-between;margin:25px 0;padding:20px;border-radius:14px;background:rgba(139,110,232,.11)}
+      .assessment-score-line>strong{font-size:42px;color:#e6dcff}.assessment-score-line small{font-size:18px;color:#aaa2c5}.assessment-score-line>span{font-size:13px;color:#c7b6ff;font-weight:800}
+      .assessment-review-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:18px 0 24px}
+      .assessment-review-item{padding:15px;border:1px solid rgba(255,255,255,.09);border-radius:12px;background:rgba(255,255,255,.025)}
+      .assessment-review-top{display:flex;justify-content:space-between;gap:10px;margin-bottom:9px;font-size:10px;color:#aaa2c5}
+      .assessment-review-top .good{color:#8fe0c4}.assessment-review-top .needs-work{color:#f3b2a6}
+      .assessment-review-item>strong{display:block;font-size:13px;line-height:1.5;color:#eee9fa}
+      .assessment-review-item p,.assessment-review-item small{display:block;font-size:11px;line-height:1.6;color:#aaa2c5;margin:7px 0 0}
+      .assessment-review-item .assessment-correct-answer{color:#a8e6d2}
+      .assessment-dashboard{margin-top:35px}
+      .assessment-dashboard-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:20px 0}
+      .assessment-dashboard-stats>div{padding:17px;border:1px solid rgba(255,255,255,.09);border-radius:12px;background:rgba(255,255,255,.025)}
+      .assessment-dashboard-stats strong{display:block;font-size:26px;color:#e6dcff}.assessment-dashboard-stats span{font-size:11px;color:#aaa2c5}
+      .topic-performance-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+      .topic-performance-card{display:grid;grid-template-columns:1fr auto;gap:9px 12px;align-items:center;padding:14px;border:1px solid rgba(255,255,255,.08);border-radius:12px}
+      .topic-performance-card>div:first-child{display:flex;flex-direction:column;gap:4px}.topic-performance-card strong{font-size:12px;color:#e6e0f5}.topic-performance-card span{font-size:10px;color:#9991b2}.topic-performance-card>b{font-size:12px;color:#c9b8ff}
+      .topic-bar{grid-column:1/2;height:6px;border-radius:99px;background:#38334d;overflow:hidden}.topic-bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#8c72ef,#d28ce8)}
+      .assessment-empty-state{font-size:12px;color:#aaa2c5;margin:18px 0 0}
+      .assessment-history-list{margin-top:22px}.assessment-history-list>strong{display:block;font-size:12px;margin-bottom:8px}.assessment-history-list>div{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:11px;color:#aaa2c5}.assessment-history-list b{color:#d7caff}
+      @media(max-width:760px){.assessment-level-grid{grid-template-columns:1fr}.assessment-start-card{align-items:flex-start;flex-direction:column}.assessment-options,.assessment-review-list,.topic-performance-grid{grid-template-columns:1fr}}
+      @media(max-width:520px){.assessment-test-top{align-items:flex-start}.assessment-test-card,.assessment-result-card,.assessment-dashboard{padding:17px}.assessment-dashboard-stats{gap:7px}.assessment-dashboard-stats>div{padding:12px}.assessment-dashboard-stats strong{font-size:21px}.assessment-history-list>div{flex-direction:column;gap:4px}}
+`}</style>
+      <div className="page-intro">
+        <div className="eyebrow">AI SIMPLIFIED · ASSESSMENT CENTRE</div>
+        <h1>Prove what <span>you know.</span></h1>
+        <p>Choose your level, take a timed mock test and use your topic-wise results to decide what to revise next.</p>
+      </div>
+      <section className="assessment-level-grid">
+        {Object.entries(assessmentBanks).map(([level,bank])=>{
+          const selected=assessmentLevel===level;
+          const levelClass=level.toLowerCase();
+          return <button key={level} className={`assessment-level-card ${levelClass} ${selected?"selected":""}`} onClick={()=>{setAssessmentLevel(level);resetAssessment();}}>
+            <span className="assessment-level-kicker">{level==="Beginner"?"BUILD CONFIDENCE":level==="Intermediate"?"APPLY CONCEPTS":"CHALLENGE YOURSELF"}</span>
+            <strong>{level}</strong>
+            <span>{bank.questions.length} questions · {bank.minutes} minutes</span>
+            <span className="assessment-level-desc">{level==="Beginner"?"Core terms and everyday AI examples":level==="Intermediate"?"Practical scenarios and model evaluation":"Trade-offs, deployment risks and deeper concepts"}</span>
+          </button>;
+        })}
+      </section>
+
+      {!assessmentStarted&&!assessmentFinished&&<section className="assessment-start-card">
+        <div><div className="eyebrow">YOUR NEXT MOCK TEST</div><h2>{assessmentLevel} assessment</h2><p>{currentAssessment.questions.length} questions · {currentAssessment.minutes} minutes · Instant answer review after submission</p></div>
+        <button className="btn-primary" onClick={()=>startAssessment(assessmentLevel)}>Start timed test <ArrowRight size={17}/></button>
+      </section>}
+
+      {assessmentStarted&&<section className="assessment-test-card">
+        <div className="assessment-test-top">
+          <div><div className="eyebrow">{assessmentLevel.toUpperCase()} MOCK TEST</div><h2>Question {assessmentIndex+1} of {currentAssessment.questions.length}</h2></div>
+          <div className={`assessment-timer ${assessmentSeconds<=60?"urgent":""}`}><span>TIME LEFT</span><strong>{formatTime(assessmentSeconds)}</strong></div>
+        </div>
+        <div className="progress-track"><div style={{width:`${(assessmentIndex/currentAssessment.questions.length)*100}%`}}/></div>
+        <div className="assessment-topic-label">{currentAssessment.questions[assessmentIndex].topic}</div>
+        <h3>{currentAssessment.questions[assessmentIndex].q}</h3>
+        <div className="assessment-options">{currentAssessment.questions[assessmentIndex].a.map((option,i)=>{
+          const chosen=assessmentAnswers[assessmentIndex];
+          return <button key={option} disabled={chosen!==undefined} onClick={()=>answerAssessment(i)} className={`assessment-option ${chosen===i?"chosen":""}`}>
+            <span>{String.fromCharCode(65+i)}</span>{option}{chosen===i&&<CheckCircle2 size={17}/>}
+          </button>;
+        })}</div>
+        <div className="assessment-test-footer">
+          <span>{Object.keys(assessmentAnswers).length} of {currentAssessment.questions.length} answered</span>
+          <button className="btn-primary" disabled={assessmentAnswers[assessmentIndex]===undefined} onClick={nextAssessmentQuestion}>{assessmentIndex===currentAssessment.questions.length-1?"Submit assessment":"Next question"} <ArrowRight size={16}/></button>
+        </div>
+      </section>}
+
+      {assessmentFinished&&<section className="assessment-result-card">
+        <div className="assessment-result-heading"><div className="trophy-icon"><Trophy size={36}/></div><div><div className="eyebrow">ASSESSMENT COMPLETE</div><h2>{assessmentScore>=5?"Excellent work!":assessmentScore>=3?"Good progress — keep going!":"Every attempt is progress."}</h2><p>{assessmentLevel} level · {Object.keys(assessmentAnswers).length} of {currentAssessment.questions.length} answered</p></div></div>
+        <div className="assessment-score-line"><strong>{assessmentScore}<small> / {currentAssessment.questions.length}</small></strong><span>{Math.round(assessmentScore/currentAssessment.questions.length*100)}% score</span></div>
+        <div className="assessment-review-list">{currentAssessment.questions.map((q,i)=>{
+          const correct=assessmentAnswers[i]===q.correct;
+          return <article className="assessment-review-item" key={`${q.topic}-${i}`}>
+            <div className="assessment-review-top"><span>{q.topic} · Q{i+1}</span><b className={correct?"good":"needs-work"}>{correct?"Correct":"Review"}</b></div>
+            <strong>{q.q}</strong>
+            <p>Your answer: {assessmentAnswers[i]===undefined?"Not answered":q.a[assessmentAnswers[i]]}</p>
+            <p className="assessment-correct-answer">Correct answer: {q.a[q.correct]}</p>
+            <small>{q.explain}</small>
+          </article>;
+        })}</div>
+        <button className="btn-primary" onClick={()=>startAssessment(assessmentLevel)}><RotateCcw size={16}/> Retake this level</button>
+      </section>}
+
+      <section className="assessment-dashboard">
+        <div className="section-heading"><div><div className="eyebrow">YOUR LEARNING ANALYTICS</div><h2>Performance <span>dashboard</span></h2><p>Track your mock-test results by topic across completed attempts in this browser session.</p></div></div>
+        <div className="assessment-dashboard-stats">
+          <div><strong>{assessmentHistory.length}</strong><span>Tests completed</span></div>
+          <div><strong>{assessmentHistory.length?Math.round(assessmentHistory.reduce((sum,item)=>sum+item.score/item.total,0)/assessmentHistory.length*100):0}%</strong><span>Average score</span></div>
+          <div><strong>{assessmentHistory.length?Math.max(...assessmentHistory.map(item=>Math.round(item.score/item.total*100))):0}%</strong><span>Best score</span></div>
+        </div>
+        <div className="topic-performance-grid">{assessmentTopics.map(topic=>{
+          const rows=assessmentHistory.flatMap(item=>{
+            const value=item.topicScores[topic];
+            return value?[value]:[];
+          });
+          const correct=rows.reduce((sum,item)=>sum+item.correct,0);
+          const total=rows.reduce((sum,item)=>sum+item.total,0);
+          const percent=total?Math.round(correct/total*100):0;
+          return <div className="topic-performance-card" key={topic}>
+            <div><strong>{topic}</strong><span>{total?`${correct}/${total} correct`:"Not tested yet"}</span></div>
+            <div className="topic-bar"><i style={{width:`${percent}%`}}/></div>
+            <b>{total?`${percent}%`:"—"}</b>
+          </div>;
+        })}</div>
+        {assessmentHistory.length===0&&<p className="assessment-empty-state">Your topic dashboard will populate after your first completed mock test.</p>}
+        {assessmentHistory.length>0&&<div className="assessment-history-list"><strong>Recent attempts</strong>{assessmentHistory.slice().reverse().slice(0,5).map((item,index)=><div key={`${item.date}-${index}`}><span>{item.level} · {new Date(item.date).toLocaleString()}</span><b>{item.score}/{item.total} · {Math.round(item.score/item.total*100)}%</b></div>)}</div>}
+      </section>
     </main>}
 
     <footer className="footer"><div className="footer-inner"><button className="brand footer-brand" onClick={()=>go("home")}><span className="brand-mark"><BrainCircuit size={21}/></span><span>AI <b>SIMPLIFIED</b><small>MAKE AI MAKE SENSE</small></span></button><p>Making artificial intelligence practical and understandable for students, professionals, creators and developers.</p><div className="footer-bottom"><span>© 2026 AI Simplified v1.3.3 · An open learning project</span><span>Built with curiosity <span className="heart">♥</span> by <a href="https://github.com/quantum-rakhi" target="_blank" rel="noreferrer">Rakhi Thakur</a></span></div></div></footer>
