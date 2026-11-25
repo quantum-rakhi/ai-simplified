@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
-  ArrowRight, ArrowUpRight, BrainCircuit, Sparkles, Compass, Zap, BookOpen,
+    ArrowLeft, ArrowRight, ArrowUpRight, BrainCircuit, Sparkles, Compass, Zap, BookOpen,
   Gamepad2, Search, Menu, X, CheckCircle2, CircleHelp, Lightbulb, Target,
   Trophy, ChevronRight, RotateCcw, WandSparkles, Layers3, ShieldCheck,
   Bot, Network, FlaskConical, GraduationCap, Play, Star,
