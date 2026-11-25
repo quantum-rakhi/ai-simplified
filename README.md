@@ -51,6 +51,29 @@ Change inputs, weights and bias to see how the prediction changes.
 
 **Note:** This is an educational single-neuron simulation, not a trained multi-layer neural network.
 
+## Version 1.3 — Neural Network Playground
+
+AI Simplified now includes a dedicated interactive Neural Network Playground.
+
+### New features
+- Interactive datasets: Circle, XOR, Gaussian Clusters and Spiral
+- Customisable neural network hidden layers
+- Activation functions: Tanh, ReLU and Sigmoid
+- Adjustable learning rate and batch size
+- Adjustable training data percentage and noise
+- Real-time decision boundary visualisation
+- Training and testing loss charts
+- Browser-based backpropagation and gradient descent
+- Train for 1, 10 or 100 epochs
+
+### Learning modes
+1. Visual AI Lab — Understand individual neurons and neural networks.
+2. Neural Network Playground — Build, train and experiment with neural networks.
+
+No API key, account or paid service required. All training runs locally in the browser.
+
+**AI Simplified — Make AI make sense.**
+
 ## 🛠️ Technology Stack
 
 - React
