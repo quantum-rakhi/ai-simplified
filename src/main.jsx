@@ -5,7 +5,7 @@ import {
   Gamepad2, Search, Menu, X, CheckCircle2, CircleHelp, Lightbulb, Target,
   Trophy, ChevronRight, RotateCcw, WandSparkles, Layers3, ShieldCheck,
   Bot, Network, FlaskConical, GraduationCap, Play, Star,
-  SlidersHorizontal, GitBranch, Scale, Gauge, Clock3, Download, Upload, RefreshCw
+  SlidersHorizontal, GitBranch, Scale, Gauge, Clock3, Download, Upload, RefreshCw, Code2
 } from "lucide-react";
 import "./styles.css";
 import "./premium.css";
