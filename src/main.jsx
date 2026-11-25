@@ -97,6 +97,139 @@ function LessonDeepDive({lesson}) {
   return <section className="deep-dive">
     <style>{`
       .deep-dive{margin:42px 0 34px;color:#f5f1ff}
+      /* BOOK-STYLE PAGE LAYOUT: use the full available viewport */
+      main.section-wrap.page-main.lesson-page{
+        width:min(1480px, calc(100% - 64px)) !important;
+        max-width:1480px !important;
+        margin-left:auto !important;
+        margin-right:auto !important;
+      }
+      .lesson-page .lesson-detail{
+        display:grid !important;
+        grid-template-columns:minmax(220px,260px) minmax(0,1fr) !important;
+        align-items:start !important;
+        gap:clamp(22px,3vw,42px) !important;
+        width:100% !important;
+        max-width:none !important;
+      }
+      .lesson-page .lesson-aside{
+        grid-column:1 !important;
+        grid-row:1 !important;
+        position:sticky !important;
+        top:22px !important;
+        width:100% !important;
+        max-width:none !important;
+        align-self:start !important;
+        margin:0 !important;
+      }
+      .lesson-page .lesson-main{
+        grid-column:2 !important;
+        grid-row:1 !important;
+        width:100% !important;
+        max-width:none !important;
+        min-width:0 !important;
+        padding:clamp(24px,3.4vw,48px) !important;
+        border:1px solid rgba(183,160,255,.15) !important;
+        border-radius:22px !important;
+        background:linear-gradient(145deg,rgba(31,29,53,.96),rgba(22,20,39,.96)) !important;
+        box-shadow:0 18px 55px rgba(0,0,0,.16) !important;
+      }
+      .lesson-page .lesson-main > h1{
+        font-size:clamp(34px,4.2vw,52px) !important;
+        line-height:1.08 !important;
+        letter-spacing:-1.5px !important;
+        margin:12px 0 14px !important;
+      }
+      .lesson-page .lesson-main > .lesson-intro{
+        max-width:850px !important;
+        font-size:16px !important;
+        line-height:1.8 !important;
+        color:#c9c1e3 !important;
+        margin-bottom:28px !important;
+      }
+      .lesson-page .definition-card,
+      .lesson-page .analogy-card{
+        max-width:none !important;
+        margin:18px 0 !important;
+      }
+      .lesson-page .lesson-main > h2{
+        margin-top:32px !important;
+      }
+      .lesson-page .deep-dive{
+        width:100% !important;
+        max-width:none !important;
+        margin:42px 0 28px !important;
+      }
+      .lesson-page .deep-dive-hero{
+        padding:clamp(23px,3vw,36px) !important;
+        border-radius:18px !important;
+      }
+      .lesson-page .deep-dive-roadmap{
+        grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+      }
+      .lesson-page .chapter-card{
+        border-radius:13px !important;
+        background:rgba(255,255,255,.025) !important;
+        margin:14px 0 !important;
+      }
+      .lesson-page .chapter-card.open{
+        background:linear-gradient(120deg,rgba(139,110,232,.10),rgba(255,255,255,.025)) !important;
+      }
+      .lesson-page .chapter-toggle{
+        padding:21px 23px !important;
+      }
+      .lesson-page .chapter-body{
+        max-width:1000px !important;
+        padding:4px 28px 28px 75px !important;
+        font-size:14px !important;
+      }
+      .lesson-page .chapter-body > p{
+        font-size:15px !important;
+        line-height:1.95 !important;
+      }
+      .lesson-page .concept-item{
+        min-height:64px !important;
+        font-size:13px !important;
+        padding:13px 14px !important;
+      }
+      .lesson-page .chapter-example,
+      .lesson-page .chapter-task{
+        padding:18px 19px !important;
+      }
+      .lesson-page .chapter-example{
+        font-size:14px !important;
+        line-height:1.8 !important;
+      }
+      .lesson-page .lesson-aside .path-item{
+        width:100% !important;
+      }
+      @media(max-width:900px){
+        main.section-wrap.page-main.lesson-page{
+          width:calc(100% - 32px) !important;
+        }
+        .lesson-page .lesson-detail{
+          grid-template-columns:minmax(0,1fr) !important;
+          gap:18px !important;
+        }
+        .lesson-page .lesson-aside{
+          position:static !important;
+          grid-column:1 !important;
+          grid-row:1 !important;
+        }
+        .lesson-page .lesson-main{
+          grid-column:1 !important;
+          grid-row:2 !important;
+        }
+      }
+      @media(max-width:560px){
+        main.section-wrap.page-main.lesson-page{
+          width:calc(100% - 20px) !important;
+        }
+        .lesson-page .lesson-main{padding:20px 15px !important}
+        .lesson-page .deep-dive-roadmap{grid-template-columns:1fr 1fr !important}
+        .lesson-page .chapter-body{padding:2px 14px 18px !important}
+        .lesson-page .chapter-toggle{padding:14px !important}
+      }
       .deep-dive-hero{position:relative;overflow:hidden;padding:25px 26px 22px;border:1px solid rgba(177,151,255,.25);border-radius:20px;background:radial-gradient(circle at 92% 0%,rgba(180,119,255,.20),transparent 34%),linear-gradient(135deg,#24203d,#19172d 72%);margin-bottom:20px}
       .deep-dive-hero:after{content:"";position:absolute;width:170px;height:170px;border:1px solid rgba(196,174,255,.12);border-radius:50%;right:-62px;bottom:-105px;box-shadow:0 0 0 18px rgba(196,174,255,.035),0 0 0 38px rgba(196,174,255,.025)}
       .deep-dive-kicker{display:flex;align-items:center;gap:8px;color:#c6b2ff;font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase}
