@@ -384,6 +384,7 @@ function LessonDeepDive({lesson}) {
         <div className="chapter-section-label"><BookOpen size={13}/> Key concepts</div>
         <div className="chapter-concepts">{activeModule.bullets.map(item=><div className="concept-item" key={item}><CheckCircle2 size={14}/><span>{item}</span></div>)}</div>
         <div className="chapter-example"><b><Lightbulb size={13}/> WORKED EXAMPLE</b>{activeModule.example}</div>
+        {activeModule.code&&<div className="chapter-code-panel"><div className="chapter-code-heading"><Code2 size={13}/> RUN THIS PYTHON EXAMPLE</div><pre><code>{activeModule.code}</code></pre>{activeModule.output&&<div className="chapter-code-output"><b>EXPECTED OUTPUT</b><pre>{activeModule.output}</pre></div>}</div>}
         <div className="chapter-task">
           <b><Target size={13}/> APPLY WHAT YOU LEARNED</b>
           <p>{activeModule.task}</p>
