@@ -2233,3 +2233,104 @@ body {
  .hero-art .lab-orbit-card{width:132px!important;min-width:132px!important;max-width:132px!important}
  .hero-art .lab-orbit-card small{font-size:5px!important}
 }
+
+
+/* MY PROGRESS — premium learning dashboard refresh */
+.learner-dashboard{max-width:1120px!important;padding-top:26px!important;padding-bottom:90px!important}
+.learner-dashboard .page-intro{max-width:760px!important;margin:28px auto 34px!important;text-align:center!important}
+.learner-dashboard .page-intro h1{font-size:clamp(34px,4.2vw,48px)!important;letter-spacing:-1.7px!important}
+.learner-dashboard .page-intro p{max-width:650px!important;margin:12px auto 0!important;color:#66718b!important;font-size:14px!important;line-height:1.75!important}
+.learner-dashboard .learner-welcome{
+ position:relative!important;overflow:hidden!important;isolation:isolate!important;
+ min-height:142px!important;padding:30px 34px!important;margin:0 0 20px!important;
+ border:1px solid rgba(255,255,255,.24)!important;border-radius:22px!important;
+ background:radial-gradient(circle at 84% 12%,rgba(183,157,255,.32),transparent 30%),linear-gradient(112deg,#29264d 0%,#37305f 52%,#514486 100%)!important;
+ box-shadow:0 18px 45px rgba(58,47,111,.16),inset 0 1px 0 rgba(255,255,255,.2)!important;
+}
+.learner-dashboard .learner-welcome:after{
+ content:"";position:absolute;z-index:-1;width:260px;height:260px;right:13%;top:-155px;
+ border:1px solid rgba(255,255,255,.13);border-radius:50%;
+ box-shadow:0 0 0 22px rgba(255,255,255,.025),0 0 0 48px rgba(255,255,255,.02);
+}
+.learner-dashboard .learner-welcome .eyebrow{color:#c9baff!important;letter-spacing:1.7px!important}
+.learner-dashboard .learner-welcome h2{color:#fff!important;font-size:25px!important;letter-spacing:-.45px!important}
+.learner-dashboard .learner-welcome p{color:rgba(245,243,255,.76)!important;font-size:12px!important;line-height:1.65!important}
+.learner-dashboard .learner-welcome .btn-primary{
+ border:1px solid rgba(255,255,255,.28)!important;border-radius:12px!important;
+ background:linear-gradient(135deg,#9b85f2,#7862d8)!important;color:#fff!important;
+ box-shadow:0 8px 22px rgba(16,12,48,.22)!important;padding:13px 17px!important;
+}
+.learner-dashboard .learner-stats{gap:14px!important;margin:20px 0 48px!important}
+.learner-dashboard .learner-stats article{
+ min-height:132px!important;justify-content:center!important;gap:9px!important;
+ padding:20px 21px!important;border:1px solid #e5e8f2!important;border-radius:17px!important;
+ background:linear-gradient(145deg,#fff,#fafaff)!important;
+ box-shadow:0 8px 24px rgba(42,51,86,.045)!important;
+ transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease!important;
+}
+.learner-dashboard .learner-stats article:hover{transform:translateY(-3px)!important;border-color:#d4cafa!important;box-shadow:0 15px 30px rgba(70,58,130,.09)!important}
+.learner-dashboard .learner-stats svg{width:20px!important;height:20px!important;color:#826bdc!important}
+.learner-dashboard .learner-stats strong{font-size:31px!important;color:#252d48!important;line-height:1!important}
+.learner-dashboard .learner-stats span{font-size:11px!important;color:#77819a!important}
+.learner-dashboard .roadmap-section{margin-bottom:48px!important}
+.learner-dashboard .roadmap-section .section-heading{margin-bottom:20px!important}
+.learner-dashboard .roadmap-section .section-heading h2{font-size:27px!important;letter-spacing:-.8px!important;color:#202943!important}
+.learner-dashboard .roadmap-section .section-heading p{color:#77819a!important;font-size:12px!important}
+.learner-dashboard .roadmap-grid{gap:16px!important}
+.learner-dashboard .roadmap-card{
+ position:relative!important;overflow:hidden!important;min-height:280px!important;
+ padding:23px!important;border:1px solid #e4e7f1!important;border-radius:18px!important;
+ background:linear-gradient(145deg,#fff 0%,#fbfaff 100%)!important;
+ box-shadow:0 9px 25px rgba(37,46,80,.045)!important;
+ transition:transform .24s ease,box-shadow .24s ease,border-color .24s ease!important;
+}
+.learner-dashboard .roadmap-card:before{
+ content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+ background:linear-gradient(180deg,#9b83f0,#c5b4ff);opacity:.8;
+}
+.learner-dashboard .roadmap-card:hover{transform:translateY(-4px)!important;border-color:#d1c5f6!important;box-shadow:0 17px 34px rgba(57,47,111,.09)!important}
+.learner-dashboard .roadmap-card.is-complete{border-color:#bce8d9!important;background:linear-gradient(145deg,#fff,#f6fffb)!important}
+.learner-dashboard .roadmap-card.is-complete:before{background:linear-gradient(180deg,#55c5a1,#9de2ca)}
+.learner-dashboard .roadmap-card.is-planned{opacity:1!important;background:linear-gradient(145deg,#fbfbfe,#f5f6fb)!important}
+.learner-dashboard .roadmap-card-top{color:#7964cf!important;font-size:9px!important;letter-spacing:1.5px!important}
+.learner-dashboard .roadmap-card-top svg{color:#8b79dc!important}
+.learner-dashboard .roadmap-card h3{color:#252d49!important;font-size:20px!important;letter-spacing:-.45px!important;margin:16px 0 8px!important}
+.learner-dashboard .roadmap-card>p{color:#68748d!important;font-size:12px!important;line-height:1.7!important}
+.learner-dashboard .roadmap-skills{gap:7px!important;margin:0 0 16px!important}
+.learner-dashboard .roadmap-skills span{
+ color:#6656ae!important;background:#f1edff!important;border:1px solid #e4dcff!important;
+ border-radius:7px!important;padding:6px 9px!important;font-size:9px!important;font-weight:650!important;
+}
+.learner-dashboard .roadmap-practical{
+ background:linear-gradient(110deg,#f1fbf8,#f6fbff)!important;
+ border:1px solid #dcefe9!important;border-radius:12px!important;
+ color:#465f67!important;padding:13px 14px!important;font-size:11px!important;line-height:1.65!important;
+}
+.learner-dashboard .roadmap-practical b{color:#32977d!important;font-size:8px!important;letter-spacing:1.2px!important}
+.learner-dashboard .roadmap-card-bottom{color:#7a8499!important;font-size:10px!important}
+.learner-dashboard .roadmap-card-bottom button{
+ border:1px solid #e2dbff!important;background:#f0edff!important;color:#6955c4!important;
+ border-radius:9px!important;padding:9px 12px!important;transition:all .2s ease!important;
+}
+.learner-dashboard .roadmap-card-bottom button:hover{background:#7964d5!important;color:#fff!important;box-shadow:0 6px 16px rgba(104,83,193,.2)!important}
+.learner-dashboard .roadmap-coming{color:#9099ab!important}
+.learner-dashboard .learner-panel,.learner-dashboard .learner-data-tools{
+ border:1px solid #e5e8f2!important;border-radius:17px!important;
+ background:linear-gradient(145deg,#fff,#fafaff)!important;
+ box-shadow:0 8px 24px rgba(42,51,86,.045)!important;
+}
+.learner-dashboard .learner-panel h3{color:#252d49!important}
+.learner-dashboard .learner-panel p,.learner-dashboard .learner-data-tools p{color:#748098!important}
+.learner-dashboard .learner-data-tools h3{color:#252d49!important}
+.learner-dashboard .learner-reset{background:#fff5f6!important;color:#b75d70!important;border-color:#f3d6dc!important}
+.learner-dashboard .learner-notice{color:#25866d!important}
+@media(max-width:760px){
+ .learner-dashboard .page-intro{margin-top:20px!important}
+ .learner-dashboard .learner-welcome{padding:23px!important}
+ .learner-dashboard .learner-stats article{min-height:116px!important}
+ .learner-dashboard .roadmap-card{min-height:260px!important;padding:19px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ .learner-dashboard .learner-stats article,.learner-dashboard .roadmap-card,.learner-dashboard .roadmap-card-bottom button{transition:none!important}
+ .learner-dashboard .learner-stats article:hover,.learner-dashboard .roadmap-card:hover{transform:none!important}
+}
