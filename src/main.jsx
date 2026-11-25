@@ -1043,6 +1043,21 @@ const levelCounts = {
     <div className="empty-state">No lessons found. Try another level.</div>}
 </main>}
 
+        {active==="lesson" && <main className="section-wrap page-main lesson-page">
+      <button className="text-link" onClick={()=>go("explore")}>
+        <ArrowLeft size={16}/> Back to all lessons
+      </button>
+
+      <div className="page-intro lesson-intro">
+        <div className="eyebrow">{currentLesson.level || "AI LEARNING"} · COURSE</div>
+        <h1>{currentLesson.title}</h1>
+        <p>{currentLesson.desc}</p>
+      </div>
+
+      {lessonDeepDive[currentLesson.id]
+        ? <LessonDeepDive lesson={currentLesson}/>
+        : <div className="empty-state">Course chapters are being prepared. Please choose another lesson for now.</div>}
+    </main>}
     {active==="visual-lab" && <main className="section-wrap page-main visual-lab-page">
       <div className="page-intro"><div className="eyebrow">VERSION 1.1 · INTERACTIVE EXPERIMENT</div><h1>See how a <span>neural network thinks.</span></h1><p>Change the inputs and connection weights. Watch the weighted sum and prediction update instantly — no maths degree required.</p></div>
       <section className="lab-first-steps" aria-labelledby="lab-guide-title">
