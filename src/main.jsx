@@ -1047,7 +1047,7 @@ const levelCounts = {
           <button className="lab-orbit-card lab-orbit-four" onClick={()=>go("visual-lab")}><span className="lab-orbit-card-inner"><span className="lab-orbit-icon"><BrainCircuit size={16}/></span><span><b>Visual AI Lab</b><small>VISUALISE · DISCOVER</small></span><ArrowUpRight size={13}/></span></button>
           <div className="brain-glow ai-face-glow"><div className="ai-face-shell">
             <div className="android-portrait">
-              <img className="android-face-image" src={`${import.meta.env.BASE_URL}ai-female-android.webp`} alt="Silver female AI android with luminous blue eyes" />
+              <img className="android-face-image" src={`${import.meta.env.BASE_URL}ai-female-android.png`} alt="Silver female AI android with luminous blue eyes" />
               <span className="android-gaze android-gaze-left" />
               <span className="android-gaze android-gaze-right" />
               <span className="face-scan-line"/>
