@@ -1804,3 +1804,58 @@ body {
  .lab-orbit-two{right:-5px}.lab-orbit-four{left:-5px}
 }
 @media(prefers-reduced-motion:reduce){.lab-orbit-track,.lab-orbit-card-inner{animation:none!important}}
+
+
+/* REFINED HERO LAB CONSTELLATION — static orbit positions, gentle independent motion */
+.lab-orbit-track{display:none!important}
+.hero-art .lab-orbit-card{
+ position:absolute!important;z-index:4!important;display:block!important;
+ width:196px!important;min-width:0!important;padding:0!important;overflow:hidden!important;
+ border:1px solid rgba(218,214,242,.95)!important;border-radius:15px!important;
+ background:rgba(255,255,255,.94)!important;color:#29344e!important;text-align:left!important;
+ box-shadow:0 14px 38px rgba(48,48,91,.11),0 2px 7px rgba(48,48,91,.035)!important;
+ backdrop-filter:blur(18px)!important;cursor:pointer!important;
+ transition:box-shadow .25s ease,border-color .25s ease,background .25s ease!important;
+}
+.hero-art .lab-orbit-card-inner{
+ display:flex!important;align-items:center!important;gap:10px!important;
+ padding:11px 12px!important;animation:none!important;rotate:0deg!important;
+}
+.hero-art .lab-orbit-card b{display:block!important;color:#29344e!important;font-size:10px!important;font-weight:800!important;white-space:nowrap!important}
+.hero-art .lab-orbit-card small{display:block!important;margin-top:4px!important;color:#8992a8!important;font-size:7px!important;font-weight:850!important;letter-spacing:.8px!important;white-space:nowrap!important}
+.hero-art .lab-orbit-card-inner>svg{flex-shrink:0!important;margin-left:auto!important;color:#9381dc!important}
+.hero-art .lab-orbit-icon{display:grid!important;place-items:center!important;flex:0 0 31px!important;width:31px!important;height:31px!important;border-radius:10px!important;background:linear-gradient(145deg,#f0edff,#e5e0ff)!important;color:#705bd0!important}
+.hero-art .lab-orbit-one{top:10%!important;right:0!important;left:auto!important;bottom:auto!important;animation:lab-card-drift-a 6.2s ease-in-out infinite!important}
+.hero-art .lab-orbit-two{top:10%!important;left:0!important;right:auto!important;bottom:auto!important;animation:lab-card-drift-b 7s ease-in-out infinite!important}
+.hero-art .lab-orbit-three{bottom:10%!important;left:0!important;right:auto!important;top:auto!important;animation:lab-card-drift-c 6.7s ease-in-out infinite!important}
+.hero-art .lab-orbit-four{bottom:10%!important;right:0!important;left:auto!important;top:auto!important;animation:lab-card-drift-d 7.4s ease-in-out infinite!important}
+.hero-art .lab-orbit-card:hover{
+ z-index:8!important;border-color:#b8a8f1!important;background:#fff!important;
+ box-shadow:0 20px 46px rgba(87,67,160,.19)!important;scale:1.045!important;
+}
+.hero-art .brain-glow{z-index:2!important}
+.hero-art .orbit-one{width:430px!important;height:245px!important}
+.hero-art .orbit-two{width:355px!important;height:355px!important}
+@keyframes lab-card-drift-a{0%,100%{translate:0 0}50%{translate:0 -8px}}
+@keyframes lab-card-drift-b{0%,100%{translate:0 0}50%{translate:0 7px}}
+@keyframes lab-card-drift-c{0%,100%{translate:0 0}50%{translate:0 -7px}}
+@keyframes lab-card-drift-d{0%,100%{translate:0 0}50%{translate:0 8px}}
+@media(max-width:760px){
+ .hero-art .lab-orbit-card{width:174px!important}
+ .hero-art .lab-orbit-card-inner{gap:7px!important;padding:9px!important}
+ .hero-art .lab-orbit-card b{font-size:9px!important}
+ .hero-art .lab-orbit-card small{font-size:6px!important}
+ .hero-art .lab-orbit-one,.hero-art .lab-orbit-two{top:4%!important}
+ .hero-art .lab-orbit-three,.hero-art .lab-orbit-four{bottom:4%!important}
+ .hero-art .orbit-one{width:360px!important;height:220px!important}
+}
+@media(max-width:480px){
+ .hero-art .lab-orbit-card{width:150px!important}
+ .hero-art .lab-orbit-card-inner{gap:6px!important;padding:8px!important}
+ .hero-art .lab-orbit-card b{font-size:8px!important}
+ .hero-art .lab-orbit-card small{font-size:5px!important;letter-spacing:.4px!important}
+ .hero-art .lab-orbit-icon{width:26px!important;height:26px!important;flex-basis:26px!important}
+ .hero-art .lab-orbit-one,.hero-art .lab-orbit-four{right:-2px!important}
+ .hero-art .lab-orbit-two,.hero-art .lab-orbit-three{left:-2px!important}
+}
+@media(prefers-reduced-motion:reduce){.hero-art .lab-orbit-card{animation:none!important;transition:none!important}}
