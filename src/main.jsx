@@ -1046,30 +1046,12 @@ const levelCounts = {
           <button className="lab-orbit-card lab-orbit-three" onClick={()=>go("neural-playground")}><span className="lab-orbit-card-inner"><span className="lab-orbit-icon"><Network size={16}/></span><span><b>Neural Playground</b><small>TRAIN · EXPLORE</small></span><ArrowUpRight size={13}/></span></button>
           <button className="lab-orbit-card lab-orbit-four" onClick={()=>go("visual-lab")}><span className="lab-orbit-card-inner"><span className="lab-orbit-icon"><BrainCircuit size={16}/></span><span><b>Visual AI Lab</b><small>VISUALISE · DISCOVER</small></span><ArrowUpRight size={13}/></span></button>
           <div className="brain-glow ai-face-glow"><div className="ai-face-shell">
-            <svg className="ai-face-svg" viewBox="0 0 320 390" role="img" aria-label="Minimal futuristic AI face with reactive cyan eyes">
-              <defs>
-                <linearGradient id="faceMetal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#52678f"/><stop offset=".32" stopColor="#273958"/><stop offset=".72" stopColor="#172641"/><stop offset="1" stopColor="#101a30"/></linearGradient>
-                <linearGradient id="faceRim" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#c0a7ff"/><stop offset=".45" stopColor="#55eaff"/><stop offset="1" stopColor="#8e7aff"/></linearGradient>
-                <linearGradient id="eyeGlow" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#f1ffff"/><stop offset=".45" stopColor="#6df4ff"/><stop offset="1" stopColor="#28a9db"/></linearGradient>
-                <filter id="eyeBloom"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-                <filter id="faceShadow"><feGaussianBlur stdDeviation="9"/></filter>
-              </defs>
-              <ellipse cx="160" cy="365" rx="88" ry="9" fill="#7464c8" opacity=".16" filter="url(#faceShadow)"/>
-              <path d="M160 15 C82 15 43 69 43 151 L48 260 C52 330 96 372 160 379 C224 372 268 330 272 260 L277 151 C277 69 238 15 160 15Z" fill="url(#faceMetal)" stroke="url(#faceRim)" strokeWidth="2.1"/>
-              <path d="M62 120 Q160 70 258 120 M57 154 Q160 121 263 154" fill="none" stroke="#8ddfff" strokeOpacity=".27" strokeWidth="1.4"/>
-              <path d="M84 75 L111 56 L137 55 M236 75 L209 56 L183 55" fill="none" stroke="#e7b777" strokeOpacity=".85" strokeWidth="2" strokeLinecap="round"/>
-              <path d="M91 177 Q119 153 148 177 Q120 201 91 177Z M172 177 Q201 153 229 177 Q200 201 172 177Z" fill="#0b1a32" stroke="#a5f5ff" strokeWidth="2.1"/>
-              <g className="ai-eye-pupil left-eye"><circle cx="120" cy="177" r="14" fill="url(#eyeGlow)" filter="url(#eyeBloom)"/><circle cx="120" cy="177" r="5" fill="#f6ffff"/><circle cx="115" cy="171" r="2.5" fill="#fff"/></g>
-              <g className="ai-eye-pupil right-eye"><circle cx="200" cy="177" r="14" fill="url(#eyeGlow)" filter="url(#eyeBloom)"/><circle cx="200" cy="177" r="5" fill="#f6ffff"/><circle cx="195" cy="171" r="2.5" fill="#fff"/></g>
-              <path d="M160 180 L145 249 L160 260 L175 249Z" fill="#1c3150" stroke="#70dff0" strokeWidth="1.7"/>
-              <path d="M126 292 Q160 300 194 292" fill="none" stroke="#9bd9ec" strokeOpacity=".55" strokeWidth="1.6" strokeLinecap="round"/>
-              <path d="M132 307 H188" stroke="#7beaff" strokeWidth="2" strokeLinecap="round" opacity=".85"/>
-              <path d="M140 315 H180" stroke="#d7b985" strokeWidth="1.2" strokeLinecap="round" opacity=".7"/>
-              <path d="M70 220 L91 238 L93 258 M250 220 L229 238 L227 258" fill="none" stroke="#5edff0" strokeOpacity=".6" strokeWidth="1.8"/>
-              <path d="M160 32 V68 M160 335 V360" stroke="#9e91ed" strokeOpacity=".7" strokeWidth="1.5"/>
-              <circle cx="160" cy="83" r="4" fill="#e8bd81"/><circle cx="160" cy="350" r="3" fill="#70eaff"/>
-              <path d="M88 345 Q160 374 232 345" fill="none" stroke="#70eaff" strokeOpacity=".35" strokeWidth="1.4"/>
-            </svg>
+            <div className="android-portrait">
+              <img className="android-face-image" src={`${import.meta.env.BASE_URL}ai-female-android.webp`} alt="Silver female AI android with luminous blue eyes" />
+              <span className="android-gaze android-gaze-left" />
+              <span className="android-gaze android-gaze-right" />
+              <span className="face-scan-line"/>
+            </div>
             <span className="face-scan-line"/><span className="face-spark face-spark-a">✦</span><span className="face-spark face-spark-b">✧</span>
           </div></div>
           <div className="orbit-label label-a">LEARN</div><div className="orbit-label label-b">EXPLORE</div>
