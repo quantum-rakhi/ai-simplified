@@ -110,6 +110,7 @@ function LessonDeepDive({lesson}) {
   const [revealed, setRevealed] = useState({});
   const [notes, setNotes] = useState({});
   const [practiceAnswers, setPracticeAnswers] = useState({});
+  const previousActiveIndex = React.useRef(0);
   if (!content) return null;
 
   const progress = Math.round((completed.length / content.modules.length) * 100);
@@ -119,6 +120,13 @@ function LessonDeepDive({lesson}) {
   };
   const activeIndex = Math.max(0, Math.min(expanded, content.modules.length - 1));
   const activeModule = content.modules[activeIndex];
+  useEffect(() => {
+    if (previousActiveIndex.current !== activeIndex) {
+      const chapter = document.getElementById(`lesson-chapter-${lesson.id}-${activeIndex}`);
+      chapter?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    previousActiveIndex.current = activeIndex;
+  }, [activeIndex, lesson.id]);
   const goNext = () => setExpanded(index => Math.min(index + 1, content.modules.length - 1));
   const goPrevious = () => setExpanded(index => Math.max(index - 1, 0));
 
@@ -352,7 +360,7 @@ function LessonDeepDive({lesson}) {
       <div><b>YOUR LEARNING GOAL</b>{content.outcome}</div>
     </div>
 
-    <article id={`lesson-chapter-${lesson.id}-${activeIndex}`} className={`chapter-card lesson-slide open ${completed.includes(activeIndex)?"is-done":""}`} key={activeModule.title} aria-live="polite">
+    <article id={`lesson-chapter-${lesson.id}-${activeIndex}`} className={`chapter-card lesson-slide open ${completed.includes(activeIndex)?"is-done":""}`} key={activeModule.title} aria-live="polite" style={{ scrollMarginTop: "112px" }}>
       <div className="slide-heading">
         <span className="chapter-number">{completed.includes(activeIndex)?<CheckCircle2 size={19}/>:String(activeIndex+1).padStart(2,"0")}</span>
         <span className="chapter-title-wrap"><strong>{activeModule.title}</strong><small>CHAPTER {activeIndex+1} OF {content.modules.length} · CONCEPT EXPLAINER · EXAMPLE · PRACTICE</small></span>
