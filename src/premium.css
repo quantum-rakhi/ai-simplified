@@ -2333,3 +2333,23 @@ body {
  .learner-dashboard .learner-stats article,.learner-dashboard .roadmap-card,.learner-dashboard .roadmap-card-bottom button{transition:none!important}
  .learner-dashboard .learner-stats article:hover,.learner-dashboard .roadmap-card:hover{transform:none!important}
 }
+
+
+/* PRECISE ANDROID IRIS TRACKING — coordinates measured against the supplied square portrait */
+.android-portrait{position:relative!important}
+.android-gaze{
+ position:absolute!important;z-index:3!important;
+ width:1.8%!important;height:1.8%!important;
+ border-radius:50%!important;
+ left:auto!important;top:auto!important;
+ clip-path:circle(48% at 50% 50%)!important;
+ background:radial-gradient(circle at 46% 42%,rgba(255,255,255,.96) 0 13%,rgba(168,246,255,.88) 24%,rgba(63,202,239,.55) 48%,rgba(28,125,181,.12) 72%,transparent 100%)!important;
+ border:1px solid rgba(190,246,255,.38)!important;
+ box-shadow:inset 0 0 3px rgba(130,239,255,.62),0 0 3px rgba(71,205,238,.28)!important;
+ transform:translate(calc(-50% + var(--gaze-x,0px)),calc(-50% + var(--gaze-y,0px)))!important;
+ transition:transform .14s cubic-bezier(.2,.65,.25,1)!important;
+ pointer-events:none!important;
+}
+.android-gaze-left{left:37.5%!important;top:41.7%!important}
+.android-gaze-right{left:63.3%!important;top:41.7%!important}
+@media(prefers-reduced-motion:reduce){.android-gaze{transition:none!important}}
