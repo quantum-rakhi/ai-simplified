@@ -205,19 +205,49 @@ function NeuralNetworkPlayground() {
   const train=samples.slice(0,split), test=samples.slice(split);
   const trainLoss=denseLoss(layers,train,activation);
   const testLoss=denseLoss(layers,test,activation);
-  const trainOne=(count=1)=>{
+  const trainOne=async(count=1)=>{
+    if(running || !train.length) return;
+    setRunning(true);
     let model=layers;
-    for(let i=0;i<count;i++) model=denseTrainEpoch(model,train,activation,learningRate,batchSize);
-    setLayers(model); setEpoch(v=>v+count);
-    setHistory(old=>[...old,{epoch:epoch+count,train:denseLoss(model,train,activation),test:denseLoss(model,test,activation)}].slice(-35));
+    let currentEpoch=epoch;
+    const points=history.length ? [...history] : [{
+      epoch,
+      train:denseLoss(model,train,activation),
+      test:denseLoss(model,test,activation)
+    }];
+    setHistory(points);
+    try {
+      for(let i=0;i<count;i++){
+        model=denseTrainEpoch(model,train,activation,learningRate,batchSize);
+        currentEpoch+=1;
+        points.push({
+          epoch:currentEpoch,
+          train:denseLoss(model,train,activation),
+          test:denseLoss(model,test,activation)
+        });
+        // Publish progress regularly so the counter and chart visibly advance.
+        if(i%2===0 || i===count-1){
+          setLayers(model);
+          setEpoch(currentEpoch);
+          setHistory(points.slice(-80));
+          await new Promise(resolve=>setTimeout(resolve,12));
+        }
+      }
+    } finally {
+      setLayers(model);
+      setEpoch(currentEpoch);
+      setHistory(points.slice(-80));
+      setRunning(false);
+    }
   };
-  const reset=()=>{setLayers(buildDenseNetwork(shape,17+epoch));setEpoch(0);setHistory([]);setRunning(false);};
-  const changeDataset=value=>{setDataset(value);setLayers(buildDenseNetwork(shape,17));setEpoch(0);setHistory([]);};
+  const reset=()=>{if(running)return;setLayers(buildDenseNetwork(shape,17+epoch));setEpoch(0);setHistory([]);};
+  const changeDataset=value=>{if(running)return;setDataset(value);setLayers(buildDenseNetwork(shape,17));setEpoch(0);setHistory([]);};
   const changeShape=(index,value)=>{
+    if(running)return;
     const updated=[...shape];updated[index]=Number(value);setShape(updated);setLayers(buildDenseNetwork(updated,17));setEpoch(0);setHistory([]);
   };
-  const addLayer=()=>{if(shape.length<3){const next=[...shape,3];setShape(next);setLayers(buildDenseNetwork(next,17));setEpoch(0);setHistory([]);}};
-  const removeLayer=()=>{if(shape.length>1){const next=shape.slice(0,-1);setShape(next);setLayers(buildDenseNetwork(next,17));setEpoch(0);setHistory([]);}};
+  const addLayer=()=>{if(!running&&shape.length<3){const next=[...shape,3];setShape(next);setLayers(buildDenseNetwork(next,17));setEpoch(0);setHistory([]);}};
+  const removeLayer=()=>{if(!running&&shape.length>1){const next=shape.slice(0,-1);setShape(next);setLayers(buildDenseNetwork(next,17));setEpoch(0);setHistory([]);}};
   const cells=[];
   const grid=22;
   for(let gy=0;gy<grid;gy++)for(let gx=0;gx<grid;gx++){
@@ -242,15 +272,16 @@ function NeuralNetworkPlayground() {
         <div className="nn-loss-chart"><div className="nn-chart-head"><b>Loss over time</b><span>Lower is better</span></div><svg viewBox="0 0 320 90" role="img" aria-label="Training and test loss chart"><path d="M5 5V78H315" fill="none" stroke="#ffffff30"/>{history.length>1&&<><polyline points={history.map((h,i)=>`${5+i*310/Math.max(1,history.length-1)},${75-h.train/maxLoss*65}`).join(" ")} fill="none" stroke="#ad91ff" strokeWidth="2.5"/><polyline points={history.map((h,i)=>`${5+i*310/Math.max(1,history.length-1)},${75-h.test/maxLoss*65}`).join(" ")} fill="none" stroke="#77d9c6" strokeWidth="2.5"/></>}</svg><div className="nn-chart-legend"><span>Training</span><span>Testing</span></div></div>
       </section>
       <aside className="nn-controls-card">
-        <div className="nn-card-heading"><div><span className="eyebrow">EXPERIMENT CONTROLS</span><h2>Shape your experiment</h2></div><button className="reset-button" onClick={reset}><RotateCcw size={13}/> Reset</button></div>
-        <label className="nn-control"><span>Dataset</span><select value={dataset} onChange={e=>changeDataset(e.target.value)}>{playgroundDatasets.map(d=><option key={d.id} value={d.id}>{d.name}</option>)}</select><small>{playgroundDatasets.find(d=>d.id===dataset).desc}</small></label>
-        <label className="nn-control"><span>Activation function</span><select value={activation} onChange={e=>setActivation(e.target.value)}>{activationNames.map(a=><option key={a} value={a}>{a}</option>)}</select><small>How hidden neurons transform their signals.</small></label>
-        <label className="nn-control"><span>Learning rate <output>{learningRate.toFixed(3)}</output></span><input type="range" min=".005" max=".15" step=".005" value={learningRate} onChange={e=>setLearningRate(Number(e.target.value))}/><small>Step size used when updating weights.</small></label>
-        <label className="nn-control"><span>Batch size <output>{batchSize}</output></span><input type="range" min="5" max="40" step="5" value={batchSize} onChange={e=>setBatchSize(Number(e.target.value))}/><small>Examples processed before each weight update.</small></label>
-        <label className="nn-control"><span>Data noise <output>{noise.toFixed(2)}</output></span><input type="range" min="0" max=".8" step=".05" value={noise} onChange={e=>setNoise(Number(e.target.value))}/><small>Adds variation to the example positions.</small></label>
-        <label className="nn-control"><span>Training data <output>{trainPercent}%</output></span><input type="range" min="50" max="90" step="5" value={trainPercent} onChange={e=>setTrainPercent(Number(e.target.value))}/><small>Remaining examples are held back for testing.</small></label>
-        <div className="nn-architecture"><div className="nn-architecture-head"><b>Hidden layers</b><span>{shape.join(" · ")}</span></div>{shape.map((count,index)=><label key={index} className="nn-layer-control"><span>Layer {index+1}</span><select value={count} onChange={e=>changeShape(index,e.target.value)}>{[2,3,4,5,6,8].map(n=><option key={n} value={n}>{n} neurons</option>)}</select></label>)}<div className="nn-layer-actions"><button onClick={addLayer} disabled={shape.length>=3}>+ Add layer</button><button onClick={removeLayer} disabled={shape.length<=1}>Remove layer</button></div></div>
-        <div className="nn-train-actions"><button className="btn-primary" onClick={()=>trainOne(1)}><Play size={14}/> Train 1 epoch</button><button className="btn-ghost" onClick={()=>trainOne(10)}>Train 10</button><button className="btn-ghost" onClick={()=>trainOne(100)}><Zap size={14}/> Train 100</button></div>
+        <div className="nn-card-heading"><div><span className="eyebrow">EXPERIMENT CONTROLS</span><h2>Shape your experiment</h2></div><button className="reset-button" onClick={reset} disabled={running}><RotateCcw size={13}/> Reset</button></div>
+        <label className="nn-control"><span>Dataset</span><select value={dataset} disabled={running} onChange={e=>changeDataset(e.target.value)}>{playgroundDatasets.map(d=><option key={d.id} value={d.id}>{d.name}</option>)}</select><small>{playgroundDatasets.find(d=>d.id===dataset).desc}</small></label>
+        <label className="nn-control"><span>Activation function</span><select value={activation} disabled={running} onChange={e=>setActivation(e.target.value)}>{activationNames.map(a=><option key={a} value={a}>{a}</option>)}</select><small>How hidden neurons transform their signals.</small></label>
+        <label className="nn-control"><span>Learning rate <output>{learningRate.toFixed(3)}</output></span><input type="range" min=".005" max=".15" step=".005" value={learningRate} disabled={running} onChange={e=>setLearningRate(Number(e.target.value))}/><small>Step size used when updating weights.</small></label>
+        <label className="nn-control"><span>Batch size <output>{batchSize}</output></span><input type="range" min="5" max="40" step="5" value={batchSize} disabled={running} onChange={e=>setBatchSize(Number(e.target.value))}/><small>Examples processed before each weight update.</small></label>
+        <label className="nn-control"><span>Data noise <output>{noise.toFixed(2)}</output></span><input type="range" min="0" max=".8" step=".05" value={noise} disabled={running} onChange={e=>setNoise(Number(e.target.value))}/><small>Adds variation to the example positions.</small></label>
+        <label className="nn-control"><span>Training data <output>{trainPercent}%</output></span><input type="range" min="50" max="90" step="5" value={trainPercent} disabled={running} onChange={e=>setTrainPercent(Number(e.target.value))}/><small>Remaining examples are held back for testing.</small></label>
+        <div className="nn-architecture"><div className="nn-architecture-head"><b>Hidden layers</b><span>{shape.join(" · ")}</span></div>{shape.map((count,index)=><label key={index} className="nn-layer-control"><span>Layer {index+1}</span><select value={count} disabled={running} onChange={e=>changeShape(index,e.target.value)}>{[2,3,4,5,6,8].map(n=><option key={n} value={n}>{n} neurons</option>)}</select></label>)}<div className="nn-layer-actions"><button onClick={addLayer} disabled={shape.length>=3}>+ Add layer</button><button onClick={removeLayer} disabled={shape.length<=1}>Remove layer</button></div></div>
+        <div className="nn-train-actions"><button className="btn-primary" onClick={()=>trainOne(1)} disabled={running}><Play size={14}/> Train 1 epoch</button><button className="btn-ghost" onClick={()=>trainOne(10)} disabled={running}>Train 10</button><button className="btn-ghost" onClick={()=>trainOne(100)} disabled={running}><Zap size={14}/> Train 100</button></div>
+        <p className="nn-training-status" aria-live="polite">{running ? `Training in progress · epoch ${epoch}` : `Ready · ${epoch} epoch${epoch===1?"":"s"} completed`}</p>
         <p className="nn-local-note"><ShieldCheck size={14}/> Runs locally in your browser. No API key or account needed.</p>
       </aside>
     </div>
