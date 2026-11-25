@@ -1701,3 +1701,52 @@ body {
  .hero-art .float-top{right:0!important}
  .hero-art .float-bottom{left:0!important}
 }
+
+
+/* FUTURISTIC POINTER-RESPONSIVE HERO */
+.hero-art{--pointer-x:50%;--pointer-y:50%;--parallax-x:0px;--parallax-y:0px;--parallax-inverse-x:0px;--parallax-inverse-y:0px;cursor:crosshair}
+.hero-art:before{
+ background:radial-gradient(ellipse at var(--pointer-x) var(--pointer-y),rgba(149,123,255,.22) 0%,rgba(119,100,205,.09) 28%,transparent 66%),radial-gradient(circle,rgba(137,112,226,.10),transparent 72%)!important;
+ transition:background .12s linear!important;
+}
+.hero-art:after{
+ left:var(--pointer-x)!important;top:var(--pointer-y)!important;
+ transform:translate(-50%,-50%)!important;
+ width:5px!important;height:5px!important;
+ box-shadow:0 0 16px 5px rgba(165,139,255,.62),0 0 34px 12px rgba(165,139,255,.18)!important;
+ opacity:.7!important;pointer-events:none!important;
+ transition:left .16s ease-out,top .16s ease-out!important;
+}
+.hero-art .brain-glow{
+ translate:var(--parallax-x) var(--parallax-y);
+ transition:translate .18s ease-out;
+}
+.hero-art .brain-core{
+ rotate:calc(var(--pointer-x) * .015 - .75deg) calc(var(--pointer-y) * -.015 + .75deg) 1 1deg;
+ transition:rotate .2s ease-out;
+}
+.hero-art .orbit-one{
+ translate:var(--parallax-inverse-x) var(--parallax-inverse-y);
+ transition:translate .2s ease-out;
+}
+.hero-art .orbit-two{
+ translate:var(--parallax-x) var(--parallax-inverse-y);
+ transition:translate .22s ease-out;
+}
+.hero-art .float-top{
+ translate:var(--parallax-inverse-x) var(--parallax-inverse-y);
+}
+.hero-art .float-bottom{
+ translate:var(--parallax-x) var(--parallax-y);
+}
+.hero-art .float-card{will-change:translate}
+.hero-art .orbit-label{transition:translate .2s ease-out}
+.hero-art .label-a{translate:var(--parallax-inverse-x) var(--parallax-inverse-y)}
+.hero-art .label-b{translate:var(--parallax-x) var(--parallax-y)}
+@media(hover:none),(pointer:coarse){
+ .hero-art{cursor:default}
+ .hero-art .brain-glow,.hero-art .orbit-one,.hero-art .orbit-two,.hero-art .float-top,.hero-art .float-bottom,.hero-art .label-a,.hero-art .label-b{translate:0 0!important}
+}
+@media(prefers-reduced-motion:reduce){
+ .hero-art:before,.hero-art:after,.hero-art .brain-glow,.hero-art .brain-core,.hero-art .orbit-one,.hero-art .orbit-two,.hero-art .float-top,.hero-art .float-bottom{transition:none!important}
+}
