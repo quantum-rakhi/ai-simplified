@@ -302,7 +302,15 @@ function NeuralNetworkPlayground() {
     const value=denseForward(layers,[x,y],activation).output;
     cells.push({x:gx*100/grid,y:gy*100/grid,value});
   }
-  const svgPoints=samples.map(sample=>({x:(sample.x+1)*50,y:(1-sample.y)*50,label:sample.label,isTest:sample.id>=split}));
+const testIds = new Set(test.map(sample => sample.id));
+
+const svgPoints = samples.map(sample => ({
+  x: (sample.x + 1) * 50,
+  y: (1 - sample.y) * 50,
+  label: sample.label,
+  isTest: testIds.has(sample.id)
+}));
+
   const historyLosses=history.flatMap(h=>[h.train,h.test]);
   const minHistoryLoss=historyLosses.length?Math.min(...historyLosses):0;
   const maxHistoryLoss=historyLosses.length?Math.max(...historyLosses):1;
