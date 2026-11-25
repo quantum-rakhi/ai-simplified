@@ -420,3 +420,76 @@ body {
   .nav-menu > summary { color: #536078; }
 }
 
+/* READABILITY AND CONTRAST FIX */
+.float-card {
+  background: #ffffff !important;
+  color: #26324b !important;
+  border: 1px solid #e1e5ef !important;
+  box-shadow: 0 12px 35px rgba(38, 50, 75, .12) !important;
+}
+
+.float-card b {
+  color: #26324b !important;
+}
+
+.float-card small {
+  color: #64718a !important;
+}
+
+.float-card .tiny-live {
+  color: #16845d !important;
+}
+
+.float-card .float-arrow {
+  color: #7258d8 !important;
+}
+
+.float-card .mini-icon {
+  background: #eeeaff !important;
+  color: #7258d8 !important;
+}
+
+.eyebrow,
+.card-tag {
+  color: #6953c7 !important;
+}
+
+.hero-lede,
+.page-intro p,
+.lesson-card p,
+.section-heading p,
+.footer-inner > p {
+  color: #56647d !important;
+}
+
+.hero-proof {
+  color: #56647d !important;
+}
+
+.hero-proof b {
+  color: #26324b !important;
+}
+
+.card-number,
+.card-bottom {
+  color: #64718a !important;
+}
+
+.search-box span {
+  color: #64718a !important;
+}
+
+.btn-ghost {
+  background: #ffffff !important;
+  color: #4c4384 !important;
+  border: 1px solid #d9d3f4 !important;
+}
+
+.btn-ghost:hover {
+  background: #f0edff !important;
+}
+
+.empty-state {
+  color: #56647d !important;
+}
+
