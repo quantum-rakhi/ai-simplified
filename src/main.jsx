@@ -129,14 +129,42 @@ function makeSamples(dataset,noise=0) {
   }
   return samples;
 }
-function buildDenseNetwork(shape=[4,2],seed=17) {
+function buildDenseNetwork(shape=[4,2],seed=17,activation="tanh") {
+  // Deterministic Xavier/He-style initialization keeps signal magnitudes
+  // better behaved as the network gets wider or deeper.
   const sizes=[2,...shape,1];
   let n=seed;
   const rand=()=>{n=(n*9301+49297)%233280;return n/233280-.5;};
-  return sizes.slice(1).map((size,layer)=>Array.from({length:size},()=>({
-    weights:Array.from({length:sizes[layer]},()=>rand()*1.4),
-    bias:rand()*.3
-  })));
+  return sizes.slice(1).map((size,layer)=>{
+    const fanIn=sizes[layer];
+    const fanOut=size;
+    const useHe=activation==="relu" && layer<sizes.length-2;
+    const limit=useHe ? Math.sqrt(6/fanIn) : Math.sqrt(6/(fanIn+fanOut));
+    return Array.from({length:size},()=>({
+      weights:Array.from({length:fanIn},()=>rand()*2*limit),
+      bias:0
+    }));
+  });
+}
+function splitSamplesStratified(samples,trainPercent) {
+  // Split each class independently so train and test retain similar class
+  // balance. The hash makes the split deterministic and reproducible.
+  const groups=[0,1].map(label=>samples.filter(sample=>sample.label===label));
+  const train=[],test=[];
+  groups.forEach((group,label)=>{
+    const ordered=[...group].sort((a,b)=>{
+      const hashA=((a.id+1)*2654435761+(label+1)*2246822519)>>>0;
+      const hashB=((b.id+1)*2654435761+(label+1)*2246822519)>>>0;
+      return hashA-hashB;
+    });
+    const requested=Math.round(ordered.length*trainPercent/100);
+    const split=Math.max(ordered.length>1?1:0,Math.min(ordered.length-1,requested));
+    train.push(...ordered.slice(0,split));
+    test.push(...ordered.slice(split));
+  });
+  train.sort((a,b)=>a.id-b.id);
+  test.sort((a,b)=>a.id-b.id);
+  return {train,test};
 }
 function denseForward(layers,input,activation) {
   const activations=[input], zs=[];
@@ -150,7 +178,12 @@ function denseForward(layers,input,activation) {
 }
 function denseTrainEpoch(layers,samples,activation,learningRate,batchSize=10) {
   const next=layers.map(layer=>layer.map(neuron=>({weights:[...neuron.weights],bias:neuron.bias})));
-  const shuffled=[...samples].sort((a,b)=>((a.id*17+3)%97)-((b.id*17+3)%97));
+  // Deterministic pseudo-shuffle avoids feeding batches in dataset order.
+  const shuffled=[...samples].sort((a,b)=>{
+    const hashA=((a.id+1)*2246822519)>>>0;
+    const hashB=((b.id+1)*2246822519)>>>0;
+    return hashA-hashB;
+  });
   for(let start=0;start<shuffled.length;start+=batchSize){
     const batch=shuffled.slice(start,start+batchSize);
     const weightGrads=next.map(layer=>layer.map(neuron=>neuron.weights.map(()=>0)));
@@ -187,6 +220,14 @@ function denseLoss(layers,samples,activation) {
     return sum-(sample.label*Math.log(p)+(1-sample.label)*Math.log(1-p));
   },0)/samples.length;
 }
+function denseAccuracy(layers,samples,activation) {
+  if(!samples.length)return 0;
+  const correct=samples.reduce((count,sample)=>{
+    const prediction=denseForward(layers,[sample.x,sample.y],activation).output>=.5?1:0;
+    return count+(prediction===sample.label?1:0);
+  },0);
+  return correct/samples.length;
+}
 
 function NeuralNetworkPlayground() {
   const [dataset,setDataset]=useState("circle");
@@ -196,15 +237,17 @@ function NeuralNetworkPlayground() {
   const [trainPercent,setTrainPercent]=useState(50);
   const [batchSize,setBatchSize]=useState(10);
   const [shape,setShape]=useState([4,2]);
-  const [layers,setLayers]=useState(()=>buildDenseNetwork([4,2]));
+  const [layers,setLayers]=useState(()=>buildDenseNetwork([4,2],17,"tanh"));
   const [epoch,setEpoch]=useState(0);
   const [history,setHistory]=useState([]);
   const [running,setRunning]=useState(false);
   const samples=useMemo(()=>makeSamples(dataset,noise),[dataset,noise]);
-  const split=Math.round(samples.length*trainPercent/100);
-  const train=samples.slice(0,split), test=samples.slice(split);
+  const {train,test}=useMemo(()=>splitSamplesStratified(samples,trainPercent),[samples,trainPercent]);
   const trainLoss=denseLoss(layers,train,activation);
   const testLoss=denseLoss(layers,test,activation);
+  const trainAccuracy=denseAccuracy(layers,train,activation);
+  const testAccuracy=denseAccuracy(layers,test,activation);
+  const generalizationGap=testLoss-trainLoss;
   const trainOne=async(count=1)=>{
     if(running || !train.length) return;
     setRunning(true);
@@ -240,14 +283,18 @@ function NeuralNetworkPlayground() {
       setRunning(false);
     }
   };
-  const reset=()=>{if(running)return;setLayers(buildDenseNetwork(shape,17+epoch));setEpoch(0);setHistory([]);};
-  const changeDataset=value=>{if(running)return;setDataset(value);setLayers(buildDenseNetwork(shape,17));setEpoch(0);setHistory([]);};
+  const reset=()=>{if(running)return;setLayers(buildDenseNetwork(shape,17+epoch,activation));setEpoch(0);setHistory([]);};
+  const resetForExperimentChange=()=>{setLayers(buildDenseNetwork(shape,17,activation));setEpoch(0);setHistory([]);};
+  const changeDataset=value=>{if(running)return;setDataset(value);setLayers(buildDenseNetwork(shape,17,activation));setEpoch(0);setHistory([]);};
+  const changeActivation=value=>{if(running)return;setActivation(value);setLayers(buildDenseNetwork(shape,17,value));setEpoch(0);setHistory([]);};
+  const changeNoise=value=>{if(running)return;setNoise(value);resetForExperimentChange();};
+  const changeTrainPercent=value=>{if(running)return;setTrainPercent(value);resetForExperimentChange();};
   const changeShape=(index,value)=>{
     if(running)return;
-    const updated=[...shape];updated[index]=Number(value);setShape(updated);setLayers(buildDenseNetwork(updated,17));setEpoch(0);setHistory([]);
+    const updated=[...shape];updated[index]=Number(value);setShape(updated);setLayers(buildDenseNetwork(updated,17,activation));setEpoch(0);setHistory([]);
   };
-  const addLayer=()=>{if(!running&&shape.length<3){const next=[...shape,3];setShape(next);setLayers(buildDenseNetwork(next,17));setEpoch(0);setHistory([]);}};
-  const removeLayer=()=>{if(!running&&shape.length>1){const next=shape.slice(0,-1);setShape(next);setLayers(buildDenseNetwork(next,17));setEpoch(0);setHistory([]);}};
+  const addLayer=()=>{if(!running&&shape.length<3){const next=[...shape,3];setShape(next);setLayers(buildDenseNetwork(next,17,activation));setEpoch(0);setHistory([]);}};
+  const removeLayer=()=>{if(!running&&shape.length>1){const next=shape.slice(0,-1);setShape(next);setLayers(buildDenseNetwork(next,17,activation));setEpoch(0);setHistory([]);}};
   const cells=[];
   const grid=22;
   for(let gy=0;gy<grid;gy++)for(let gx=0;gx<grid;gx++){
@@ -262,8 +309,9 @@ function NeuralNetworkPlayground() {
   const historyRange=Math.max(.02,maxHistoryLoss-minHistoryLoss);
   const chartY=loss=>75-((loss-minHistoryLoss)/historyRange)*62;
   return <main className="section-wrap page-main nn-playground-page">
-    <div className="page-intro"><div className="eyebrow">VERSION 1.3 · INTERACTIVE MACHINE LEARNING</div><h1>Build it. Train it. <span>See it learn.</span></h1><p>Experiment with a real browser-based neural network. Change the data, architecture and training settings — then watch the decision boundary adapt.</p></div>
+    <div className="page-intro"><div className="eyebrow">VERSION 1.3.3 · INTERACTIVE MACHINE LEARNING</div><h1>Build it. Train it. <span>See it learn.</span></h1><p>Experiment with a real browser-based neural network. Change the data, architecture and training settings — then watch the decision boundary adapt.</p></div>
     <div className="nn-welcome"><Lightbulb size={19}/><p><b>First time here?</b> The coloured dots are examples. The network learns a boundary that separates the two groups. Start with Circle, keep the default settings and press <b>Train 100</b>.</p></div>
+    <style>{`.nn-metrics-strip{display:flex;flex-wrap:wrap;gap:10px 18px;padding:11px 13px;margin:10px 0 2px;border:1px solid rgba(173,145,255,.16);border-radius:10px;background:rgba(255,255,255,.025);font-size:11px;color:#aaa4c7}.nn-metrics-strip span{display:flex;gap:6px;align-items:center}.nn-metrics-strip b{color:#e7ddff;font-variant-numeric:tabular-nums}`}</style>
     <div className="nn-workspace">
       <section className="nn-visual-card">
         <div className="nn-card-heading"><div><span className="eyebrow">LIVE DECISION BOUNDARY</span><h2>{playgroundDatasets.find(d=>d.id===dataset).name} classification</h2></div><span className="nn-live-dot">● LIVE MODEL</span></div>
@@ -273,16 +321,17 @@ function NeuralNetworkPlayground() {
         </svg>
         <div className="nn-legend"><span><i className="nn-dot-a"/> Class 0</span><span><i className="nn-dot-b"/> Class 1</span><span><i className="nn-dot-test"/> Test examples</span></div>
         <div className="nn-loss-cards"><div><span>TRAIN LOSS</span><b>{trainLoss.toFixed(3)}</b></div><div><span>TEST LOSS</span><b>{testLoss.toFixed(3)}</b></div><div><span>EPOCH</span><b>{epoch}</b></div></div>
+        <div className="nn-metrics-strip"><span>Train accuracy <b>{(trainAccuracy*100).toFixed(1)}%</b></span><span>Test accuracy <b>{(testAccuracy*100).toFixed(1)}%</b></span><span>Generalization gap <b>{generalizationGap>=0?"+":""}{generalizationGap.toFixed(3)}</b></span></div>
         <div className="nn-loss-chart"><div className="nn-chart-head"><b>Loss over time</b><span>Lower is better</span></div><svg viewBox="0 0 320 90" role="img" aria-label="Training and test loss chart"><path d="M5 5V78H315" fill="none" stroke="#ffffff30"/>{history.length>1&&<><polyline points={history.map((h,i)=>`${5+i*310/Math.max(1,history.length-1)},${chartY(h.train)}`).join(" ")} fill="none" stroke="#ad91ff" strokeWidth="2.5"/><polyline points={history.map((h,i)=>`${5+i*310/Math.max(1,history.length-1)},${chartY(h.test)}`).join(" ")} fill="none" stroke="#77d9c6" strokeWidth="2.5"/></>}</svg><div className="nn-chart-legend"><span>Training</span><span>Testing</span></div></div>
       </section>
       <aside className="nn-controls-card">
         <div className="nn-card-heading"><div><span className="eyebrow">EXPERIMENT CONTROLS</span><h2>Shape your experiment</h2></div><button className="reset-button" onClick={reset} disabled={running}><RotateCcw size={13}/> Reset</button></div>
         <label className="nn-control"><span>Dataset</span><select value={dataset} disabled={running} onChange={e=>changeDataset(e.target.value)}>{playgroundDatasets.map(d=><option key={d.id} value={d.id}>{d.name}</option>)}</select><small>{playgroundDatasets.find(d=>d.id===dataset).desc}</small></label>
-        <label className="nn-control"><span>Activation function</span><select value={activation} disabled={running} onChange={e=>setActivation(e.target.value)}>{activationNames.map(a=><option key={a} value={a}>{a}</option>)}</select><small>How hidden neurons transform their signals.</small></label>
+        <label className="nn-control"><span>Activation function</span><select value={activation} disabled={running} onChange={e=>changeActivation(e.target.value)}>{activationNames.map(a=><option key={a} value={a}>{a}</option>)}</select><small>How hidden neurons transform their signals.</small></label>
         <label className="nn-control"><span>Learning rate <output>{learningRate.toFixed(3)}</output></span><input type="range" min=".01" max="1" step=".01" value={learningRate} disabled={running} onChange={e=>setLearningRate(Number(e.target.value))}/><small>Step size used when updating weights.</small></label>
         <label className="nn-control"><span>Batch size <output>{batchSize}</output></span><input type="range" min="5" max="40" step="5" value={batchSize} disabled={running} onChange={e=>setBatchSize(Number(e.target.value))}/><small>Examples processed before each weight update.</small></label>
-        <label className="nn-control"><span>Data noise <output>{noise.toFixed(2)}</output></span><input type="range" min="0" max=".8" step=".05" value={noise} disabled={running} onChange={e=>setNoise(Number(e.target.value))}/><small>Adds variation to the example positions.</small></label>
-        <label className="nn-control"><span>Training data <output>{trainPercent}%</output></span><input type="range" min="50" max="90" step="5" value={trainPercent} disabled={running} onChange={e=>setTrainPercent(Number(e.target.value))}/><small>Remaining examples are held back for testing.</small></label>
+        <label className="nn-control"><span>Data noise <output>{noise.toFixed(2)}</output></span><input type="range" min="0" max=".8" step=".05" value={noise} disabled={running} onChange={e=>changeNoise(Number(e.target.value))}/><small>Adds variation to the example positions.</small></label>
+        <label className="nn-control"><span>Training data <output>{trainPercent}%</output></span><input type="range" min="50" max="90" step="5" value={trainPercent} disabled={running} onChange={e=>changeTrainPercent(Number(e.target.value))}/><small>A stratified, reproducible sample is held back for testing.</small></label>
         <div className="nn-architecture"><div className="nn-architecture-head"><b>Hidden layers</b><span>{shape.join(" · ")}</span></div>{shape.map((count,index)=><label key={index} className="nn-layer-control"><span>Layer {index+1}</span><select value={count} disabled={running} onChange={e=>changeShape(index,e.target.value)}>{[2,3,4,5,6,8].map(n=><option key={n} value={n}>{n} neurons</option>)}</select></label>)}<div className="nn-layer-actions"><button onClick={addLayer} disabled={shape.length>=3}>+ Add layer</button><button onClick={removeLayer} disabled={shape.length<=1}>Remove layer</button></div></div>
         <div className="nn-train-actions"><button className="btn-primary" onClick={()=>trainOne(1)} disabled={running}><Play size={14}/> Train 1 epoch</button><button className="btn-ghost" onClick={()=>trainOne(10)} disabled={running}>Train 10</button><button className="btn-ghost" onClick={()=>trainOne(100)} disabled={running}><Zap size={14}/> Train 100</button></div>
         <p className="nn-training-status" aria-live="polite">{running ? `Training in progress · epoch ${epoch}` : `Ready · ${epoch} epoch${epoch===1?"":"s"} completed`}</p>
@@ -290,7 +339,7 @@ function NeuralNetworkPlayground() {
       </aside>
     </div>
     <section className="nn-explain-grid"><article><span>01 · DATASET</span><h3>Examples to learn from</h3><p>Each dot has two input features (X and Y) and a known class. The network sees training examples and tries to learn their pattern.</p></article><article><span>02 · NETWORK</span><h3>Layers find patterns</h3><p>Hidden layers combine signals into useful intermediate features. More neurons can represent more complex boundaries, but are not always better.</p></article><article><span>03 · TRAINING</span><h3>Improve through feedback</h3><p>Backpropagation calculates how weights contributed to an error. Gradient descent nudges those weights to reduce the loss.</p></article></section>
-    <div className="nn-reference-note">Educational simulator: a compact fully connected neural network using sigmoid output, selectable hidden activations and mini-batch gradient descent. It is intended for learning, not production modelling.</div>
+    <div className="nn-reference-note">Educational simulator: a compact fully connected neural network using sigmoid output, selectable hidden activations, stratified reproducible train/test splits, fan-in-aware initialization and mini-batch gradient descent. Accuracy and loss are illustrative evaluation metrics, not production model guarantees.</div>
   </main>;
 }
 
@@ -668,7 +717,7 @@ function App() {
         </div>
     </main>}
 
-    <footer className="footer"><div className="footer-inner"><button className="brand footer-brand" onClick={()=>go("home")}><span className="brand-mark"><BrainCircuit size={21}/></span><span>AI <b>SIMPLIFIED</b><small>MAKE AI MAKE SENSE</small></span></button><p>Making artificial intelligence practical and understandable for students, professionals, creators and developers.</p><div className="footer-bottom"><span>© 2026 AI Simplified · An open learning project</span><span>Built with curiosity <span className="heart">♥</span> by <a href="https://github.com/quantum-rakhi" target="_blank" rel="noreferrer">Rakhi Thakur</a></span></div></div></footer>
+    <footer className="footer"><div className="footer-inner"><button className="brand footer-brand" onClick={()=>go("home")}><span className="brand-mark"><BrainCircuit size={21}/></span><span>AI <b>SIMPLIFIED</b><small>MAKE AI MAKE SENSE</small></span></button><p>Making artificial intelligence practical and understandable for students, professionals, creators and developers.</p><div className="footer-bottom"><span>© 2026 AI Simplified v1.3.3 · An open learning project</span><span>Built with curiosity <span className="heart">♥</span> by <a href="https://github.com/quantum-rakhi" target="_blank" rel="noreferrer">Rakhi Thakur</a></span></div></div></footer>
   </div>;
 }
 
