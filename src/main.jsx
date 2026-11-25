@@ -13,6 +13,7 @@ import "./explore-levels.css";
 import { advancedLessons, advancedLessonDeepDive, advancedChapterPractice } from "./advancedLessons";
 import { phase2Lessons, phase2LessonDeepDive, phase2ChapterPractice } from "./phase2Lessons";
 import { expansionLessons, expansionDeepDive, expansionChapterPractice } from "./expansionLessons";
+import { coreCourseDeepDive, coreCourseChapterPractice } from "./coreCourseExpansion";
 import { recordChapterCompletion, recordQuizResult, recordAssessmentResult, getProgressSnapshot, subscribeToProgress, exportProgress, importProgress, resetProgress } from "./services/progressStorage";
 
 const lessons = [
@@ -98,6 +99,8 @@ Object.assign(chapterPractice, phase2ChapterPractice);
 lessons.push(...expansionLessons);
 Object.assign(lessonDeepDive, expansionDeepDive);
 Object.assign(chapterPractice, expansionChapterPractice);
+Object.assign(lessonDeepDive, coreCourseDeepDive);
+Object.assign(chapterPractice, coreCourseChapterPractice);
 
 
 function LessonDeepDive({lesson}) {
