@@ -1028,7 +1028,7 @@ const levelCounts = {
     ].map(item => (
       <button key={item.level}
         className={`level-card level-${item.level.toLowerCase()} ${levelFilter===item.level?"selected":""}`}
-        onClick={()=>setLevelFilter(item.level)}>
+        onClick={()=>{setLevelFilter(item.level); document.getElementById("course-catalogue")?.scrollIntoView({behavior:"smooth",block:"start"});}}>
         <span className="level-index">{item.num}</span>
         <span className="level-kicker">{item.kicker}</span>
         <strong>{item.level}</strong>
@@ -1038,7 +1038,7 @@ const levelCounts = {
     ))}
   </div>
 
-  <div className="catalogue-heading">
+  <div className="catalogue-heading" id="course-catalogue">
     <div>
       <div className="eyebrow">COURSE CATALOGUE</div>
       <h2>{levelFilter==="All"?"All learning content":levelFilter+" learning path"}</h2>
@@ -1051,7 +1051,7 @@ const levelCounts = {
       {["All","Beginner","Intermediate","Advanced"].map(level => (
         <button key={level}
           className={levelFilter===level?"level-filter active":"level-filter"}
-          onClick={()=>setLevelFilter(level)}>
+          onClick={()=>{setLevelFilter(level); document.getElementById("course-catalogue")?.scrollIntoView({behavior:"smooth",block:"start"});}}>
           {level}<span>{levelCounts[level]}</span>
         </button>
       ))}
