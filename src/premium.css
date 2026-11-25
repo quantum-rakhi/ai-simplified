@@ -2445,3 +2445,53 @@ body {
 .chapter-code-output{padding:14px 20px 18px;background:#f7f8fd;color:#35415e;border-top:1px solid #dfe3f2}
 .chapter-code-output>b{font-size:10px;letter-spacing:.12em;color:#6c63c9}
 .chapter-code-output pre{margin:9px 0 0;white-space:pre-wrap;font:12px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace}
+
+
+/* Lesson code blocks: high-contrast, comfortable reading */
+.chapter-code-panel{
+  overflow:hidden;
+  border:1px solid #343b58;
+  border-radius:16px;
+  background:#171b2d;
+  box-shadow:0 14px 34px rgba(30,35,68,.12);
+}
+.chapter-code-panel .chapter-code-heading{
+  background:#292443 !important;
+  color:#e5ddff !important;
+  padding:15px 20px;
+  font-size:11px;
+  letter-spacing:.1em;
+}
+.chapter-code-panel > pre{
+  margin:0;
+  padding:22px 24px;
+  overflow-x:auto;
+  background:#171b2d !important;
+  color:#f4f6ff !important;
+  font-size:14px;
+  line-height:1.9;
+  tab-size:4;
+}
+.chapter-code-panel > pre code,
+.chapter-code-panel pre code{
+  display:block;
+  color:#f4f6ff !important;
+  background:transparent !important;
+  font:500 14px/1.9 ui-monospace,SFMono-Regular,Consolas,monospace !important;
+  opacity:1 !important;
+  text-shadow:none !important;
+}
+.chapter-code-output{
+  background:#f7f8fd !important;
+  color:#303954 !important;
+  padding:16px 22px 19px;
+}
+.chapter-code-output pre{
+  color:#303954 !important;
+  font-size:13px !important;
+  line-height:1.75 !important;
+}
+@media(max-width:640px){
+  .chapter-code-panel > pre{padding:17px 16px;font-size:13px}
+  .chapter-code-panel > pre code,.chapter-code-panel pre code{font-size:13px !important}
+}
