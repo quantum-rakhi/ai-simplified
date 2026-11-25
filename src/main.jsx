@@ -98,11 +98,10 @@ function LessonDeepDive({lesson}) {
   const finishChapter = (index) => setCompleted(previous =>
     previous.includes(index) ? previous : [...previous, index]
   );
-  const goNext = () => {
-    const next = Math.min(expanded + 1, content.modules.length - 1);
-    setExpanded(next);
-    document.getElementById(`lesson-chapter-${lesson.id}-${next}`)?.scrollIntoView({behavior:"smooth",block:"center"});
-  };
+  const activeIndex = Math.max(0, Math.min(expanded, content.modules.length - 1));
+  const activeModule = content.modules[activeIndex];
+  const goNext = () => setExpanded(index => Math.min(index + 1, content.modules.length - 1));
+  const goPrevious = () => setExpanded(index => Math.max(index - 1, 0));
 
   return <section className="deep-dive">
     <style>{`
@@ -255,6 +254,17 @@ function LessonDeepDive({lesson}) {
       .roadmap-step strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:650}
       .roadmap-step.done{border-color:rgba(119,217,198,.35);background:rgba(119,217,198,.07);color:#d8f5ed}
       .roadmap-step.done span{background:#24564f;color:#9ef0d8}
+      .slide-roadmap .roadmap-step{font:inherit;text-align:left;cursor:pointer}
+      .slide-roadmap .roadmap-step.current{border-color:rgba(174,145,255,.62);background:rgba(139,110,232,.15);color:#f2eaff}
+      .slide-roadmap .roadmap-step:focus-visible,.slide-navigation button:focus-visible{outline:2px solid #bca6ff;outline-offset:3px}
+      .lesson-slide{display:flex;flex-direction:column;min-height:560px}
+      .slide-heading{display:flex;align-items:center;gap:13px;padding:22px 23px 0}
+      .slide-navigation{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:17px 22px 21px;border-top:1px solid rgba(255,255,255,.08);margin-top:auto}
+      .slide-navigation>span{font-size:11px;color:#a9a1c5;font-weight:750;white-space:nowrap}
+      .slide-navigation button:disabled{opacity:.35;cursor:not-allowed}
+      .slide-prev-icon{transform:rotate(180deg)}
+      .lesson-slide .chapter-body{flex:1;padding-top:15px}
+      @media(max-width:560px){.lesson-slide{min-height:0}.slide-heading{padding:16px 14px 0}.slide-navigation{padding:14px;flex-wrap:wrap}.slide-navigation>span{order:3;width:100%;text-align:center}}
       .learning-outcome{display:flex;gap:13px;align-items:flex-start;border:1px solid rgba(166,139,250,.25);background:linear-gradient(110deg,rgba(139,110,232,.13),rgba(139,110,232,.045));padding:17px 19px;border-radius:15px;margin:0 0 22px;color:#ddd5ff;line-height:1.65;font-size:13px}
       .outcome-icon{width:34px;height:34px;display:grid;place-items:center;border-radius:10px;background:#30284f;color:#cdbbff;flex:none}
       .learning-outcome b{display:block;color:#c4adff;font-size:10px;letter-spacing:1.2px;margin-bottom:4px}
@@ -311,11 +321,11 @@ function LessonDeepDive({lesson}) {
       </div>
     </div>
 
-    <div className="deep-dive-roadmap">
-      {content.modules.map((module,index)=><div key={module.title} className={`roadmap-step ${completed.includes(index)?"done":""}`}>
+    <div className="deep-dive-roadmap slide-roadmap" aria-label="Lesson chapters">
+      {content.modules.map((module,index)=><button type="button" key={module.title} onClick={()=>setExpanded(index)} aria-current={activeIndex===index?"step":undefined} className={`roadmap-step ${completed.includes(index)?"done":""} ${activeIndex===index?"current":""}`}>
         <span>{completed.includes(index)?<CheckCircle2 size={14}/>:String(index+1).padStart(2,"0")}</span>
         <strong>{module.title}</strong>
-      </div>)}
+      </button>)}
     </div>
 
     <div className="learning-outcome">
@@ -323,51 +333,54 @@ function LessonDeepDive({lesson}) {
       <div><b>YOUR LEARNING GOAL</b>{content.outcome}</div>
     </div>
 
-    {content.modules.map((module,index)=><article id={`lesson-chapter-${lesson.id}-${index}`} className={`chapter-card ${expanded===index?"open":""} ${completed.includes(index)?"is-done":""}`} key={module.title}>
-      <button className="chapter-toggle" aria-expanded={expanded===index} onClick={()=>setExpanded(expanded===index?-1:index)}>
-        <span className="chapter-number">{completed.includes(index)?<CheckCircle2 size={19}/>:String(index+1).padStart(2,"0")}</span>
-        <span className="chapter-title-wrap"><strong>{module.title}</strong><small>CONCEPT EXPLAINER · EXAMPLE · PRACTICE</small></span>
-        {completed.includes(index)&&<span className="chapter-status">COMPLETED</span>}
-        <ChevronRight className="chapter-chevron" size={18}/>
-      </button>
-      {expanded===index&&<div className="chapter-body">
-        <p>{module.explain}</p>
+    <article id={`lesson-chapter-${lesson.id}-${activeIndex}`} className={`chapter-card lesson-slide open ${completed.includes(activeIndex)?"is-done":""}`} key={activeModule.title} aria-live="polite">
+      <div className="slide-heading">
+        <span className="chapter-number">{completed.includes(activeIndex)?<CheckCircle2 size={19}/>:String(activeIndex+1).padStart(2,"0")}</span>
+        <span className="chapter-title-wrap"><strong>{activeModule.title}</strong><small>CHAPTER {activeIndex+1} OF {content.modules.length} · CONCEPT EXPLAINER · EXAMPLE · PRACTICE</small></span>
+        {completed.includes(activeIndex)&&<span className="chapter-status">COMPLETED</span>}
+      </div>
+      <div className="chapter-body">
+        <p>{activeModule.explain}</p>
         <div className="chapter-section-label"><BookOpen size={13}/> The important ideas</div>
-        <div className="chapter-concepts">{module.bullets.map((item,bulletIndex)=><div className="concept-item" key={item}><CheckCircle2 size={14}/><span>{item}</span></div>)}</div>
-        <div className="chapter-example"><b><Lightbulb size={13}/> SEE IT IN THE REAL WORLD</b>{module.example}</div>
+        <div className="chapter-concepts">{activeModule.bullets.map(item=><div className="concept-item" key={item}><CheckCircle2 size={14}/><span>{item}</span></div>)}</div>
+        <div className="chapter-example"><b><Lightbulb size={13}/> SEE IT IN THE REAL WORLD</b>{activeModule.example}</div>
         <div className="chapter-task">
           <b><Target size={13}/> YOUR TURN · THINK IT THROUGH</b>
-          <p>{module.task}</p>
-          <textarea className="reflection-input" value={notes[index]||""} onChange={event=>setNotes(previous=>({...previous,[index]:event.target.value}))} placeholder="Write your answer or an example in your own words…"/>
+          <p>{activeModule.task}</p>
+          <textarea className="reflection-input" value={notes[activeIndex]||""} onChange={event=>setNotes(previous=>({...previous,[activeIndex]:event.target.value}))} placeholder="Write your answer or an example in your own words…"/>
           <div className="chapter-actions">
-            <button className="chapter-action-btn" onClick={()=>setRevealed(previous=>({...previous,[index]:!previous[index]}))}><Lightbulb size={13}/>{revealed[index]?"Hide learning hint":"Show learning hint"}</button>
-            <button className="chapter-action-btn primary" onClick={()=>finishChapter(index)} disabled={completed.includes(index)}><CheckCircle2 size={14}/>{completed.includes(index)?"Chapter completed":"Mark chapter complete"}</button>
+            <button className="chapter-action-btn" onClick={()=>setRevealed(previous=>({...previous,[activeIndex]:!previous[activeIndex]}))}><Lightbulb size={13}/>{revealed[activeIndex]?"Hide learning hint":"Show learning hint"}</button>
+            <button className="chapter-action-btn primary" onClick={()=>finishChapter(activeIndex)} disabled={completed.includes(activeIndex)}><CheckCircle2 size={14}/>{completed.includes(activeIndex)?"Chapter completed":"Mark chapter complete"}</button>
           </div>
-          {revealed[index]&&<div className="chapter-answer"><b>How to approach it:</b> Identify the input, the task the system is performing, what a correct result would look like, and what could go wrong. There may be several valid answers — explain your reasoning rather than memorising a definition.</div>}
+          {revealed[activeIndex]&&<div className="chapter-answer"><b>How to approach it:</b> Identify the input, the task the system is performing, what a correct result would look like, and what could go wrong. There may be several valid answers — explain your reasoning rather than memorising a definition.</div>}
         </div>
-        {chapterPractice[lesson.id]?.[index]&&<div className="chapter-practice">
+        {chapterPractice[lesson.id]?.[activeIndex]&&<div className="chapter-practice">
           <div className="chapter-section-label"><FlaskConical size={14}/> INTERACTIVE PRACTICE · CHECK YOUR UNDERSTANDING</div>
-          <h4>{chapterPractice[lesson.id][index].q}</h4>
-          <div className="practice-options">{chapterPractice[lesson.id][index].a.map((option,optionIndex)=>{
-            const answerKey=`${lesson.id}-${index}`;
+          <h4>{chapterPractice[lesson.id][activeIndex].q}</h4>
+          <div className="practice-options">{chapterPractice[lesson.id][activeIndex].a.map((option,optionIndex)=>{
+            const answerKey=`${lesson.id}-${activeIndex}`;
             const chosen=practiceAnswers[answerKey];
             const locked=chosen!==undefined;
-            const correct=chapterPractice[lesson.id][index].correct;
-            return <button key={option} disabled={locked} onClick={()=>setPracticeAnswers(prev=>({...prev,[answerKey]:optionIndex}))}
-              className={`practice-option ${locked&&optionIndex===correct?"correct":""} ${locked&&chosen===optionIndex&&chosen!==correct?"incorrect":""}`}>
-              <span>{String.fromCharCode(65+optionIndex)}</span>{option}
-              {locked&&optionIndex===correct&&<CheckCircle2 size={16}/>}
+            const correct=chapterPractice[lesson.id][activeIndex].correct;
+            return <button key={option} disabled={locked} onClick={()=>setPracticeAnswers(prev=>({...prev,[answerKey]:optionIndex}))} className={`practice-option ${locked&&optionIndex===correct?"correct":""} ${locked&&chosen===optionIndex&&chosen!==correct?"incorrect":""}`}>
+              <span>{String.fromCharCode(65+optionIndex)}</span>{option}{locked&&optionIndex===correct&&<CheckCircle2 size={16}/>}
             </button>;
           })}</div>
-          {practiceAnswers[`${lesson.id}-${index}`]!==undefined&&<div className="practice-feedback">
-            <b>{practiceAnswers[`${lesson.id}-${index}`]===chapterPractice[lesson.id][index].correct?"Correct — nicely reasoned!":"Not quite. Review the explanation:"}</b>
-            <p>{chapterPractice[lesson.id][index].explain}</p>
-            <button className="chapter-action-btn" onClick={()=>setPracticeAnswers(prev=>({...prev,[`${lesson.id}-${index}`]:undefined}))}><RotateCcw size={13}/> Try again</button>
+          {practiceAnswers[`${lesson.id}-${activeIndex}`]!==undefined&&<div className="practice-feedback">
+            <b>{practiceAnswers[`${lesson.id}-${activeIndex}`]===chapterPractice[lesson.id][activeIndex].correct?"Correct — nicely reasoned!":"Not quite. Review the explanation:"}</b>
+            <p>{chapterPractice[lesson.id][activeIndex].explain}</p>
+            <button className="chapter-action-btn" onClick={()=>setPracticeAnswers(prev=>({...prev,[`${lesson.id}-${activeIndex}`]:undefined}))}><RotateCcw size={13}/> Try again</button>
           </div>}
         </div>}
-        {index<content.modules.length-1&&<div className="chapter-actions" style={{justifyContent:"flex-end",marginTop:16}}><button className="chapter-action-btn" onClick={goNext}>Next chapter <ArrowRight size={14}/></button></div>}
-      </div>}
-    </article>)}
+      </div>
+      <div className="slide-navigation">
+        <button className="chapter-action-btn" onClick={goPrevious} disabled={activeIndex===0}><ChevronRight size={14} className="slide-prev-icon"/> Previous</button>
+        <span>SLIDE {activeIndex+1} / {content.modules.length}</span>
+        {activeIndex<content.modules.length-1
+          ? <button className="chapter-action-btn primary" onClick={goNext}>Next chapter <ArrowRight size={14}/></button>
+          : <button className="chapter-action-btn primary" onClick={()=>finishChapter(activeIndex)}><CheckCircle2 size={14}/> Finish lesson</button>}
+      </div>
+    </article>
 
     <div className="lesson-end-check">
       <div className="deep-dive-kicker"><Trophy size={14}/> YOUR PROGRESS</div>
