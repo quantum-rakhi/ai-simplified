@@ -40,11 +40,18 @@ function App() {
   const [quizDone, setQuizDone] = useState(false);
   const [promptMode, setPromptMode] = useState(1);
   const [demoCount, setDemoCount] = useState(0);
+  const [x1, setX1] = useState(0.8);
+  const [x2, setX2] = useState(0.3);
+  const [w1, setW1] = useState(2);
+  const [w2, setW2] = useState(-1);
+  const [bias, setBias] = useState(0);
 
   const completed = useMemo(() => Object.keys(answers).length, [answers]);
   const score = quiz.reduce((n, q, i) => n + (answers[i] === q.correct ? 1 : 0), 0);
   const currentLesson = lessons.find(x => x.id === selectedLesson) || lessons[0];
   const filteredLessons = lessons.filter(x => (x.title + " " + x.desc + " " + x.tag).toLowerCase().includes(query.toLowerCase()));
+  const z = x1*w1 + x2*w2 + bias;
+  const probability = 1 / (1 + Math.exp(-z));
 
   const go = (section) => { setActive(section); setMenuOpen(false); window.scrollTo({top:0,behavior:"smooth"}); };
   const openLesson = (id) => { setSelectedLesson(id); go("lesson"); };
@@ -69,6 +76,7 @@ function App() {
         <button className={active==="home"?"nav-active":""} onClick={()=>go("home")}>Home</button>
         <button className={active==="explore"?"nav-active":""} onClick={()=>go("explore")}>Explore AI</button>
         <button className={active==="playground"?"nav-active":""} onClick={()=>go("playground")}>Playground</button>
+        <button className={active==="visual-lab"?"nav-active":""} onClick={()=>go("visual-lab")}>Visual AI Lab</button>
         <button className={active==="quiz"?"nav-active":""} onClick={()=>go("quiz")}>Quiz</button>
       </nav>
       <button className="top-cta" onClick={()=>go("explore")}>Start learning <ArrowUpRight size={16}/></button>
@@ -114,6 +122,11 @@ function App() {
         <button className="btn-light" onClick={()=>go("playground")}>Enter playground <ArrowRight size={17}/></button>
         <div className="banner-decoration">✳</div>
       </section>
+      <section className="visual-lab-promo section-wrap">
+        <div className="promo-orb"><Network size={30}/></div>
+        <div className="promo-copy"><div className="eyebrow">NEW · VERSION 1.1</div><h2>See a neural network think.</h2><p>Change inputs, adjust weights and watch a tiny neural model update its prediction in real time.</p></div>
+        <button className="btn-light" onClick={()=>go("visual-lab")}>Explore Visual AI Lab <ArrowRight size={17}/></button>
+      </section>
       <section className="section-wrap bottom-cta"><div className="cta-emoji">🧠</div><h2>Ready to see what you know?</h2><p>Take a quick quiz. No pressure — learning is the win.</p><button className="btn-primary" onClick={()=>go("quiz")}>Take the 2-minute quiz <ArrowRight size={17}/></button></section>
     </main>}
 
@@ -137,6 +150,57 @@ function App() {
         </div>
         <aside className="lesson-aside"><div className="aside-kicker">YOUR LEARNING PATH</div>{lessons.map((l,i)=><button key={l.id} className={l.id===selectedLesson?"path-item selected":"path-item"} onClick={()=>setSelectedLesson(l.id)}><span className="path-number">0{i+1}</span><span>{l.title}</span><ChevronRight size={16}/></button>)}<div className="aside-tip"><Star size={17}/><b>Beginner tip</b><p>You don't need to memorise everything. Focus on understanding the big idea.</p></div></aside>
       </div>
+    </main>}
+
+    {active==="visual-lab" && <main className="section-wrap page-main visual-lab-page">
+      <div className="page-intro"><div className="eyebrow">VERSION 1.1 · INTERACTIVE EXPERIMENT</div><h1>See how a <span>neural network thinks.</span></h1><p>Change the inputs and connection weights. Watch the weighted sum and prediction update instantly — no maths degree required.</p></div>
+      <div className="lab-layout">
+        <section className="lab-main-card">
+          <div className="lab-card-heading"><div><div className="eyebrow">YOUR TINY NEURAL NETWORK</div><h2>One neuron. Two signals. One prediction.</h2></div><span className="lab-live"><i/> LIVE MODEL</span></div>
+          <div className="network-stage">
+            <svg className="network-svg" viewBox="0 0 720 300" role="img" aria-label="Two input nodes connect to one output neuron">
+              <defs>
+                <linearGradient id="edgeOne" x1="0" x2="1"><stop offset="0%" stopColor="#7c6be8"/><stop offset="100%" stopColor="#e78bc2"/></linearGradient>
+                <filter id="nodeGlow"><feGaussianBlur stdDeviation="5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              </defs>
+              <path d="M155 85 C300 85 365 115 520 150" stroke="url(#edgeOne)" strokeWidth={Math.max(2,Math.abs(2.5*w1))} opacity=".9" fill="none"/>
+              <path d="M155 215 C300 215 365 185 520 150" stroke="#77d8d1" strokeWidth={Math.max(2,Math.abs(2.5*w2))} opacity=".9" fill="none"/>
+              <text x="330" y="83" fill="#c4b5fd" fontSize="13" textAnchor="middle">w₁ = {w1.toFixed(1)}</text>
+              <text x="330" y="229" fill="#8ce5dc" fontSize="13" textAnchor="middle">w₂ = {w2.toFixed(1)}</text>
+              <circle cx="105" cy="85" r="43" fill="#32265c" stroke="#a78bfa" strokeWidth="2" filter="url(#nodeGlow)"/>
+              <circle cx="105" cy="215" r="43" fill="#1e4c55" stroke="#72d9d1" strokeWidth="2" filter="url(#nodeGlow)"/>
+              <text x="105" y="80" fill="#fff" fontSize="12" textAnchor="middle">INPUT 1</text><text x="105" y="99" fill="#fff" fontSize="18" fontWeight="700" textAnchor="middle">{x1.toFixed(1)}</text>
+              <text x="105" y="210" fill="#fff" fontSize="12" textAnchor="middle">INPUT 2</text><text x="105" y="229" fill="#fff" fontSize="18" fontWeight="700" textAnchor="middle">{x2.toFixed(1)}</text>
+              <circle cx="570" cy="150" r="61" fill="#4a367c" stroke="#d1baff" strokeWidth="3" filter="url(#nodeGlow)"/>
+              <text x="570" y="141" fill="#e9ddff" fontSize="12" textAnchor="middle">NEURON</text><text x="570" y="165" fill="#fff" fontSize="20" fontWeight="700" textAnchor="middle">{(probability*100).toFixed(0)}%</text>
+              <text x="570" y="239" fill="#aaa4c7" fontSize="12" textAnchor="middle">prediction</text>
+              <text x="365" y="151" fill="#aaa4c7" fontSize="12" textAnchor="middle">weighted signals</text>
+            </svg>
+          </div>
+          <div className="model-output">
+            <div><span className="output-label">WEIGHTED SUM (z)</span><strong>{z.toFixed(2)}</strong></div>
+            <div className="output-arrow">→</div>
+            <div><span className="output-label">SIGMOID OUTPUT</span><strong className="output-percent">{(probability*100).toFixed(1)}%</strong></div>
+            <div className="output-meter"><div style={{width:`${probability*100}%`}}/></div>
+          </div>
+          <div className="lab-explainer"><Lightbulb size={18}/><p><b>What just happened?</b> Each input is multiplied by its weight. We add those values and the bias, then pass the result through a sigmoid function to get a value between 0 and 1.</p></div>
+        </section>
+
+        <aside className="lab-controls">
+          <div className="controls-heading"><div className="eyebrow">EXPERIMENT CONTROLS</div><button className="reset-button" onClick={()=>{setX1(.8);setX2(.3);setW1(2);setW2(-1);setBias(0)}}><RotateCcw size={14}/> Reset</button></div>
+          <div className="control-group"><div className="control-title"><label htmlFor="x1">Input 1</label><output>{x1.toFixed(1)}</output></div><input id="x1" type="range" min="0" max="1" step=".1" value={x1} onChange={e=>setX1(Number(e.target.value))}/><small>Signal strength · 0 to 1</small></div>
+          <div className="control-group"><div className="control-title"><label htmlFor="x2">Input 2</label><output>{x2.toFixed(1)}</output></div><input id="x2" type="range" min="0" max="1" step=".1" value={x2} onChange={e=>setX2(Number(e.target.value))}/><small>Signal strength · 0 to 1</small></div>
+          <div className="control-group"><div className="control-title"><label htmlFor="w1">Weight 1</label><output>{w1.toFixed(1)}</output></div><input id="w1" type="range" min="-3" max="3" step=".1" value={w1} onChange={e=>setW1(Number(e.target.value))}/><small>Influence of input 1 · −3 to +3</small></div>
+          <div className="control-group"><div className="control-title"><label htmlFor="w2">Weight 2</label><output>{w2.toFixed(1)}</output></div><input id="w2" type="range" min="-3" max="3" step=".1" value={w2} onChange={e=>setW2(Number(e.target.value))}/><small>Influence of input 2 · −3 to +3</small></div>
+          <div className="control-group"><div className="control-title"><label htmlFor="bias">Bias</label><output>{bias.toFixed(1)}</output></div><input id="bias" type="range" min="-3" max="3" step=".1" value={bias} onChange={e=>setBias(Number(e.target.value))}/><small>Extra adjustment · −3 to +3</small></div>
+          <div className="prediction-callout"><span>MODEL PREDICTION</span><strong>{probability>=.5?"Higher signal":"Lower signal"}</strong><small>{(probability*100).toFixed(1)}% sigmoid output · illustrative threshold 50%</small></div>
+        </aside>
+      </div>
+      <section className="lab-formula">
+        <div><div className="eyebrow">THE SIMPLE MATHS</div><h2>From inputs to output</h2><p>Neurons combine incoming signals using weights and a bias. The activation function transforms the combined value.</p></div>
+        <div className="formula-box"><code>z = (x₁ × w₁) + (x₂ × w₂) + b</code><code>output = 1 ÷ (1 + e<sup>−z</sup>)</code><span>Here, sigmoid keeps the output between 0 and 1.</span></div>
+      </section>
+      <div className="lab-caveat"><CircleHelp size={17}/><p><b>Learning model, not a trained AI.</b> This is a single-neuron mathematical simulation with manually adjustable parameters. Real neural networks usually contain many neurons and learn weights from training data through optimisation.</p></div>
     </main>}
 
     {active==="playground" && <main className="section-wrap page-main">
