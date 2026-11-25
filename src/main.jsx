@@ -12,6 +12,7 @@ import "./premium.css";
 import "./explore-levels.css";
 import { advancedLessons, advancedLessonDeepDive, advancedChapterPractice } from "./advancedLessons";
 import { phase2Lessons, phase2LessonDeepDive, phase2ChapterPractice } from "./phase2Lessons";
+import { expansionLessons, expansionDeepDive, expansionChapterPractice } from "./expansionLessons";
 import { recordChapterCompletion, recordQuizResult, recordAssessmentResult, getProgressSnapshot, subscribeToProgress, exportProgress, importProgress, resetProgress } from "./services/progressStorage";
 
 const lessons = [
@@ -92,6 +93,11 @@ Object.assign(chapterPractice, advancedChapterPractice);
 lessons.push(...phase2Lessons);
 Object.assign(lessonDeepDive, phase2LessonDeepDive);
 Object.assign(chapterPractice, phase2ChapterPractice);
+
+// Expanded roadmap courses (seven new courses; existing course IDs remain unchanged).
+lessons.push(...expansionLessons);
+Object.assign(lessonDeepDive, expansionDeepDive);
+Object.assign(chapterPractice, expansionChapterPractice);
 
 
 function LessonDeepDive({lesson}) {
