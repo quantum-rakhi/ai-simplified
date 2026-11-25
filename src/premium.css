@@ -2436,3 +2436,12 @@ body {
  .android-portrait{width:290px!important;height:315px!important}
  .hero-art .lab-orbit-card{width:124px!important;min-width:124px!important;max-width:124px!important}
 }
+
+/* Chapter code examples */
+.chapter-code-panel{margin:18px 0 24px;border:1px solid #dfe3f2;border-radius:16px;overflow:hidden;background:#202638;color:#f4f6ff;box-shadow:0 12px 28px rgba(35,42,70,.08)}
+.chapter-code-heading{display:flex;align-items:center;gap:9px;padding:13px 18px;background:#2a334b;color:#c9c4ff;font-size:11px;font-weight:800;letter-spacing:.12em}
+.chapter-code-panel>pre{margin:0;padding:20px 22px;overflow-x:auto;line-height:1.75;font-size:13px;color:#f5f6ff}
+.chapter-code-panel code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre}
+.chapter-code-output{padding:14px 20px 18px;background:#f7f8fd;color:#35415e;border-top:1px solid #dfe3f2}
+.chapter-code-output>b{font-size:10px;letter-spacing:.12em;color:#6c63c9}
+.chapter-code-output pre{margin:9px 0 0;white-space:pre-wrap;font:12px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace}
