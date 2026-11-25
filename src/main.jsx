@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import "./styles.css";
 import { advancedLessons, advancedLessonDeepDive, advancedChapterPractice } from "./advancedLessons";
+import { phase2Lessons, phase2LessonDeepDive, phase2ChapterPractice } from "./phase2Lessons";
 import { recordChapterCompletion, recordQuizResult, recordAssessmentResult, getProgressSnapshot, subscribeToProgress, exportProgress, importProgress, resetProgress } from "./services/progressStorage";
 
 const lessons = [
@@ -84,6 +85,11 @@ const chapterPractice = {"ai": [{"q": "A photo app groups pictures of the same p
 lessons.push(...advancedLessons);
 Object.assign(lessonDeepDive, advancedLessonDeepDive);
 Object.assign(chapterPractice, advancedChapterPractice);
+
+// Phase 2: Python, mathematics and data foundations.
+lessons.push(...phase2Lessons);
+Object.assign(lessonDeepDive, phase2LessonDeepDive);
+Object.assign(chapterPractice, phase2ChapterPractice);
 
 
 function LessonDeepDive({lesson}) {
@@ -1398,7 +1404,7 @@ function App() {
 
 const roadmapLevels = [
   {id:"foundations",level:0,title:"AI Foundations",description:"Understand what AI is, where it is used, and what its limitations mean in practice.",skills:["AI fundamentals","AI vs ML vs Deep Learning","Responsible AI"],lessons:["ai"],practical:"Identify AI use cases and distinguish AI, machine learning and generative AI.",status:"available"},
-  {id:"python-data",level:1,title:"Python, Mathematics & Data",description:"Learn the programming and data skills used throughout practical AI development.",skills:["Python","NumPy and Pandas","Statistics","Data visualisation"],lessons:[],practical:"Explore a dataset, clean missing values and create a simple data visualisation.",status:"planned"},
+  {id:"python-data",level:1,title:"Python, Mathematics & Data",description:"Build practical programming, mathematical and data-analysis foundations for AI.",skills:["Python","Vectors and matrices","NumPy and Pandas","Statistics","Data visualisation"],lessons:["python-basics","math-for-ai","data-with-python","statistics-visualization"],practical:"Write Python code, clean a small dataset and explain its patterns with a chart.",status:"available"},
   {id:"machine-learning",level:2,title:"Machine Learning",description:"Understand training data, features, labels, algorithms and model evaluation.",skills:["Supervised learning","Unsupervised learning","Regression","Classification"],lessons:["ml"],practical:"Design a classifier and explain how to evaluate predictions on unseen data.",status:"available"},
   {id:"deep-learning",level:3,title:"Deep Learning",description:"Explore neurons, layers, activation functions, backpropagation and training.",skills:["Neural networks","Backpropagation","Optimisation","Transformers"],lessons:["dl"],practical:"Train the existing XOR neural network and inspect how loss changes.",status:"available"},
   {id:"generative-ai",level:4,title:"Generative AI & LLMs",description:"Learn how language models process prompts and generate text and other content.",skills:["Generative AI","LLMs","Tokens","Prompt engineering","Evaluation"],lessons:["genai","llm","prompt"],practical:"Improve a prompt by adding context, constraints and an output format.",status:"available"},
