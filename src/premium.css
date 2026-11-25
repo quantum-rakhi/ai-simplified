@@ -2194,3 +2194,42 @@ body {
 .android-gaze-left{left:40.2%!important}
 .android-gaze-right{left:61.5%!important}
 @media(prefers-reduced-motion:reduce){.android-gaze{transition:none!important}}
+
+
+/* FINAL EYE DETAIL — cyan stays inside the irises, not outside the eyelids */
+.android-gaze{
+ position:absolute!important;z-index:3!important;
+ width:2.55%!important;height:1.55%!important;
+ border-radius:50%!important;
+ clip-path:ellipse(48% 46% at 50% 50%)!important;
+ background:radial-gradient(ellipse at 45% 42%,#f4ffff 0%,#b7f8ff 16%,#55d9f4 36%,#237fae 62%,#132b49 88%)!important;
+ border:1px solid rgba(155,229,245,.42)!important;
+ box-shadow:inset 0 0 5px rgba(108,231,255,.72),inset 0 0 1px 1px rgba(240,255,255,.75),0 0 3px rgba(71,205,238,.25)!important;
+ transform:translate(var(--gaze-x,0px),var(--gaze-y,0px))!important;
+ transition:transform .19s cubic-bezier(.2,.7,.25,1)!important;
+}
+.android-gaze-left{left:40.15%!important;top:43.1%!important}
+.android-gaze-right{left:61.35%!important;top:43.1%!important}
+/* Move lab labels to the outer side rails so none sit on the face */
+.hero-art .lab-orbit-card{
+ width:150px!important;min-width:150px!important;max-width:150px!important;
+}
+.hero-art .lab-orbit-one{top:24%!important;left:-1%!important;right:auto!important;bottom:auto!important}
+.hero-art .lab-orbit-two{top:24%!important;right:-1%!important;left:auto!important;bottom:auto!important}
+.hero-art .lab-orbit-three{top:61%!important;left:-1%!important;right:auto!important;bottom:auto!important}
+.hero-art .lab-orbit-four{top:61%!important;right:-1%!important;left:auto!important;bottom:auto!important}
+.hero-art .lab-orbit-card-inner{padding:9px 10px!important;gap:7px!important}
+.hero-art .lab-orbit-card b{font-size:8.5px!important}
+.hero-art .lab-orbit-card small{font-size:5.5px!important;letter-spacing:.45px!important}
+@media(max-width:1050px){
+ .hero-art .lab-orbit-card{width:138px!important;min-width:138px!important;max-width:138px!important}
+}
+@media(max-width:760px){
+ .hero-art .lab-orbit-one,.hero-art .lab-orbit-two{top:5%!important}
+ .hero-art .lab-orbit-three,.hero-art .lab-orbit-four{top:auto!important;bottom:5%!important}
+ .hero-art .lab-orbit-card{width:145px!important;min-width:145px!important;max-width:145px!important}
+}
+@media(max-width:480px){
+ .hero-art .lab-orbit-card{width:132px!important;min-width:132px!important;max-width:132px!important}
+ .hero-art .lab-orbit-card small{font-size:5px!important}
+}
