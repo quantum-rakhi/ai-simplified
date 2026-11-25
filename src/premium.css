@@ -1389,3 +1389,72 @@ body {
   .lesson-page .lesson-active-content .chapter-practice{padding:16px!important}
   .lesson-page .lesson-active-content .slide-navigation{padding:13px 16px!important}
 }
+
+
+/* PREMIUM HOMEPAGE END-CAP: quiz CTA + brand footer */
+.bottom-cta {
+  position: relative !important;
+  isolation: isolate;
+  overflow: hidden;
+  padding: 76px 28px 82px !important;
+  margin-top: 58px !important;
+  margin-bottom: 0 !important;
+  text-align: center;
+  border: 1px solid #e5e1f6;
+  border-radius: 26px 26px 0 0;
+  background:
+    radial-gradient(ellipse at 50% 0%,rgba(132,108,220,.13),transparent 48%),
+    linear-gradient(180deg,#fbfaff 0%,#f2f1fb 100%) !important;
+}
+.bottom-cta:before,.bottom-cta:after {
+  content:"";
+  position:absolute;
+  z-index:-1;
+  width:230px;height:230px;border-radius:50%;
+  border:1px solid rgba(113,91,194,.10);
+}
+.bottom-cta:before {left:-120px;top:10px;box-shadow:0 0 0 24px rgba(113,91,194,.025),0 0 0 48px rgba(113,91,194,.02)}
+.bottom-cta:after {right:-120px;bottom:-120px;box-shadow:0 0 0 24px rgba(113,91,194,.025),0 0 0 48px rgba(113,91,194,.02)}
+.bottom-cta .cta-emoji {
+  width:58px;height:58px;display:grid;place-items:center;
+  margin:0 auto 18px;border-radius:18px;
+  background:linear-gradient(135deg,#eee9ff,#f8eafa);
+  box-shadow:0 8px 22px rgba(99,78,170,.10);
+  font-size:27px;
+}
+.bottom-cta h2 {color:#202943 !important;font-size:clamp(27px,3vw,36px) !important;letter-spacing:-1px;margin:0 0 10px !important}
+.bottom-cta p {color:#68758d !important;font-size:15px;margin:0 0 24px !important}
+.bottom-cta .btn-primary {
+  min-height:52px;padding:0 25px !important;border-radius:13px !important;
+  background:linear-gradient(110deg,#6956ce,#8c70d9) !important;
+  box-shadow:0 10px 24px rgba(105,86,206,.22) !important;
+}
+.footer {
+  margin-top:0 !important;
+  background:#fff !important;
+  border-top:1px solid #e7eaf1 !important;
+}
+.footer-inner {
+  max-width:1320px !important;
+  padding:42px 24px 22px !important;
+}
+.footer-brand {margin-bottom:14px !important}
+.footer-inner > p {
+  max-width:720px;color:#65728a !important;
+  font-size:14px;line-height:1.8;margin:0 0 28px !important;
+}
+.footer-bottom {
+  display:flex;align-items:center;justify-content:space-between;
+  gap:14px;flex-wrap:wrap;
+  padding-top:19px !important;
+  border-top:1px solid #e9ecf2 !important;
+  color:#8993a6 !important;font-size:12px !important;
+}
+.footer-bottom a {color:#6653c5 !important;text-decoration:none;font-weight:650}
+.footer-bottom a:hover {text-decoration:underline}
+.footer-bottom .heart {color:#d47aa5 !important}
+@media(max-width:640px) {
+ .bottom-cta {padding:55px 18px 60px !important;margin-top:38px !important}
+ .footer-inner {padding:30px 18px 18px !important}
+ .footer-bottom {align-items:flex-start;flex-direction:column}
+}
