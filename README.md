@@ -1,17 +1,66 @@
+
 # AI Simplified 🧠✨
 
-**Make AI make sense.** A colourful, gamified AI learning platform for students, professionals, creators and developers — from first concepts to practical experiments.
+**Make AI make sense.**
 
-## MVP features
+A colourful, gamified AI learning platform for students, professionals, creators and developers — from first concepts to practical experiments.
 
-- Six beginner lessons: AI, Machine Learning, Deep Learning, Generative AI, LLMs and Prompt Engineering
-- Searchable lesson library
-- Interactive fruit-classification explainer (fixed-rule demo, not a trained model)
-- Five-question knowledge quiz with explanations and score
-- Responsive layout for mobile and desktop
-- GitHub Pages deployment through GitHub Actions
+🌐 **Live Website:** https://quantum-rakhi.github.io/ai-simplified/
 
-## Run locally
+## 🚀 Features
+
+### AI Learning
+- Six beginner-friendly AI lessons
+- Artificial Intelligence fundamentals
+- Machine Learning
+- Deep Learning
+- Generative AI
+- Large Language Models (LLMs)
+- Prompt Engineering
+
+### Visual AI Lab — Version 1.1
+- Interactive neural network visualisation
+- Adjustable input signals
+- Adjustable connection weights
+- Bias experimentation
+- Real-time weighted sum calculation
+- Sigmoid activation function
+- Live prediction percentage
+- Interactive reset controls
+
+### More Learning Features
+- Searchable AI knowledge library
+- Interactive fruit classification experiment
+- Five-question knowledge quiz
+- Responsive desktop and mobile interface
+- Gamified learning experience
+
+## 🧪 Visual AI Lab
+
+Explore how a simplified artificial neuron works.
+
+The simulator demonstrates:
+
+z = (x1 × w1) + (x2 × w2) + b
+
+The weighted sum is passed through a sigmoid activation function:
+
+output = 1 / (1 + e^(-z))
+
+Change inputs, weights and bias to see how the prediction changes.
+
+**Note:** This is an educational single-neuron simulation, not a trained multi-layer neural network.
+
+## 🛠️ Technology Stack
+
+- React
+- JavaScript
+- Vite
+- CSS
+- GitHub Actions
+- GitHub Pages
+
+## 💻 Run Locally
 
 Requirements: Node.js 20+ and npm.
 
@@ -20,54 +69,36 @@ npm install
 npm run dev
 ```
 
-Open the local URL printed by Vite.
-
-## Build for production
+## 🏗️ Build for Production
 
 ```bash
 npm run build
 npm run preview
 ```
 
-## Deploy to GitHub Pages
+## 🌍 Deployment
 
-This repository is configured for `https://quantum-rakhi.github.io/ai-simplified/`.
+Hosted free using GitHub Pages.
 
-1. Create a **public** GitHub repository named `ai-simplified` under your GitHub account (the example URL below uses `quantum-rakhi`).
-2. Upload/push all files from this project to the repository's `main` branch. Include the hidden `.github/workflows/deploy.yml` file.
-3. In the repository, open **Settings → Pages**.
-4. Under **Build and deployment → Source**, choose **GitHub Actions**.
-5. Open the **Actions** tab and wait for the “Deploy AI Simplified to GitHub Pages” workflow to finish.
-6. Visit `https://quantum-rakhi.github.io/ai-simplified/`.
+Repository:
+https://github.com/quantum-rakhi/ai-simplified
 
-If you use a different repository name, update `base` in `vite.config.js` to `/<your-repository-name>/` and update the README URL.
+Website:
+https://quantum-rakhi.github.io/ai-simplified/
 
-## Project structure
+Deployment is automated through GitHub Actions.
 
-```text
-ai-simplified/
-├── .github/workflows/deploy.yml
-├── src/
-│   ├── main.jsx
-│   └── styles.css
-├── index.html
-├── package.json
-├── vite.config.js
-└── README.md
-```
+## 🔮 Roadmap
 
-## Important note about the playground
+- Multi-layer neural network simulator
+- AI learning paths
+- Prompt Engineering Studio
+- AI Tools Directory
+- XP points and achievement badges
+- AI Agent Playground
 
-The fruit classifier is intentionally a deterministic, rule-based teaching simulation. It illustrates the idea of classification and feature matching; it does not train a machine-learning model or call an AI API.
+## ❤️ Our Mission
 
-## Roadmap
+Make Artificial Intelligence understandable, accessible and enjoyable for everyone.
 
-- Add progress saved in the browser
-- Add more visual explainers (tokens, neural networks, training vs inference)
-- Add accessibility and keyboard-navigation improvements
-- Add optional multilingual content
-- Add a real, privacy-conscious AI demo only after explaining its limitations and API costs
-
-## Author
-
-Created by [Rakhi Thakur](https://github.com/quantum-rakhi).
+**AI Simplified — Understand AI. Explore AI. Master AI.**
