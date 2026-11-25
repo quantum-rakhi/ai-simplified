@@ -886,7 +886,7 @@ function App() {
   };
 
   return <div className="app-shell">
-    <div className="announcement"><Sparkles size={14}/> YOUR FRIENDLY FIRST STEP INTO AI <span>·</span> FREE FOREVER</div>
+    
     <header className="topbar">
       <button className="brand" onClick={() => go("home")} aria-label="AI Simplified home">
         <span className="brand-mark"><BrainCircuit size={22}/></span>
@@ -894,12 +894,22 @@ function App() {
       </button>
       <nav className={menuOpen ? "nav-links open" : "nav-links"}>
         <button className={active==="home"?"nav-active":""} onClick={()=>go("home")}>Home</button>
-        <button className={active==="explore"?"nav-active":""} onClick={()=>go("explore")}>Explore AI</button>
-        <button className={active==="playground"?"nav-active":""} onClick={()=>go("playground")}>Playground</button>
-        <button className={active==="neural-playground"?"nav-active":""} onClick={()=>go("neural-playground")}>Neural Playground</button>
-        <button className={active==="visual-lab"?"nav-active":""} onClick={()=>go("visual-lab")}>Visual AI Lab</button>
-        <button className={active==="quiz"?"nav-active":""} onClick={()=>go("quiz")}>Quiz</button>
-        <button className={active==="assessment"?"nav-active":""} onClick={()=>go("assessment")}>Assessment Centre</button>
+        <button className={active==="explore"?"nav-active":""} onClick={()=>go("explore")}>Learn</button>
+        <details className="nav-menu">
+          <summary className={["playground","neural-playground","visual-lab"].includes(active)?"nav-active":""}>Labs</summary>
+          <div className="nav-dropdown">
+            <button className={active==="playground"?"nav-active":""} onClick={()=>go("playground")}>AI Playground</button>
+            <button className={active==="neural-playground"?"nav-active":""} onClick={()=>go("neural-playground")}>Neural Playground</button>
+            <button className={active==="visual-lab"?"nav-active":""} onClick={()=>go("visual-lab")}>Visual AI Lab</button>
+          </div>
+        </details>
+        <details className="nav-menu">
+          <summary className={["quiz","assessment"].includes(active)?"nav-active":""}>Assessments</summary>
+          <div className="nav-dropdown">
+            <button className={active==="quiz"?"nav-active":""} onClick={()=>go("quiz")}>Knowledge Quiz</button>
+            <button className={active==="assessment"?"nav-active":""} onClick={()=>go("assessment")}>Assessment Centre</button>
+          </div>
+        </details>
         <button className={active==="dashboard"?"nav-active":""} onClick={()=>go("dashboard")}>My Progress</button>
       </nav>
       <button className="top-cta" onClick={()=>go("explore")}>Start learning <ArrowUpRight size={16}/></button>
