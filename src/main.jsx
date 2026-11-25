@@ -783,6 +783,31 @@ const svgPoints = samples.map(sample => ({
 function AgentTutorial() {
   const [completed,setCompleted] = useState([]);
   const [current,setCurrent] = useState(0);
+  const [copyStatus,setCopyStatus] = useState("idle");
+  const copyCurrentCode = async () => {
+    if (!step?.code) return;
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(step.code);
+      } else {
+        const textarea = document.createElement("textarea");
+        textarea.value = step.code;
+        textarea.setAttribute("readonly", "");
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+        document.body.appendChild(textarea);
+        textarea.select();
+        const copied = document.execCommand("copy");
+        document.body.removeChild(textarea);
+        if (!copied) throw new Error("Copy command was not available");
+      }
+      setCopyStatus("copied");
+      window.setTimeout(() => setCopyStatus("idle"), 1800);
+    } catch (error) {
+      setCopyStatus("failed");
+      window.setTimeout(() => setCopyStatus("idle"), 2200);
+    }
+  };
   const steps = [
     {title:"Understand the architecture",tag:"FOUNDATION",time:"3 min",body:"Your React website is the learning interface. The Python Gemini ADK agent runs separately on your computer. The browser will call a backend API later; never place a Gemini key in frontend code.",code:"React website  →  Python ADK agent  →  Gemini model",tip:"Think of the agent as the engine and the website as its control panel."},
     {title:"Install Python",tag:"ENVIRONMENT",time:"5 min",body:"On Windows, install Python 3.11 or later. Open PowerShell and check that the Python launcher is available.",code:"py --version",tip:"If Windows says the command is not recognised, install Python and enable the Python Launcher."},
@@ -797,7 +822,7 @@ function AgentTutorial() {
   ];
   const step = steps[current];
   const toggleDone = (i) => setCompleted(prev=>prev.includes(i)?prev.filter(x=>x!==i):[...prev,i]);
-  const goTo = (i) => setCurrent(Math.max(0,Math.min(steps.length-1,i)));
+  const goTo = (i) => { setCurrent(Math.max(0,Math.min(steps.length-1,i))); setCopyStatus("idle"); };
   return <main className="agent-workbench">
     <section className="agent-workbench-hero">
       <div className="agent-hero-top"><span className="agent-live-label"><i/> ZERO-COST BUILD WORKSPACE</span><span className="agent-hero-index">PROJECT 01 / AI SIMPLIFIED</span></div>
@@ -807,7 +832,7 @@ function AgentTutorial() {
     <div className="agent-workbench-heading"><div><span className="agent-kicker">THE BUILD SEQUENCE</span><h2>From zero to your first agent</h2><p>Choose a milestone. Follow the instructions. Mark it complete when it works.</p></div><span className="agent-workbench-status">{completed.length} / 10 COMPLETE</span></div>
     <section className="agent-workbench-grid">
       <aside className="agent-rail"><div className="agent-rail-title">BUILD ROADMAP <span>01—10</span></div>{steps.map((s,i)=><button key={s.title} className={"agent-rail-item "+(current===i?"selected ":"")+(completed.includes(i)?"is-done":"")} onClick={()=>goTo(i)}><span className="agent-rail-num">{completed.includes(i)?<CheckCircle2 size={16}/>:String(i+1).padStart(2,"0")}</span><span className="agent-rail-copy"><b>{s.title}</b><small>{s.time}</small></span><ChevronRight size={15}/></button>)}<div className="agent-rail-foot"><ShieldCheck size={16}/><span>Private key stays on your machine.</span></div></aside>
-      <article className="agent-focus-panel"><div className="agent-focus-top"><span className="agent-focus-tag">{step.tag}</span><span className="agent-focus-time">{step.time}</span></div><div className="agent-focus-number">STEP {String(current+1).padStart(2,"0")} <span> / 10</span></div><h3>{step.title}</h3><p className="agent-focus-body">{step.body}</p>{step.code&&<div className="agent-command-panel"><div className="agent-command-head"><span><i/> POWERSHELL / COMMAND</span><button onClick={()=>navigator.clipboard?.writeText(step.code)}>COPY <span>↗</span></button></div><pre>{step.code}</pre></div>}{step.link&&<a className="agent-resource-link" href={step.link} target="_blank" rel="noreferrer">Open Google AI Studio <ArrowUpRight size={15}/></a>}{step.tip&&<div className="agent-pro-tip"><span>FIELD NOTE</span><p>{step.tip}</p></div>}<div className="agent-focus-actions"><button className={"agent-complete-btn "+(completed.includes(current)?"completed":"")} onClick={()=>toggleDone(current)}>{completed.includes(current)?<><CheckCircle2 size={16}/> COMPLETED — UNDO</>:<>MARK MILESTONE COMPLETE <CheckCircle2 size={16}/></>}</button><div className="agent-step-nav"><button disabled={current===0} onClick={()=>goTo(current-1)}>BACK</button><button onClick={()=>goTo(current+1)} disabled={current===steps.length-1}>NEXT MILESTONE <ChevronRight size={15}/></button></div></div></article>
+      <article className="agent-focus-panel"><div className="agent-focus-top"><span className="agent-focus-tag">{step.tag}</span><span className="agent-focus-time">{step.time}</span></div><div className="agent-focus-number">STEP {String(current+1).padStart(2,"0")} <span> / 10</span></div><h3>{step.title}</h3><p className="agent-focus-body">{step.body}</p>{step.code&&<div className="agent-command-panel"><div className="agent-command-head"><span><i/> POWERSHELL / COMMAND</span><button onClick={copyCurrentCode} aria-live="polite">{copyStatus==="copied"?"COPIED ✓":copyStatus==="failed"?"COPY FAILED":"COPY ↗"}</button></div><pre>{step.code}</pre></div>}{step.link&&<a className="agent-resource-link" href={step.link} target="_blank" rel="noreferrer">Open Google AI Studio <ArrowUpRight size={15}/></a>}{step.tip&&<div className="agent-pro-tip"><span>FIELD NOTE</span><p>{step.tip}</p></div>}<div className="agent-focus-actions"><button className={"agent-complete-btn "+(completed.includes(current)?"completed":"")} onClick={()=>toggleDone(current)}>{completed.includes(current)?<><CheckCircle2 size={16}/> COMPLETED — UNDO</>:<>MARK MILESTONE COMPLETE <CheckCircle2 size={16}/></>}</button><div className="agent-step-nav"><button disabled={current===0} onClick={()=>goTo(current-1)}>BACK</button><button onClick={()=>goTo(current+1)} disabled={current===steps.length-1}>NEXT MILESTONE <ChevronRight size={15}/></button></div></div></article>
     </section>
     <section className="agent-safety-strip"><ShieldCheck size={20}/><div><b>Built to stay free. Designed to stay safe.</b><p>Use the Gemini API free tier only where available. Quotas and terms can change. Do not add billing, publish API keys or send confidential information. Local development does not require paid hosting.</p></div><div className="agent-reference-links"><a href="https://github.com/quantum-rakhi/ai-simplified/tree/main/agent-backend" target="_blank" rel="noreferrer">SOURCE CODE <ArrowUpRight size={13}/></a><a href="https://google.github.io/adk-docs/" target="_blank" rel="noreferrer">ADK DOCS <ArrowUpRight size={13}/></a></div></section>
   </main>;
