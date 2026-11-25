@@ -1,0 +1,55 @@
+/* Skill-level learning catalogue */
+.explore-page { padding-bottom: 76px; }
+.explore-page .page-intro { max-width: 850px; margin: 64px auto 38px; }
+.explore-page .page-intro h1 { font-size: clamp(42px, 5vw, 62px); }
+.level-overview {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 34px 0 58px;
+}
+.level-card {
+  position: relative;
+  min-height: 210px;
+  padding: 24px;
+  border: 1px solid rgba(180,195,220,.14);
+  border-radius: 18px;
+  background: linear-gradient(145deg, rgba(31,35,61,.96), rgba(19,25,43,.96));
+  color: #f4f3fb;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 9px;
+  cursor: pointer;
+  transition: transform .2s ease, border-color .2s ease, background .2s ease;
+}
+.level-card:hover { transform: translateY(-3px); border-color: rgba(174,157,255,.45); }
+.level-card.selected { border-color: rgba(174,157,255,.68); box-shadow: 0 0 0 1px rgba(174,157,255,.12), 0 18px 40px rgba(0,0,0,.16); }
+.level-index { position: absolute; top: 20px; right: 22px; color: #777d9d; font: 700 12px "Space Grotesk",sans-serif; }
+.level-kicker { color: #a99aff; font-size: 8px; letter-spacing: 1.7px; font-weight: 850; }
+.level-card strong { font: 700 24px "Space Grotesk",sans-serif; letter-spacing: -.7px; }
+.level-description { max-width: 290px; color: #aeb8ce; font-size: 11px; line-height: 1.7; }
+.level-total { display: flex; align-items: center; gap: 7px; margin-top: auto; color: #c8bdff; font-size: 10px; font-weight: 750; }
+.level-beginner .level-kicker { color: #8ed9b7; }
+.level-intermediate .level-kicker { color: #8dc9ed; }
+.level-advanced .level-kicker { color: #e7b0d9; }
+.catalogue-heading { display: flex; justify-content: space-between; align-items: end; margin-bottom: 18px; }
+.catalogue-heading h2 { margin: 8px 0 7px; font: 700 clamp(25px,3vw,34px) "Space Grotesk",sans-serif; letter-spacing: -1.1px; }
+.catalogue-heading p { max-width: 720px; margin: 0; color: #aab3c8; font-size: 12px; line-height: 1.7; }
+.catalogue-controls { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin: 20px 0 24px; }
+.level-filters { display: flex; flex-wrap: wrap; gap: 7px; }
+.level-filter { display: flex; align-items: center; gap: 9px; padding: 9px 12px; border: 1px solid rgba(180,195,220,.14); border-radius: 999px; background: rgba(25,31,51,.8); color: #aeb8ca; font-size: 10px; font-weight: 750; cursor: pointer; }
+.level-filter span { display: inline-grid; place-items: center; min-width: 19px; height: 19px; padding: 0 5px; border-radius: 999px; background: rgba(255,255,255,.07); color: #c9c1ff; font-size: 9px; }
+.level-filter.active { color: #fff; background: rgba(142,125,230,.19); border-color: rgba(174,157,255,.5); }
+.catalogue-controls .search-box { flex: 0 1 430px; margin: 0; }
+.lesson-level-chip { display: inline-flex; align-items: center; border: 1px solid rgba(180,195,220,.13); border-radius: 999px; padding: 5px 8px; color: #aeb8ca; font-size: 8px; font-weight: 750; }
+.lesson-level-chip.beginner { color: #9be0bd; background: rgba(86,190,139,.08); }
+.lesson-level-chip.intermediate { color: #9bd4f2; background: rgba(83,166,215,.09); }
+.lesson-level-chip.advanced { color: #efb9df; background: rgba(201,112,177,.09); }
+@media (max-width: 800px) {
+  .level-overview { grid-template-columns: 1fr; margin: 26px 0 42px; }
+  .level-card { min-height: 170px; }
+  .catalogue-controls { align-items: stretch; flex-direction: column; }
+  .catalogue-controls .search-box { flex-basis: auto; max-width: none; width: 100%; }
+}
