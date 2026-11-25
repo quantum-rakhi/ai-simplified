@@ -1979,3 +1979,44 @@ body {
  .hero-art .brain-core svg{width:92px!important;height:92px!important}
 }
 @media(prefers-reduced-motion:reduce){.hero-art .brain-core:after{animation:none!important}}
+
+
+/* FUTURISTIC AI FACE — reactive gaze and holographic facial shell */
+.hero-art{--gaze-x:0px;--gaze-y:0px}
+.hero-art .ai-face-glow{
+ width:330px!important;height:330px!important;
+ border-radius:50%!important;
+ background:radial-gradient(circle,rgba(66,209,255,.20),rgba(126,104,224,.17) 43%,transparent 72%)!important;
+ box-shadow:0 0 90px rgba(69,196,255,.13),0 0 125px rgba(139,103,232,.15)!important;
+}
+.ai-face-shell{
+ position:relative!important;display:grid!important;place-items:center!important;
+ width:260px!important;height:300px!important;
+ border-radius:48% 48% 44% 44%!important;
+ background:radial-gradient(ellipse at 50% 20%,rgba(103,222,255,.17),rgba(87,76,157,.09) 48%,transparent 72%)!important;
+ filter:drop-shadow(0 18px 30px rgba(47,45,110,.25))!important;
+ animation:ai-face-float 7s ease-in-out infinite!important;
+}
+.ai-face-svg{width:100%!important;height:100%!important;overflow:visible!important;filter:drop-shadow(0 0 14px rgba(59,210,255,.22))!important}
+.ai-face-svg .face-outline{stroke-dasharray:1000;stroke-dashoffset:0}
+.ai-eye-pupil{transform:translate(var(--gaze-x),var(--gaze-y));transition:transform .12s ease-out!important}
+.face-scan-line{
+ position:absolute!important;left:12%!important;right:12%!important;top:16%!important;height:1px!important;
+ background:linear-gradient(90deg,transparent,#67edff,#fff,#67edff,transparent)!important;
+ box-shadow:0 0 12px 2px rgba(74,225,255,.65)!important;
+ opacity:.42!important;animation:face-scan 5.5s ease-in-out infinite!important;pointer-events:none!important;
+}
+.face-spark{position:absolute!important;color:#c9faff!important;text-shadow:0 0 12px #4deaff,0 0 24px #8b76ff!important}
+.face-spark-a{top:14%!important;right:9%!important;font-size:24px!important;animation:face-sparkle 3s ease-in-out infinite!important}
+.face-spark-b{bottom:16%!important;left:5%!important;font-size:19px!important;animation:face-sparkle 4s ease-in-out -1.4s infinite!important}
+@keyframes ai-face-float{0%,100%{translate:0 0}50%{translate:0 -7px}}
+@keyframes face-scan{0%,100%{top:17%;opacity:.15}50%{top:77%;opacity:.65}}
+@keyframes face-sparkle{0%,100%{opacity:.35;scale:.85}50%{opacity:1;scale:1.16}}
+@media(max-width:760px){
+ .hero-art .ai-face-glow{width:270px!important;height:270px!important}
+ .ai-face-shell{width:220px!important;height:255px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ .ai-face-shell,.face-scan-line,.face-spark{animation:none!important}
+ .ai-eye-pupil{transition:none!important}
+}
