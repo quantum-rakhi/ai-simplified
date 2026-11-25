@@ -1450,15 +1450,21 @@ const levelCounts = {
       <style>{`
       .assessment-page{padding-bottom:70px}
       .assessment-level-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:28px 0 18px}
-      .assessment-level-card{display:flex;flex-direction:column;align-items:flex-start;gap:9px;text-align:left;padding:22px;border:1px solid rgba(255,255,255,.12);border-radius:17px;background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.018));color:#f5f1ff;cursor:pointer;transition:.2s}
-      .assessment-level-card:hover,.assessment-level-card.selected{border-color:rgba(177,151,255,.65);background:linear-gradient(145deg,rgba(139,110,232,.17),rgba(255,255,255,.025));transform:translateY(-2px)}
-      .assessment-level-card strong{font-size:23px;letter-spacing:-.5px}
-      .assessment-level-card>span:nth-of-type(2){font-size:12px;color:#c8bde7}
-      .assessment-level-kicker{font-size:9px;letter-spacing:1.2px;font-weight:850;color:#bca8ff}
-      .assessment-level-desc{font-size:12px;line-height:1.6;color:#a9a1c3}
+      .assessment-level-card{display:flex;flex-direction:column;align-items:flex-start;gap:9px;text-align:left;padding:22px;border:1px solid #e1e5f0;border-radius:17px;background:#fff;color:#26324b;cursor:pointer;transition:transform .2s,border-color .2s,box-shadow .2s;box-shadow:0 8px 24px rgba(39,48,78,.05)}
+      .assessment-level-card:hover,.assessment-level-card.selected{border-color:#a99af4;background:linear-gradient(145deg,#f1edff,#fff);transform:translateY(-2px);box-shadow:0 12px 28px rgba(104,86,190,.11)}
+      .assessment-level-card strong{font-size:23px;letter-spacing:-.5px;color:#202943}
+      .assessment-level-card>span:nth-of-type(2){font-size:12px;color:#58647c}
+      .assessment-level-kicker{font-size:9px;letter-spacing:1.2px;font-weight:850;color:#725bd4}
+      .assessment-level-desc{font-size:12px;line-height:1.6;color:#59667f}
+      .assessment-level-card .level-index{color:#725bd4}
       .assessment-start-card,.assessment-test-card,.assessment-result-card,.assessment-dashboard{padding:clamp(20px,3vw,30px);border:1px solid rgba(177,151,255,.2);border-radius:19px;background:linear-gradient(145deg,rgba(31,29,53,.96),rgba(22,20,39,.96));margin:18px 0 26px}
       .assessment-start-card{display:flex;align-items:center;justify-content:space-between;gap:20px}
-      .assessment-start-card h2,.assessment-test-top h2,.assessment-result-card h2{font-size:24px;margin:8px 0}
+      .assessment-start-card h2,.assessment-test-top h2,.assessment-result-card h2{font-size:24px;margin:8px 0;color:#f5f2ff}
+      .assessment-start-card .eyebrow,.assessment-dashboard .eyebrow{color:#a99aff}
+      .assessment-dashboard .section-heading h2{color:#f5f2ff}
+      .assessment-dashboard .section-heading h2 span{color:#b9a8ff}
+      .assessment-dashboard .section-heading p{color:#c0bad2}
+      .assessment-start-card p,.assessment-result-heading p{color:#c4bdd8}
       .assessment-start-card p,.assessment-result-heading p{font-size:13px;color:#aaa2c5;margin:0;line-height:1.6}
       .assessment-test-top{display:flex;align-items:center;justify-content:space-between;gap:18px}
       .assessment-timer{display:flex;flex-direction:column;align-items:center;padding:10px 17px;border-radius:12px;border:1px solid rgba(177,151,255,.3);background:rgba(139,110,232,.12)}
