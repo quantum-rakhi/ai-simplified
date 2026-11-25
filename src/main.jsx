@@ -110,8 +110,7 @@ function LessonDeepDive({lesson}) {
   const [revealed, setRevealed] = useState({});
   const [notes, setNotes] = useState({});
   const [practiceAnswers, setPracticeAnswers] = useState({});
-  const previousActiveIndex = React.useRef(0);
-  if (!content) return null;
+  const shouldScrollToChapter = React.useRef(false);
 
   const progress = Math.round((completed.length / content.modules.length) * 100);
   const finishChapter = (index) => {
@@ -121,14 +120,22 @@ function LessonDeepDive({lesson}) {
   const activeIndex = Math.max(0, Math.min(expanded, content.modules.length - 1));
   const activeModule = content.modules[activeIndex];
   useEffect(() => {
-    if (previousActiveIndex.current !== activeIndex) {
-      const chapter = document.getElementById(`lesson-chapter-${lesson.id}-${activeIndex}`);
-      chapter?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-    previousActiveIndex.current = activeIndex;
+    if (!shouldScrollToChapter.current) return;
+    const chapter = document.getElementById(`lesson-chapter-${lesson.id}-${activeIndex}`);
+    chapter?.scrollIntoView({ behavior: "smooth", block: "start" });
+    shouldScrollToChapter.current = false;
   }, [activeIndex, lesson.id]);
-  const goNext = () => setExpanded(index => Math.min(index + 1, content.modules.length - 1));
-  const goPrevious = () => setExpanded(index => Math.max(index - 1, 0));
+  if (!content) return null;
+  const selectChapter = (index) => {
+    if (index === activeIndex) {
+      document.getElementById(`lesson-chapter-${lesson.id}-${index}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
+    shouldScrollToChapter.current = true;
+    setExpanded(index);
+  };
+  const goNext = () => selectChapter(Math.min(activeIndex + 1, content.modules.length - 1));
+  const goPrevious = () => selectChapter(Math.max(activeIndex - 1, 0));
 
   return <section className="deep-dive">
     <style>{`
@@ -349,7 +356,7 @@ function LessonDeepDive({lesson}) {
     </div>
 
     <div className="deep-dive-roadmap slide-roadmap" aria-label="Lesson chapters">
-      {content.modules.map((module,index)=><button type="button" key={module.title} onClick={()=>setExpanded(index)} aria-current={activeIndex===index?"step":undefined} className={`roadmap-step ${completed.includes(index)?"done":""} ${activeIndex===index?"current":""}`}>
+      {content.modules.map((module,index)=><button type="button" key={module.title} onClick={()=>selectChapter(index)} aria-current={activeIndex===index?"step":undefined} className={`roadmap-step ${completed.includes(index)?"done":""} ${activeIndex===index?"current":""}`}>
         <span>{completed.includes(index)?<CheckCircle2 size={14}/>:String(index+1).padStart(2,"0")}</span>
         <strong>{module.title}</strong>
       </button>)}
@@ -360,7 +367,7 @@ function LessonDeepDive({lesson}) {
       <div><b>YOUR LEARNING GOAL</b>{content.outcome}</div>
     </div>
 
-    <article id={`lesson-chapter-${lesson.id}-${activeIndex}`} className={`chapter-card lesson-slide open ${completed.includes(activeIndex)?"is-done":""}`} key={activeModule.title} aria-live="polite" style={{ scrollMarginTop: "112px" }}>
+    <article id={`lesson-chapter-${lesson.id}-${activeIndex}`} className={`chapter-card lesson-slide open ${completed.includes(activeIndex)?"is-done":""}`} key={activeModule.title} aria-live="polite" style={{ scrollMarginTop: "128px" }}>
       <div className="slide-heading">
         <span className="chapter-number">{completed.includes(activeIndex)?<CheckCircle2 size={19}/>:String(activeIndex+1).padStart(2,"0")}</span>
         <span className="chapter-title-wrap"><strong>{activeModule.title}</strong><small>CHAPTER {activeIndex+1} OF {content.modules.length} · CONCEPT EXPLAINER · EXAMPLE · PRACTICE</small></span>
