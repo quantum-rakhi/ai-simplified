@@ -8,6 +8,7 @@ import {
   SlidersHorizontal, GitBranch, Scale, Gauge, Clock3, Download, Upload, RefreshCw
 } from "lucide-react";
 import "./styles.css";
+import "./premium.css";
 import { advancedLessons, advancedLessonDeepDive, advancedChapterPractice } from "./advancedLessons";
 import { phase2Lessons, phase2LessonDeepDive, phase2ChapterPractice } from "./phase2Lessons";
 import { recordChapterCompletion, recordQuizResult, recordAssessmentResult, getProgressSnapshot, subscribeToProgress, exportProgress, importProgress, resetProgress } from "./services/progressStorage";
