@@ -2098,3 +2098,50 @@ body {
  .hero-art .ai-face-glow{width:285px!important;height:320px!important}
  .android-portrait{width:270px!important;height:310px!important}
 }
+
+
+/* HERO LAB LABEL CLEARANCE — keep cards outside the android silhouette */
+.hero-art .ai-face-glow{
+ width:390px!important;height:420px!important;
+}
+.android-portrait{
+ width:355px!important;height:405px!important;
+}
+.hero-art .lab-orbit-card{
+ width:174px!important;min-width:174px!important;max-width:174px!important;
+}
+.hero-art .lab-orbit-one{top:4%!important;left:0!important;right:auto!important}
+.hero-art .lab-orbit-two{top:4%!important;right:0!important;left:auto!important}
+.hero-art .lab-orbit-three{bottom:4%!important;left:0!important;right:auto!important}
+.hero-art .lab-orbit-four{bottom:4%!important;right:0!important;left:auto!important}
+.hero-art .lab-orbit-card-inner{padding:10px 11px!important;gap:8px!important}
+.hero-art .lab-orbit-card b{font-size:9px!important}
+.hero-art .lab-orbit-card small{font-size:6px!important;letter-spacing:.65px!important}
+/* Barely perceptible drift: cards stay anchored and never sweep across the face */
+.hero-art .lab-orbit-one{animation:lab-label-drift-a 9s ease-in-out infinite!important}
+.hero-art .lab-orbit-two{animation:lab-label-drift-b 10s ease-in-out infinite!important}
+.hero-art .lab-orbit-three{animation:lab-label-drift-b 10.5s ease-in-out infinite!important}
+.hero-art .lab-orbit-four{animation:lab-label-drift-a 9.5s ease-in-out infinite!important}
+@keyframes lab-label-drift-a{0%,100%{translate:0 0}50%{translate:0 -2px}}
+@keyframes lab-label-drift-b{0%,100%{translate:0 0}50%{translate:0 2px}}
+@media(max-width:1050px){
+ .hero-art .ai-face-glow{width:350px!important;height:380px!important}
+ .android-portrait{width:325px!important;height:370px!important}
+ .hero-art .lab-orbit-card{width:160px!important;min-width:160px!important;max-width:160px!important}
+}
+@media(max-width:760px){
+ .hero-art .ai-face-glow{width:315px!important;height:350px!important}
+ .android-portrait{width:290px!important;height:335px!important}
+ .hero-art .lab-orbit-card{width:150px!important;min-width:150px!important;max-width:150px!important}
+ .hero-art .lab-orbit-card-inner{padding:8px!important;gap:6px!important}
+ .hero-art .lab-orbit-card b{font-size:8px!important}
+}
+@media(max-width:480px){
+ .hero-art .ai-face-glow{width:275px!important;height:310px!important}
+ .android-portrait{width:255px!important;height:295px!important}
+ .hero-art .lab-orbit-card{width:137px!important;min-width:137px!important;max-width:137px!important}
+ .hero-art .lab-orbit-card small{font-size:5px!important;letter-spacing:.35px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ .hero-art .lab-orbit-card{animation:none!important}
+}
