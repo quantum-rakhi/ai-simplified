@@ -2519,3 +2519,129 @@ body {
 }
 .chapter-code-output{background:#eef2fa!important;color:#202b43!important}
 .chapter-code-output pre{color:#202b43!important;-webkit-text-fill-color:#202b43!important;font-weight:600!important}
+
+
+/* Homepage promotional banners — accessible contrast and refined hierarchy */
+.play-banner {
+  min-height: 156px !important;
+  padding: 32px 38px !important;
+  gap: 22px !important;
+  border: 1px solid rgba(255,255,255,.24) !important;
+  box-shadow: 0 18px 42px rgba(68,48,126,.14), inset 0 1px 0 rgba(255,255,255,.18) !important;
+  background:
+    radial-gradient(circle at 82% 18%, rgba(255,255,255,.17), transparent 25%),
+    linear-gradient(108deg,#5945b5 0%,#8053ae 52%,#bd6d7d 100%) !important;
+}
+.play-banner .eyebrow {
+  color: #f5eaff !important;
+  opacity: 1 !important;
+}
+.play-banner h2 {
+  color: #fff !important;
+  font-size: clamp(21px,2.1vw,25px) !important;
+  line-height: 1.2 !important;
+  letter-spacing: -.55px !important;
+  text-shadow: 0 1px 10px rgba(35,20,70,.12);
+}
+.play-banner p {
+  color: rgba(255,255,255,.9) !important;
+  font-size: 13px !important;
+  line-height: 1.65 !important;
+  max-width: 610px;
+}
+.play-banner .banner-icon {
+  background: rgba(255,255,255,.17) !important;
+  border: 1px solid rgba(255,255,255,.25);
+  color: #fff !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 8px 24px rgba(39,24,83,.12);
+}
+.play-banner .btn-light,
+.visual-lab-promo .btn-light {
+  min-height: 52px !important;
+  padding: 0 23px !important;
+  border: 1px solid rgba(255,255,255,.72) !important;
+  border-radius: 13px !important;
+  color: #5c4a9e !important;
+  background: #fff !important;
+  box-shadow: 0 8px 22px rgba(28,20,60,.13) !important;
+  transition: transform .22s ease, box-shadow .22s ease, background .22s ease !important;
+}
+.play-banner .btn-light:hover,
+.visual-lab-promo .btn-light:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 13px 28px rgba(28,20,60,.2) !important;
+  background: #fbfaff !important;
+}
+.play-banner .banner-decoration {
+  color: rgba(255,255,255,.12) !important;
+  pointer-events: none;
+}
+.visual-lab-promo {
+  position: relative;
+  min-height: 156px !important;
+  padding: 30px 34px !important;
+  border: 1px solid rgba(189,166,255,.28) !important;
+  border-radius: 22px !important;
+  background:
+    radial-gradient(circle at 84% 12%, rgba(166,132,255,.2), transparent 27%),
+    linear-gradient(112deg,#211d3b 0%,#292244 58%,#3b2b59 100%) !important;
+  box-shadow: 0 18px 42px rgba(35,27,74,.14), inset 0 1px 0 rgba(255,255,255,.08) !important;
+}
+.visual-lab-promo:after {
+  content: "";
+  position: absolute;
+  width: 190px;
+  height: 190px;
+  right: 210px;
+  top: -92px;
+  border: 1px solid rgba(193,174,255,.13);
+  border-radius: 50%;
+  box-shadow: 0 0 0 22px rgba(193,174,255,.035), 0 0 55px rgba(157,125,255,.12);
+  pointer-events: none;
+}
+.visual-lab-promo .promo-orb {
+  width: 62px !important;
+  height: 62px !important;
+  border-radius: 18px !important;
+  color: #fff !important;
+  background: linear-gradient(145deg,#8d75ed,#bd76cf) !important;
+  box-shadow: 0 10px 28px rgba(146,112,234,.3) !important;
+}
+.visual-lab-promo .promo-copy { position: relative; z-index: 1; }
+.visual-lab-promo .promo-copy .eyebrow {
+  color: #c8b7ff !important;
+  opacity: 1 !important;
+}
+.visual-lab-promo .promo-copy h2 {
+  color: #fff !important;
+  font-size: clamp(21px,2.1vw,25px) !important;
+  line-height: 1.2 !important;
+  letter-spacing: -.55px !important;
+  margin: 7px 0 8px !important;
+}
+.visual-lab-promo .promo-copy p {
+  max-width: 650px;
+  color: #d4cfe7 !important;
+  font-size: 13px !important;
+  line-height: 1.65 !important;
+}
+.visual-lab-promo .btn-light { position: relative; z-index: 2; }
+.bottom-cta {
+  max-width: 1128px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  border-radius: 26px !important;
+  box-shadow: 0 18px 48px rgba(74,61,130,.07) !important;
+}
+@media(max-width:760px) {
+  .play-banner { padding: 25px 23px !important; gap: 15px !important; }
+  .play-banner > div:nth-child(2) { min-width: 0; flex: 1; }
+  .play-banner .btn-light { margin-left: 0 !important; }
+  .visual-lab-promo { padding: 24px 22px !important; flex-wrap: wrap; }
+  .visual-lab-promo .promo-copy { min-width: calc(100% - 82px); }
+  .visual-lab-promo .btn-light { margin-left: 0 !important; }
+  .visual-lab-promo:after { right: -65px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .play-banner .btn-light,.visual-lab-promo .btn-light { transition: none !important; }
+}
