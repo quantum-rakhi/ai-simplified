@@ -1859,3 +1859,38 @@ body {
  .hero-art .lab-orbit-two,.hero-art .lab-orbit-three{left:-2px!important}
 }
 @media(prefers-reduced-motion:reduce){.hero-art .lab-orbit-card{animation:none!important;transition:none!important}}
+
+
+/* FINAL HERO COMPOSITION ALIGNMENT — keep lab cards inside the artwork column */
+.hero-art{width:100%!important;min-width:0!important;overflow:visible!important;transform:translateX(22px)!important}
+.hero-art .lab-orbit-card{
+ width:188px!important;min-width:188px!important;max-width:188px!important;
+}
+.hero-art .lab-orbit-one{top:5%!important;right:2%!important;left:auto!important;bottom:auto!important}
+.hero-art .lab-orbit-two{top:5%!important;left:2%!important;right:auto!important;bottom:auto!important}
+.hero-art .lab-orbit-three{bottom:5%!important;left:2%!important;right:auto!important;top:auto!important}
+.hero-art .lab-orbit-four{bottom:5%!important;right:2%!important;left:auto!important;top:auto!important}
+.hero-art .brain-glow{position:relative!important;z-index:2!important}
+.hero-art .orbit-one{width:min(420px,88%)!important;height:245px!important}
+.hero-art .orbit-two{width:min(350px,76%)!important;height:350px!important}
+@media(max-width:1050px){
+ .hero-art{transform:translateX(8px)!important}
+ .hero-art .lab-orbit-card{width:170px!important;min-width:170px!important;max-width:170px!important}
+ .hero-art .lab-orbit-card-inner{gap:8px!important;padding:10px!important}
+ .hero-art .lab-orbit-card b{font-size:9px!important}
+}
+@media(max-width:760px){
+ .hero-art{transform:none!important;min-height:390px!important}
+ .hero-art .lab-orbit-card{width:166px!important;min-width:166px!important;max-width:166px!important}
+ .hero-art .lab-orbit-one,.hero-art .lab-orbit-four{right:0!important}
+ .hero-art .lab-orbit-two,.hero-art .lab-orbit-three{left:0!important}
+}
+@media(max-width:480px){
+ .hero-art{min-height:340px!important}
+ .hero-art .lab-orbit-card{width:148px!important;min-width:148px!important;max-width:148px!important}
+ .hero-art .lab-orbit-card-inner{gap:6px!important;padding:8px!important}
+ .hero-art .lab-orbit-card b{font-size:8px!important}
+ .hero-art .lab-orbit-card small{font-size:5px!important}
+ .hero-art .lab-orbit-one,.hero-art .lab-orbit-four{right:0!important}
+ .hero-art .lab-orbit-two,.hero-art .lab-orbit-three{left:0!important}
+}
