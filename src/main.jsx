@@ -355,19 +355,25 @@ function LessonDeepDive({lesson}) {
       </div>
     </div>
 
-    <div className="deep-dive-roadmap slide-roadmap" aria-label="Lesson chapters">
+    <div className="lesson-workspace">
+      <aside className="lesson-chapter-sidebar">
+        <div className="chapter-sidebar-heading">
+          <span>COURSE CONTENT</span>
+          <strong>{content.modules.length} chapters</strong>
+        </div>
+        <div className="deep-dive-roadmap slide-roadmap" aria-label="Lesson chapters">
       {content.modules.map((module,index)=><button type="button" key={module.title} onClick={()=>selectChapter(index)} aria-current={activeIndex===index?"step":undefined} className={`roadmap-step ${completed.includes(index)?"done":""} ${activeIndex===index?"current":""}`}>
         <span>{completed.includes(index)?<CheckCircle2 size={14}/>:String(index+1).padStart(2,"0")}</span>
         <strong>{module.title}</strong>
       </button>)}
     </div>
-
-    <div className="learning-outcome">
+      </aside>
+      <div className="lesson-active-content">
+        <div className="learning-outcome">
       <span className="outcome-icon"><Target size={18}/></span>
       <div><b>YOUR LEARNING GOAL</b>{content.outcome}</div>
     </div>
-
-    <article id={`lesson-chapter-${lesson.id}-${activeIndex}`} className={`chapter-card lesson-slide open ${completed.includes(activeIndex)?"is-done":""}`} key={activeModule.title} aria-live="polite" style={{ scrollMarginTop: "128px" }}>
+        <article id={`lesson-chapter-${lesson.id}-${activeIndex}`} className={`chapter-card lesson-slide open ${completed.includes(activeIndex)?"is-done":""}`} key={activeModule.title} aria-live="polite" style={{ scrollMarginTop: "128px" }}>
       <div className="slide-heading">
         <span className="chapter-number">{completed.includes(activeIndex)?<CheckCircle2 size={19}/>:String(activeIndex+1).padStart(2,"0")}</span>
         <span className="chapter-title-wrap"><strong>{activeModule.title}</strong><small>CHAPTER {activeIndex+1} OF {content.modules.length} · CONCEPT EXPLAINER · EXAMPLE · PRACTICE</small></span>
@@ -415,6 +421,8 @@ function LessonDeepDive({lesson}) {
           : <button className="chapter-action-btn primary" onClick={()=>finishChapter(activeIndex)}><CheckCircle2 size={14}/> Finish lesson</button>}
       </div>
     </article>
+      </div>
+    </div>
 
     <div className="lesson-end-check">
       <div className="deep-dive-kicker"><Trophy size={14}/> YOUR PROGRESS</div>
