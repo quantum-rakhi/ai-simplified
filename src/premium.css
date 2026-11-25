@@ -2145,3 +2145,35 @@ body {
 @media(prefers-reduced-motion:reduce){
  .hero-art .lab-orbit-card{animation:none!important}
 }
+
+
+/* RESTORE THE LARGER ANDROID HERO + MORE EXPRESSIVE EYE TRACKING */
+.hero-art .ai-face-glow{width:460px!important;height:480px!important}
+.android-portrait{width:430px!important;height:470px!important}
+.android-gaze{
+ width:5.2%!important;height:2.7%!important;
+ border-radius:50%!important;
+ background:radial-gradient(ellipse at 45% 40%,rgba(255,255,255,.98) 0%,rgba(103,237,255,.95) 24%,rgba(40,166,225,.55) 53%,rgba(30,98,180,.08) 78%,transparent 100%)!important;
+ box-shadow:0 0 9px rgba(74,224,255,.75),0 0 19px rgba(42,203,255,.52)!important;
+ transform:translate(var(--gaze-x,0px),var(--gaze-y,0px))!important;
+ transition:transform .075s cubic-bezier(.2,.7,.3,1)!important;
+}
+.android-gaze-left{left:36.2%!important;top:43.7%!important}
+.android-gaze-right{left:60.7%!important;top:43.7%!important}
+.hero-art .lab-orbit-card{z-index:5!important}
+.hero-art .lab-orbit-one{top:4%!important;left:0!important}
+.hero-art .lab-orbit-two{top:4%!important;right:0!important}
+.hero-art .lab-orbit-three{bottom:4%!important;left:0!important}
+.hero-art .lab-orbit-four{bottom:4%!important;right:0!important}
+@media(max-width:1050px){
+ .hero-art .ai-face-glow{width:400px!important;height:430px!important}
+ .android-portrait{width:370px!important;height:420px!important}
+}
+@media(max-width:760px){
+ .hero-art .ai-face-glow{width:330px!important;height:360px!important}
+ .android-portrait{width:310px!important;height:350px!important}
+}
+@media(max-width:480px){
+ .hero-art .ai-face-glow{width:285px!important;height:320px!important}
+ .android-portrait{width:270px!important;height:310px!important}
+}
