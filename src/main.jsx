@@ -1065,7 +1065,7 @@ const levelCounts = {
       </section>
 
       <section className="section-wrap learn-section">
-        <div className="section-heading"><div><div className="eyebrow">YOUR LEARNING PATH</div><h2>Small steps. <span>Big aha moments.</span></h2><p>Start with the basics and build your AI confidence one idea at a time.</p></div><button className="text-link" onClick={()=>go("explore")}>View all lessons <ArrowRight size={16}/></button></div>
+        <div className="section-heading"><div><div className="eyebrow">STRUCTURED LEARNING PATH</div><h2>Build your <span>AI expertise.</span></h2><p>Develop strong foundations, apply concepts through guided practice, and progress towards advanced AI skills.</p></div><button className="text-link" onClick={()=>go("explore")}>View all lessons <ArrowRight size={16}/></button></div>
         <div className="lesson-grid">
           {lessons.slice(0,3).map((lesson,i)=><LessonCard key={lesson.id} lesson={lesson} index={i} onClick={()=>openLesson(lesson.id)}/>)}
         </div>
