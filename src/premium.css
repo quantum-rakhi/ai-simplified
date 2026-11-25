@@ -2495,3 +2495,27 @@ body {
   .chapter-code-panel > pre{padding:17px 16px;font-size:13px}
   .chapter-code-panel > pre code,.chapter-code-panel pre code{font-size:13px !important}
 }
+
+
+/* Final contrast override: light editor surface for lesson snippets */
+.chapter-code-panel{background:#ffffff!important;border:1px solid #d9deeb!important}
+.chapter-code-panel .chapter-code-heading{background:#24213b!important;color:#f4f0ff!important}
+.chapter-code-panel>pre{
+  background:#f8faff!important;
+  color:#172033!important;
+  -webkit-text-fill-color:#172033!important;
+}
+.chapter-code-panel>pre code,
+.chapter-code-panel>pre code *,
+.chapter-code-panel pre code{
+  background:transparent!important;
+  color:#172033!important;
+  -webkit-text-fill-color:#172033!important;
+  opacity:1!important;
+  visibility:visible!important;
+  text-shadow:none!important;
+  filter:none!important;
+  font-weight:600!important;
+}
+.chapter-code-output{background:#eef2fa!important;color:#202b43!important}
+.chapter-code-output pre{color:#202b43!important;-webkit-text-fill-color:#202b43!important;font-weight:600!important}
